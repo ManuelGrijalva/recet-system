@@ -24,14 +24,13 @@ const cookieOrHeaderExtractor = (req: Request): string | null => {
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
-    private readonly configService: ConfigService,
+    configService: ConfigService,
     private readonly databaseService: DatabaseService,
   ) {
     super({
       jwtFromRequest: cookieOrHeaderExtractor,
       ignoreExpiration: false,
-      secretOrKey:
-        configService.get<string>('JWT_SECRET') || 'recet_system_jwt_secret_production_2026',
+      secretOrKey: configService.getOrThrow<string>('JWT_SECRET'),
     });
   }
 

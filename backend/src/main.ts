@@ -1,11 +1,14 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { DrizzleExceptionFilter } from './common/filters/drizzle-exception.filter';
 
 async function bootstrap(): Promise<void> {
+  // La validacion estricta de entorno corre al construir AppModule (ConfigModule.validate).
   const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
 
   // 1. Prefijo global para la API REST
   app.setGlobalPrefix('api');
@@ -15,7 +18,7 @@ async function bootstrap(): Promise<void> {
 
   // 3. CORS configurado para comunicacion con el frontend en Next.js
   app.enableCors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    origin: configService.getOrThrow<string>('FRONTEND_URL'),
     credentials: true,
   });
 
@@ -31,7 +34,7 @@ async function bootstrap(): Promise<void> {
   // 5. Filtro global de excepciones de PostgreSQL / Drizzle
   app.useGlobalFilters(new DrizzleExceptionFilter());
 
-  const port = process.env.PORT || 4000;
+  const port = configService.getOrThrow<number>('PORT');
   await app.listen(port);
   console.info(`Servidor API iniciado exitosamente en el puerto ${port}`);
 }

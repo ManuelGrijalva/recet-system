@@ -17,15 +17,69 @@ Este README es documentación viva: se actualiza en la misma edición que introd
 
 ## Puesta en marcha
 
-Requisitos: Node.js 20+, pnpm 10+ o 12+, y una base PostgreSQL 16+ accesible por SSL.
+Requisitos: Node.js 20+, pnpm 10+ o 12+, y una base PostgreSQL 16+ accesible (local o gestionada).
+
+El repositorio es un workspace pnpm con dos paquetes: `backend` (API NestJS) y `frontend` (web Next.js). Se levantan en dos terminales.
+
+### 1. Dependencias
 
 ```bash
-pnpm install
-cp backend/.env.example backend/.env   # completar los valores reales
-pnpm --filter backend db:push
-pnpm --filter backend start:dev        # API en http://localhost:4000/api
-pnpm --filter frontend dev             # Web en http://localhost:3000
+pnpm install            # instala backend y frontend desde la raiz
 ```
+
+### 2. Variables de entorno
+
+Backend (`backend/.env`, obligatorio, validado al arrancar):
+
+```bash
+cp backend/.env.example backend/.env
+```
+
+Completar como minimo `DATABASE_URL`, `DATABASE_SSL` y las credenciales de Google
+(`GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`). El backend no inicia si falta una
+variable, tiene formato invalido o conserva texto de plantilla.
+
+Frontend (`frontend/.env.local`, ignorado por git):
+
+```bash
+cp frontend/.env.example frontend/.env.local
+```
+
+| Variable | Valor local | Uso |
+|---|---|---|
+| `NEXT_PUBLIC_API_URL` | `http://localhost:4000/api` | Base del API que consume el cliente (`shared/lib/apiClient.ts`) y el inicio de sesion con Google. Debe incluir el prefijo `/api`. |
+
+Si se omite `frontend/.env.local`, el frontend cae al valor por defecto
+`http://localhost:4000/api`, por lo que arranca contra un backend local sin
+configuracion extra.
+
+### 3. Base de datos
+
+```bash
+pnpm --filter backend db:migrate       # aplica las migraciones versionadas en backend/drizzle
+```
+
+Alternativa para prototipar sin generar migracion: `pnpm --filter backend db:push`.
+
+### 4. Levantar ambos proyectos
+
+```bash
+# Terminal 1 - API en http://localhost:4000/api
+pnpm --filter backend start:dev
+
+# Terminal 2 - Web en http://localhost:3000
+pnpm --filter frontend dev
+```
+
+Atajos equivalentes desde la raiz: `pnpm dev:backend` y `pnpm dev:frontend`.
+
+### 5. Pruebas rapidas en local
+
+- API viva: `curl http://localhost:4000/api/recipes/feed`.
+- Web: abrir `http://localhost:3000`; el feed y el detalle funcionan con datos
+  semilla aunque el backend no responda (`withFallback`).
+- Sesion de desarrollo sin Google: con el backend en `NODE_ENV=development`,
+  `POST http://localhost:4000/api/auth/dev-login` con cuerpo JSON `{ "email": "...", "name": "..." }`.
 
 ## Comandos
 
@@ -34,10 +88,12 @@ pnpm --filter frontend dev             # Web en http://localhost:3000
 | Instalar dependencias del workspace | `pnpm install` |
 | Frontend en desarrollo | `pnpm --filter frontend dev` |
 | Backend NestJS en watch | `pnpm --filter backend start:dev` |
-| Chequeo de tipos del frontend | `pnpm --filter frontend typecheck` |
+| Chequeo de tipos | `pnpm --filter frontend typecheck` / `pnpm --filter backend typecheck` |
 | Linteo estricto (cero `any`) | `pnpm lint` |
-| Generar migraciones Drizzle | `pnpm --filter backend db:generate` |
-| Aplicar migraciones Drizzle | `pnpm --filter backend db:push` |
+| Generar migración Drizzle desde el schema | `pnpm --filter backend db:generate` |
+| Aplicar migraciones versionadas | `pnpm --filter backend db:migrate` |
+| Empujar el schema sin migración (prototipo) | `pnpm --filter backend db:push` |
+| Inspector de base de datos | `pnpm --filter backend db:studio` |
 
 ## Stack tecnológico
 
@@ -57,12 +113,15 @@ pnpm --filter frontend dev             # Web en http://localhost:3000
 recet-system/
 ├── .agents/rules/          Reglas para agentes (gestor de paquetes, etc.)
 ├── backend/                API NestJS + Drizzle ORM
+│   ├── .env.example        Plantilla de entorno (copiar a backend/.env)
+│   ├── drizzle/            Migraciones SQL versionadas
 │   └── src/
 │       ├── common/         Decoradores, filtros y guards
 │       ├── config/         Validación de variables de entorno al arranque
 │       ├── database/       Conexión SSL y esquema Drizzle
 │       └── modules/        auth, users, recipes, interactions
 ├── frontend/               Web Next.js (App Router)
+│   ├── .env.example        Plantilla de entorno (copiar a frontend/.env.local)
 │   └── src/
 │       ├── app/            Rutas: solo renderizan el Screen de cada slice
 │       ├── features/       Vertical slices (recipe-feed, reactions, ...)
@@ -92,7 +151,7 @@ features/<slice>/
 - La capa `api/` llama al backend real y cae a datos semilla con `withFallback`, de modo que la interfaz funciona sin backend levantado.
 - Imports mediante el alias `@/` (`@/features/...`, `@/shared/...`).
 
-Slices migrados a la fecha: `recipe-feed`, `reactions`. Pendientes: `recipe-detail`, `recipe-compose`, `ingredient-search`, `saved-recipes`, `profile`, `auth`, `comments`.
+Slices: `recipe-feed`, `recipe-detail`, `recipe-compose`, `ingredient-search`, `saved-recipes`, `profile`, `auth`, `comments`, `reactions`. Todas las páginas de `app/` están adelgazadas a un solo `Screen`.
 
 ### Layout responsivo
 
@@ -129,4 +188,5 @@ Las directrices completas están en `AGENTS.md`. Resumen:
 - TypeScript estricto; prohibido `any`. Un `any` hace fallar el linteo.
 - Sin emojis en código, documentación ni control de versiones.
 - Diseño monocromático (blanco, negro, `zinc`); `rounded-full` solo en avatares; prohibido `uppercase`.
-- Commits y descripciones de PR en español, en imperativo, con el trailer `Co-Authored-By`.
+- Commits con Conventional Commits (`tipo(scope): resumen`), resumen y cuerpo en español e imperativo. Tipos: `feat`, `fix`, `refactor`, `perf`, `docs`, `test`, `build`, `ci`, `chore`, `style`.
+- Prohibido incluir trailers `Co-Authored-By` o cualquier atribución a un agente en commits o Pull Request. El autor es siempre el desarrollador humano.

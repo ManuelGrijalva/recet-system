@@ -1,11 +1,23 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
+import { cn } from '@/shared/lib/utils';
 import { Button } from '@/shared/components/ui/Button';
-import { GoogleIcon } from '@/shared/components/ui/icons';
+import googleLogo from '@/shared/assets/google.svg';
 import { useGoogleLogin } from '../hooks/useGoogleLogin';
 
-export function GoogleLoginButton(): React.JSX.Element {
+interface GoogleLoginButtonProps {
+  className?: string;
+}
+
+/**
+ * Único botón de acceso: redirige al flujo OAuth de Google del backend.
+ * Usa el logotipo cargado en `shared/assets/google.svg`.
+ */
+export function GoogleLoginButton({
+  className,
+}: GoogleLoginButtonProps = {}): React.JSX.Element {
   const { isRedirecting, login } = useGoogleLogin();
 
   return (
@@ -13,12 +25,19 @@ export function GoogleLoginButton(): React.JSX.Element {
       type="button"
       variant="outline"
       size="lg"
-      className="w-full flex items-center justify-center gap-3"
+      className={cn('w-full flex items-center justify-center gap-3', className)}
       onClick={login}
       isLoading={isRedirecting}
     >
-      <GoogleIcon className="w-4 h-4" />
-      <span>Continuar con Google</span>
+      <Image
+        src={googleLogo}
+        alt=""
+        aria-hidden
+        width={18}
+        height={18}
+        className="h-[18px] w-[18px] shrink-0"
+      />
+      <span>Iniciar sesión con Google</span>
     </Button>
   );
 }

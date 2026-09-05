@@ -157,6 +157,7 @@ Slices: `recipe-feed`, `recipe-detail`, `recipe-compose`, `ingredient-search`, `
 
 - Móvil: barra de navegación inferior fija, feed a una columna, modales tipo bottom sheet.
 - Escritorio: barra lateral izquierda fija (`w-64`), feed central `max-w-2xl`, barra lateral derecha (`lg:` en adelante) con sugerencias y tendencias.
+- Acceso (`/login`): el slice `auth` monta `LoginScreen` como overlay `fixed inset-0` para salir del layout con barras. Escritorio: foto (`shared/assets/login-guate.jpg`) a media pantalla más el formulario; móvil: franja superior delgada con un fragmento de la misma foto. Único acceso: `GoogleLoginButton` con el logotipo de `shared/assets/google.svg`.
 
 ## Arquitectura del backend
 

@@ -1,0 +1,22 @@
+{
+  "name": "recet-system-root",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sistema web de recetas tradicionales guatemaltecas con búsqueda por ingredientes (Jutiapa)",
+  "packageManager": "pnpm@12.3.4",
+  "scripts": {
+    "dev:frontend": "pnpm --filter frontend dev",
+    "dev:backend": "pnpm --filter backend start:dev",
+    "build:frontend": "pnpm --filter frontend build",
+    "build:backend": "pnpm --filter backend build",
+    "lint": "eslint .",
+    "typecheck": "pnpm --filter frontend typecheck && pnpm --filter backend typecheck"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.20.0",
+    "@typescript-eslint/eslint-plugin": "^8.24.0",
+    "@typescript-eslint/parser": "^8.24.0",
+    "eslint": "^9.20.0",
+    "typescript": "^5.7.3"
+  }
+}

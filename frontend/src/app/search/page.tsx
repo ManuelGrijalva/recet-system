@@ -1,6 +1,6 @@
 import React from 'react';
-import { IngredientSearch } from '../../features/search/IngredientSearch';
+import { IngredientSearchScreen } from '@/features/ingredient-search';
 
 export default function SearchPage(): React.JSX.Element {
-  return <IngredientSearch />;
+  return <IngredientSearchScreen />;
 }

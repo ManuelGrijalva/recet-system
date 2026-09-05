@@ -4,6 +4,7 @@ import '../styles/globals.css';
 import { DesktopSidebar } from '../shared/components/layout/DesktopSidebar';
 import { MobileBottomNav } from '../shared/components/layout/MobileBottomNav';
 import { RightSidebar } from '../shared/components/layout/RightSidebar';
+import { BrandMark } from '../shared/components/ui/BrandMark';
 
 export const metadata: Metadata = {
   title: 'Recetario Tradicional de Jutiapa | Red Social Culinaria',
@@ -40,9 +41,7 @@ export default function RootLayout({
           {/* 2. Encabezado Móvil (Solo visible en pantallas pequeñas) */}
           <header className="md:hidden fixed top-0 left-0 right-0 h-14 bg-white/90 dark:bg-[#0a0a0a]/90 backdrop-blur-sm border-b border-zinc-200 dark:border-zinc-800 z-40 px-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-md bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 flex items-center justify-center font-bold text-xs">
-                R
-              </div>
+              <BrandMark size="sm" />
               <span className="font-semibold text-sm tracking-tight text-zinc-950 dark:text-zinc-50">
                 Recetario Jutiapa
               </span>

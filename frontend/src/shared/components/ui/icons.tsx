@@ -75,6 +75,22 @@ export function ArrowLeftIcon({ className }: IconProps): React.JSX.Element {
   );
 }
 
+export function XIcon({ className }: IconProps): React.JSX.Element {
+  return (
+    <svg {...stroke(className ?? 'w-3.5 h-3.5')}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+    </svg>
+  );
+}
+
+export function SearchIcon({ className }: IconProps): React.JSX.Element {
+  return (
+    <svg {...stroke(className)}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+    </svg>
+  );
+}
+
 export function GoogleIcon({ className }: IconProps): React.JSX.Element {
   return (
     <svg className={className ?? 'w-4 h-4'} viewBox="0 0 24 24">

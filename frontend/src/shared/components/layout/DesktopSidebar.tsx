@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Avatar } from '../ui/Avatar';
+import { BrandMark } from '../ui/BrandMark';
 
 interface NavItem {
   label: string;
@@ -71,9 +72,7 @@ export function DesktopSidebar(): React.JSX.Element {
       {/* Brand Header */}
       <div className="mb-8 px-2">
         <Link href="/" className="inline-flex items-center gap-2.5 group">
-          <div className="w-8 h-8 rounded-md bg-zinc-900 dark:bg-zinc-100 flex items-center justify-center text-white dark:text-zinc-900 font-bold text-sm">
-            R
-          </div>
+          <BrandMark size="md" />
           <div>
             <span className="font-semibold text-lg tracking-tight text-zinc-950 dark:text-zinc-50 block leading-tight">
               Recetario Jutiapa

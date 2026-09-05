@@ -38,6 +38,3 @@ lerna-debug.log*
 *.njsproj
 *.sln
 *.sw?
-
-# Drizzle Kit migration metadata
-drizzle/meta/

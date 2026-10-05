@@ -5,7 +5,7 @@
 - Prohibido utilizar `npm` o `yarn`.
 
 ## 2. Fuente de Verdad
-- El documento académico y de requerimientos `Entrega I part2.md` es la fuente de verdad del sistema (búsqueda inteligente por ingredientes, repositorio de recetas tradicionales de Jutiapa, comunidad y roles).
+- El documento académico y de requerimientos `Entrega 2 part2.md` es la fuente de verdad del sistema (búsqueda inteligente por ingredientes, repositorio de recetas tradicionales de Jutiapa, comunidad y roles).
 - Debe mantenerse siempre en `.gitignore`.
 
 ## 3. Calidad de Código y Tipado

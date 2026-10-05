@@ -4,7 +4,7 @@ Guía operativa para Claude Code en el repositorio `recet-system`. Las reglas no
 
 ## Qué es
 
-Red social gastronómica para el rescate de la cocina tradicional de Jutiapa (Guatemala), con búsqueda de recetas por ingredientes disponibles. Proyecto de graduación, Universidad Mariano Gálvez, Campus Jutiapa. La fuente de verdad de requerimientos es `Entrega I part2.md` (ignorado por git, no editar).
+Red social gastronómica para el rescate de la cocina tradicional de Jutiapa (Guatemala), con búsqueda de recetas por ingredientes disponibles. Proyecto de graduación, Universidad Mariano Gálvez, Campus Jutiapa. La fuente de verdad de requerimientos es `Entrega 2 part2.md` (ignorado por git, no editar).
 
 ## Monorepo
 

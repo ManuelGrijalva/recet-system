@@ -4,10 +4,12 @@ import type { MatchedRecipe } from '../types';
 
 interface MatchResultListProps {
   results: MatchedRecipe[];
+  isLoading?: boolean;
 }
 
 export function MatchResultList({
   results,
+  isLoading = false,
 }: MatchResultListProps): React.JSX.Element {
   return (
     <div className="space-y-4 pt-4 border-t border-zinc-200 dark:border-zinc-800">
@@ -20,7 +22,11 @@ export function MatchResultList({
         </span>
       </div>
 
-      {results.length === 0 ? (
+      {isLoading ? (
+        <div className="rounded-md border border-dashed border-zinc-200 dark:border-zinc-800 p-8 text-center">
+          <p className="text-xs text-zinc-500">Buscando recetas...</p>
+        </div>
+      ) : results.length === 0 ? (
         <div className="rounded-md border border-dashed border-zinc-200 dark:border-zinc-800 p-8 text-center">
           <p className="text-xs text-zinc-500">
             No encontramos recetas que coincidan con los ingredientes seleccionados. Prueba agregando otros insumos.

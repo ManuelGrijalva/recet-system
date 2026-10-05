@@ -8,7 +8,8 @@ import { IngredientChips } from './IngredientChips';
 import { MatchResultList } from './MatchResultList';
 
 export function IngredientSearchScreen(): React.JSX.Element {
-  const { results, isSelected, toggle, addCustom } = useIngredientSearch();
+  const { results, isLoading, isSelected, toggle, addCustom } =
+    useIngredientSearch();
 
   return (
     <div className="space-y-6">
@@ -29,7 +30,7 @@ export function IngredientSearchScreen(): React.JSX.Element {
         onToggle={toggle}
       />
 
-      <MatchResultList results={results} />
+      <MatchResultList results={results} isLoading={isLoading} />
     </div>
   );
 }

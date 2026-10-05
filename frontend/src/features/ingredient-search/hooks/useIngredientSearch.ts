@@ -1,38 +1,44 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
-import { getRecipeCatalog } from '../api/getRecipeCatalog';
-import { matchRecipesByIngredients } from '../lib/matchRecipesByIngredients';
-import type { CatalogRecipe, MatchedRecipe } from '../types';
+import { useEffect, useState } from 'react';
+import { searchRecipesByIngredients } from '../api/searchRecipesByIngredients';
+import type { MatchedRecipe } from '../types';
 
 const DEFAULT_SELECTION = ['Harina de arroz', 'Crema fresca de vaca'];
 
 interface UseIngredientSearchResult {
   selected: string[];
   results: MatchedRecipe[];
+  isLoading: boolean;
   isSelected: (name: string) => boolean;
   toggle: (name: string) => void;
   addCustom: (name: string) => void;
 }
 
 export function useIngredientSearch(): UseIngredientSearchResult {
-  const [catalog, setCatalog] = useState<CatalogRecipe[]>([]);
   const [selected, setSelected] = useState<string[]>(DEFAULT_SELECTION);
+  const [results, setResults] = useState<MatchedRecipe[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     let active = true;
-    getRecipeCatalog().then((data) => {
-      if (active) setCatalog(data);
+
+    if (selected.length === 0) {
+      setResults([]);
+      return;
+    }
+
+    setIsLoading(true);
+    searchRecipesByIngredients(selected).then((data) => {
+      if (!active) return;
+      setResults(data);
+      setIsLoading(false);
     });
+
     return () => {
       active = false;
     };
-  }, []);
-
-  const results = useMemo(
-    () => matchRecipesByIngredients(catalog, selected),
-    [catalog, selected],
-  );
+  }, [selected]);
 
   const isSelected = (name: string) => selected.includes(name);
 
@@ -48,5 +54,5 @@ export function useIngredientSearch(): UseIngredientSearchResult {
     setSelected((prev) => (prev.includes(clean) ? prev : [...prev, clean]));
   };
 
-  return { selected, results, isSelected, toggle, addCustom };
+  return { selected, results, isLoading, isSelected, toggle, addCustom };
 }

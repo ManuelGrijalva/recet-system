@@ -4,13 +4,7 @@ function has(selected: string[], ingredient: string): boolean {
   return selected.some((s) => s.toLowerCase() === ingredient.toLowerCase());
 }
 
-/**
- * Algoritmo de coincidencia por ingredientes disponibles.
- *
- * Para cada receta calcula el porcentaje de ingredientes que el usuario ya
- * tiene, descarta las que no coinciden en nada y ordena de mayor a menor
- * coincidencia. Función pura: sin estado ni efectos.
- */
+// Respaldo offline de searchRecipesByIngredients cuando el backend no responde.
 export function matchRecipesByIngredients(
   catalog: CatalogRecipe[],
   selectedIngredients: string[],

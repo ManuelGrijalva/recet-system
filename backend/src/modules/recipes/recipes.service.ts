@@ -40,6 +40,8 @@ export interface FeedRecipeItem {
   };
   commentsCount: number;
   matchPercentage?: number;
+  matchedIngredientNames?: string[];
+  missingIngredientNames?: string[];
 }
 
 @Injectable()
@@ -222,6 +224,10 @@ export class RecipesService {
         const results: FeedRecipeItem[] = [];
         for (const cand of candidateRecipes) {
           const stats = await this.getRecipeStats(cand.recipe.id);
+          const breakdown = await this.getIngredientBreakdown(
+            cand.recipe.id,
+            matchedIds,
+          );
           results.push({
             id: cand.recipe.id,
             title: cand.recipe.title,
@@ -238,6 +244,8 @@ export class RecipesService {
             reactionCounts: stats.reactionCounts,
             commentsCount: stats.commentsCount,
             matchPercentage: scoredMap.get(cand.recipe.id) || 0,
+            matchedIngredientNames: breakdown.matchedNames,
+            missingIngredientNames: breakdown.missingNames,
           });
         }
 
@@ -390,5 +398,34 @@ export class RecipesService {
       reactionCounts: counts,
       commentsCount: commentRow ? commentRow.count : 0,
     };
+  }
+
+  private async getIngredientBreakdown(
+    recipeId: string,
+    matchedIngredientIds: string[],
+  ): Promise<{ matchedNames: string[]; missingNames: string[] }> {
+    const db = this.databaseService.db;
+
+    const rows = await db
+      .select({
+        ingredientId: recipeIngredients.ingredientId,
+        name: ingredients.name,
+      })
+      .from(recipeIngredients)
+      .innerJoin(ingredients, eq(recipeIngredients.ingredientId, ingredients.id))
+      .where(eq(recipeIngredients.recipeId, recipeId));
+
+    const matchedNames: string[] = [];
+    const missingNames: string[] = [];
+
+    for (const row of rows) {
+      if (matchedIngredientIds.includes(row.ingredientId)) {
+        matchedNames.push(row.name);
+      } else {
+        missingNames.push(row.name);
+      }
+    }
+
+    return { matchedNames, missingNames };
   }
 }

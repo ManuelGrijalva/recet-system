@@ -165,7 +165,7 @@ Módulos en `backend/src/modules/`, cada uno con `*.controller.ts`, `*.service.t
 
 - `auth`: Google OAuth 2.0, emisión de JWT en cookie HTTP-Only, `dev-login` para desarrollo.
 - `users`: perfil privado (`/users/me`) y público (`/users/:id`); el teléfono es privado y editable.
-- `recipes`: alta de recetas, feed paginado (`/recipes/feed`), búsqueda (`/recipes/search`), detalle y borrado.
+- `recipes`: alta de recetas, feed paginado (`/recipes/feed`), búsqueda (`/recipes/search`, con porcentaje y desglose de ingredientes coincidentes/faltantes), detalle y borrado.
 - `interactions`: reacciones (`LIKE`, `YUMMY`, `TRIED_IT`), guardados y comentarios con un nivel de hilo.
 
 Configuración por entorno validada al arrancar en `backend/src/config/env.validation.ts`; el consumo se hace con `configService.getOrThrow(...)`. No se queman valores en el código.

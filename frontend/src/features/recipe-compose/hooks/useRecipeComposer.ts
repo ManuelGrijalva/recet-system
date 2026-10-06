@@ -1,6 +1,8 @@
 'use client';
 
 import { useCallback, useMemo, useState } from 'react';
+import { ApiError } from '@/shared/lib/apiClient';
+import type { RecipeStatus } from '@/shared/types';
 import { createRecipe } from '../api/createRecipe';
 import { buildCreateRecipePayload } from '../lib/buildCreateRecipePayload';
 import {
@@ -17,6 +19,26 @@ import type {
   IngredientDraft,
   RecipeDraft,
 } from '../types';
+
+const SUCCESS_MESSAGES: Record<RecipeStatus, string> = {
+  PENDING_REVIEW:
+    'Tu receta quedó pendiente de revisión. Aparecerá en el feed cuando un administrador la apruebe.',
+  PUBLISHED: 'Tu receta fue publicada.',
+  DRAFT: 'Borrador guardado exitosamente.',
+  ARCHIVED: 'La receta quedó archivada.',
+};
+
+function describeSubmitError(err: unknown): string {
+  if (err instanceof ApiError && err.status === 401) {
+    return 'Inicia sesión para publicar recetas.';
+  }
+  if (err instanceof ApiError && err.status === 403) {
+    return 'Solo los usuarios colaboradores pueden publicar recetas. Solicita el rol a un administrador.';
+  }
+  return err instanceof Error
+    ? err.message
+    : 'No se pudo guardar la receta. Intenta de nuevo.';
+}
 
 interface SubmitResult {
   ok: boolean;
@@ -98,22 +120,10 @@ export function useRecipeComposer(): UseRecipeComposerResult {
     setResult(null);
 
     try {
-      await createRecipe(buildCreateRecipePayload(draft));
-      setResult({
-        ok: true,
-        message:
-          draft.status === 'PUBLISHED'
-            ? 'Tu receta fue enviada para validación y publicación comunitaria.'
-            : 'Borrador guardado exitosamente.',
-      });
+      const created = await createRecipe(buildCreateRecipePayload(draft));
+      setResult({ ok: true, message: SUCCESS_MESSAGES[created.status] });
     } catch (err) {
-      setResult({
-        ok: false,
-        message:
-          err instanceof Error
-            ? err.message
-            : 'No se pudo guardar la receta. Intenta de nuevo.',
-      });
+      setResult({ ok: false, message: describeSubmitError(err) });
     } finally {
       setIsSubmitting(false);
     }

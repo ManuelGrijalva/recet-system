@@ -1,6 +1,17 @@
 export const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
 
+// Conserva el codigo HTTP para que los hooks distingan 401/403 de fallas de red
+export class ApiError extends Error {
+  constructor(
+    message: string,
+    readonly status: number,
+  ) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}
+
 interface RequestOptions extends RequestInit {
   params?: Record<string, string | number | boolean | undefined>;
 }
@@ -43,8 +54,9 @@ export async function apiClient<T>(
     const errorBody = (await response.json().catch(() => ({}))) as {
       message?: string;
     };
-    throw new Error(
+    throw new ApiError(
       errorBody.message || `Error en la petición: ${response.status} ${response.statusText}`,
+      response.status,
     );
   }
 

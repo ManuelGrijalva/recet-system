@@ -151,12 +151,13 @@ features/<slice>/
 - La capa `api/` llama al backend real y cae a datos semilla con `withFallback`, de modo que la interfaz funciona sin backend levantado.
 - Imports mediante el alias `@/` (`@/features/...`, `@/shared/...`).
 
-Slices: `recipe-feed`, `recipe-detail`, `recipe-compose`, `ingredient-search`, `saved-recipes`, `profile`, `auth`, `comments`, `reactions`. Todas las páginas de `app/` están adelgazadas a un solo `Screen`.
+Slices: `recipe-feed`, `recipe-detail`, `recipe-compose`, `ingredient-search`, `saved-recipes`, `profile`, `auth`, `comments`, `reactions`, `moderation`. Todas las páginas de `app/` están adelgazadas a un solo `Screen`.
 
 ### Layout responsivo
 
 - Móvil: barra de navegación inferior fija, feed a una columna, modales tipo bottom sheet.
 - Escritorio: barra lateral izquierda fija (`w-64`), feed central `max-w-2xl`, barra lateral derecha (`lg:` en adelante) con sugerencias y tendencias.
+- Validación (`/moderation`): el slice `moderation` lista las recetas pendientes y permite aprobarlas o devolverlas con observaciones. Es la única lectura sin datos semilla: si el backend responde 401/403 se muestra el aviso en lugar de recetas ficticias. Los errores HTTP llegan como `ApiError` (con `status`) desde `@/shared/lib/apiClient`.
 - Acceso (`/login`): el slice `auth` monta `LoginScreen` como overlay `fixed inset-0` para salir del layout con barras. Escritorio: foto (`shared/assets/login-guate.jpg`) a media pantalla más el formulario; móvil: franja superior delgada con un fragmento de la misma foto. Único acceso: `GoogleLoginButton` con el logotipo de `shared/assets/google.svg`.
 
 ## Arquitectura del backend

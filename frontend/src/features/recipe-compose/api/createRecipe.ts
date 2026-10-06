@@ -1,10 +1,11 @@
 import { apiClient } from '@/shared/lib/apiClient';
+import type { RecipeStatus } from '@/shared/types';
 import type { CreateRecipePayload } from '../types';
 
 export interface CreatedRecipe {
   id: string;
   title: string;
-  status: string;
+  status: RecipeStatus;
 }
 
 /**

@@ -157,7 +157,7 @@ Slices: `recipe-feed`, `recipe-detail`, `recipe-compose`, `ingredient-search`, `
 
 - Móvil: barra de navegación inferior fija, feed a una columna, modales tipo bottom sheet.
 - Escritorio: barra lateral izquierda fija (`w-64`), feed central `max-w-2xl`, barra lateral derecha (`lg:` en adelante) con sugerencias y tendencias.
-- Validación (`/moderation`): el slice `moderation` lista las recetas pendientes y permite aprobarlas o devolverlas con observaciones. Es la única lectura sin datos semilla: si el backend responde 401/403 se muestra el aviso en lugar de recetas ficticias. Los errores HTTP llegan como `ApiError` (con `status`) desde `@/shared/lib/apiClient`.
+- Validación (`/moderation`): el slice `moderation` tiene dos pestañas: recetas pendientes (aprobar o devolver con observaciones) y usuarios (otorgar o retirar el rol de colaborador). Es la única lectura sin datos semilla: si el backend responde 401/403 se muestra el aviso en lugar de recetas ficticias. Los errores HTTP llegan como `ApiError` (con `status`) desde `@/shared/lib/apiClient`.
 - Acceso (`/login`): el slice `auth` monta `LoginScreen` como overlay `fixed inset-0` para salir del layout con barras. Escritorio: foto (`shared/assets/login-guate.jpg`) a media pantalla más el formulario; móvil: franja superior delgada con un fragmento de la misma foto. Único acceso: `GoogleLoginButton` con el logotipo de `shared/assets/google.svg`.
 
 ## Arquitectura del backend
@@ -168,7 +168,7 @@ Módulos en `backend/src/modules/`, cada uno con `*.controller.ts`, `*.service.t
 - `users`: perfil privado (`/users/me`) y público (`/users/:id`); el teléfono es privado y editable.
 - `recipes`: alta de recetas (solo `CONTRIBUTOR` y `ADMIN`; las del colaborador nacen en `PENDING_REVIEW`, las del admin se publican directo), feed paginado (`/recipes/feed`), búsqueda (`/recipes/search`, con porcentaje y desglose de ingredientes coincidentes/faltantes), detalle y borrado.
 - `interactions`: reacciones (`LIKE`, `YUMMY`, `TRIED_IT`), guardados y comentarios con un nivel de hilo.
-- `moderation` (solo `ADMIN`): `GET /moderation/recipes/pending` lista las recetas en revisión (más antiguas primero) y `PATCH /moderation/recipes/:id` con `{ "decision": "APPROVE" }` las publica o con `{ "decision": "RETURN", "notes": "..." }` las devuelve a `DRAFT` con observaciones en `reviewNotes`.
+- `moderation` (solo `ADMIN`): `GET /moderation/recipes/pending` lista las recetas en revisión (más antiguas primero) y `PATCH /moderation/recipes/:id` con `{ "decision": "APPROVE" }` las publica o con `{ "decision": "RETURN", "notes": "..." }` las devuelve a `DRAFT` con observaciones en `reviewNotes`. `GET /moderation/users?q=` busca usuarios por nombre o correo y `PATCH /moderation/users/:id/role` con `{ "role": "CONTRIBUTOR" | "USER" }` otorga o retira el rol de colaborador (no modifica cuentas `ADMIN`).
 
 Configuración por entorno validada al arrancar en `backend/src/config/env.validation.ts`; el consumo se hace con `configService.getOrThrow(...)`. No se queman valores en el código.
 

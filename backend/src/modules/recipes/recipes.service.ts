@@ -15,6 +15,7 @@ import {
 } from '../../database/schema';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { SearchRecipesDto } from './dto/search-recipe.dto';
+import { UserRole } from '../../common/decorators/roles.decorator';
 
 export interface FeedRecipeItem {
   id: string;
@@ -27,6 +28,7 @@ export interface FeedRecipeItem {
   coverImageUrl: string | null;
   originRegion: string;
   status: 'DRAFT' | 'PENDING_REVIEW' | 'PUBLISHED' | 'ARCHIVED';
+  reviewNotes?: string | null;
   createdAt: Date;
   author: {
     id: string;
@@ -48,7 +50,11 @@ export interface FeedRecipeItem {
 export class RecipesService {
   constructor(private readonly databaseService: DatabaseService) {}
 
-  async create(authorId: string, dto: CreateRecipeDto): Promise<FeedRecipeItem> {
+  async create(
+    authorId: string,
+    authorRole: UserRole,
+    dto: CreateRecipeDto,
+  ): Promise<FeedRecipeItem> {
     const db = this.databaseService.db;
 
     // 1. Insertar receta base
@@ -63,7 +69,7 @@ export class RecipesService {
         servings: dto.servings,
         difficulty: dto.difficulty,
         coverImageUrl: dto.coverImageUrl,
-        status: dto.status || 'PUBLISHED',
+        status: this.resolveInitialStatus(authorRole, dto.status),
         originRegion: dto.originRegion || 'Jutiapa',
         instructions: dto.instructions,
       })
@@ -339,6 +345,7 @@ export class RecipesService {
       coverImageUrl: row.recipe.coverImageUrl,
       originRegion: row.recipe.originRegion,
       status: row.recipe.status,
+      reviewNotes: row.recipe.reviewNotes,
       createdAt: row.recipe.createdAt,
       author: row.author,
       reactionCounts: stats.reactionCounts,
@@ -365,6 +372,15 @@ export class RecipesService {
     }
 
     await db.delete(recipes).where(eq(recipes.id, recipeId));
+  }
+
+  // Regla de negocio 4.3.4.a: lo que publica un colaborador pasa por revision del admin
+  private resolveInitialStatus(
+    authorRole: UserRole,
+    requested: CreateRecipeDto['status'],
+  ): 'DRAFT' | 'PENDING_REVIEW' | 'PUBLISHED' {
+    if (requested === 'DRAFT') return 'DRAFT';
+    return authorRole === 'ADMIN' ? 'PUBLISHED' : 'PENDING_REVIEW';
   }
 
   private async getRecipeStats(recipeId: string): Promise<{

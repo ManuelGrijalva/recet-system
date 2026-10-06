@@ -8,6 +8,13 @@
       "when": 1788646449754,
       "tag": "0000_groovy_amazoness",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791320108067,
+      "tag": "0001_mysterious_garia",
+      "breakpoints": true
     }
   ]
 }

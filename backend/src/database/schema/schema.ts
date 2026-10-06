@@ -97,6 +97,8 @@ export const recipes = pgTable(
     coverImageUrl: text('cover_image_url'),
     status: recipeStatusEnum('status').notNull().default('DRAFT'),
     originRegion: text('origin_region').default('Jutiapa').notNull(),
+    // Observaciones del administrador al devolver una receta en revision
+    reviewNotes: text('review_notes'),
     instructions: jsonb('instructions')
       .$type<RecipeStepInstruction[]>()
       .notNull()

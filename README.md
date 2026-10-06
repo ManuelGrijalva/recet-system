@@ -119,7 +119,7 @@ recet-system/
 │       ├── common/         Decoradores, filtros y guards
 │       ├── config/         Validación de variables de entorno al arranque
 │       ├── database/       Conexión SSL y esquema Drizzle
-│       └── modules/        auth, users, recipes, interactions
+│       └── modules/        auth, users, recipes, interactions, moderation
 ├── frontend/               Web Next.js (App Router)
 │   ├── .env.example        Plantilla de entorno (copiar a frontend/.env.local)
 │   └── src/
@@ -165,8 +165,9 @@ Módulos en `backend/src/modules/`, cada uno con `*.controller.ts`, `*.service.t
 
 - `auth`: Google OAuth 2.0, emisión de JWT en cookie HTTP-Only, `dev-login` para desarrollo.
 - `users`: perfil privado (`/users/me`) y público (`/users/:id`); el teléfono es privado y editable.
-- `recipes`: alta de recetas, feed paginado (`/recipes/feed`), búsqueda (`/recipes/search`, con porcentaje y desglose de ingredientes coincidentes/faltantes), detalle y borrado.
+- `recipes`: alta de recetas (solo `CONTRIBUTOR` y `ADMIN`; las del colaborador nacen en `PENDING_REVIEW`, las del admin se publican directo), feed paginado (`/recipes/feed`), búsqueda (`/recipes/search`, con porcentaje y desglose de ingredientes coincidentes/faltantes), detalle y borrado.
 - `interactions`: reacciones (`LIKE`, `YUMMY`, `TRIED_IT`), guardados y comentarios con un nivel de hilo.
+- `moderation` (solo `ADMIN`): `GET /moderation/recipes/pending` lista las recetas en revisión (más antiguas primero) y `PATCH /moderation/recipes/:id` con `{ "decision": "APPROVE" }` las publica o con `{ "decision": "RETURN", "notes": "..." }` las devuelve a `DRAFT` con observaciones en `reviewNotes`.
 
 Configuración por entorno validada al arrancar en `backend/src/config/env.validation.ts`; el consumo se hace con `configService.getOrThrow(...)`. No se queman valores en el código.
 
@@ -175,7 +176,7 @@ Configuración por entorno validada al arrancar en `backend/src/config/env.valid
 Esquema en `backend/src/database/schema/schema.ts`:
 
 1. `users`: identidad Google OAuth, avatar, nombre, teléfono privado y rol (`USER`, `CONTRIBUTOR`, `ADMIN`).
-2. `recipes`: título, porciones, tiempos, dificultad, instrucciones JSONB y ciclo de vida (`DRAFT`, `PENDING_REVIEW`, `PUBLISHED`). Índices para feed (`status, createdAt DESC`), autor y región.
+2. `recipes`: título, porciones, tiempos, dificultad, instrucciones JSONB y ciclo de vida (`DRAFT`, `PENDING_REVIEW`, `PUBLISHED`) y `review_notes` con las observaciones del administrador. Índices para feed (`status, createdAt DESC`), autor y región.
 3. `ingredients` y `recipe_ingredients`: catálogo normalizado y relación N:M para el algoritmo de coincidencia por ingredientes.
 4. `recipe_reactions`: unicidad usuario-receta e índices de agregación.
 5. `recipe_bookmarks`: recetario personal con unicidad usuario-receta.

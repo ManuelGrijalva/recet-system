@@ -60,9 +60,12 @@ backend/src/
     users/                     perfil y roles
     recipes/                   CRUD de recetas y búsqueda por ingredientes
     interactions/              reacciones y comentarios (1 nivel de hilo)
+    moderation/                validación de recetas pendientes (solo ADMIN)
 ```
 
 Prefijo global de la API: `/api`. Auth por cookie `jwt` HTTP-only (o `Authorization: Bearer`). Roles: `USER`, `CONTRIBUTOR`, `ADMIN`. `POST /api/auth/dev-login` solo funciona con `NODE_ENV=development`.
+
+Flujo de moderación (regla 4.3.4.a): `POST /api/recipes` exige rol `CONTRIBUTOR` o `ADMIN`; lo del colaborador nace en `PENDING_REVIEW` y no aparece en feed ni búsqueda hasta que el admin lo aprueba en `PATCH /api/moderation/recipes/:id` (`APPROVE` publica, `RETURN` regresa a `DRAFT` con `reviewNotes`). Rutas solo-admin: `@UseGuards(JwtAuthGuard, RolesGuard)` + `@Roles('ADMIN')`.
 
 ## Estructura del frontend
 

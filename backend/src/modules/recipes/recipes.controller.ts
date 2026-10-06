@@ -14,6 +14,8 @@ import { RecipesService, FeedRecipeItem } from './recipes.service';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { SearchRecipesDto } from './dto/search-recipe.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { Roles } from '../../common/decorators/roles.decorator';
 import { CurrentUser, AuthenticatedUser } from '../../common/decorators/current-user.decorator';
 
 @Controller('recipes')
@@ -21,12 +23,13 @@ export class RecipesController {
   constructor(private readonly recipesService: RecipesService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('CONTRIBUTOR', 'ADMIN')
   async createRecipe(
     @CurrentUser() user: AuthenticatedUser,
     @Body() dto: CreateRecipeDto,
   ): Promise<FeedRecipeItem> {
-    return this.recipesService.create(user.id, dto);
+    return this.recipesService.create(user.id, user.role, dto);
   }
 
   @Get('feed')

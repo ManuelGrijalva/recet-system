@@ -26,3 +26,14 @@ export interface PendingRecipe {
 export type ReviewDecision =
   | { decision: 'APPROVE' }
   | { decision: 'RETURN'; notes: string };
+
+export type ManagedUserRole = 'USER' | 'CONTRIBUTOR' | 'ADMIN';
+
+export interface ManagedUser {
+  id: string;
+  name: string;
+  email: string;
+  avatarUrl: string | null;
+  role: ManagedUserRole;
+  createdAt: string;
+}

@@ -1,9 +1,9 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { ApiError } from '@/shared/lib/apiClient';
 import { getPendingRecipes } from '../api/getPendingRecipes';
 import { reviewRecipe } from '../api/reviewRecipe';
+import { describeModerationError } from '../lib/describeModerationError';
 import type { PendingRecipe, ReviewDecision } from '../types';
 
 interface UsePendingRecipesResult {
@@ -12,16 +12,6 @@ interface UsePendingRecipesResult {
   error: string | null;
   reviewingId: string | null;
   review: (recipeId: string, decision: ReviewDecision) => Promise<boolean>;
-}
-
-function describeError(err: unknown): string {
-  if (err instanceof ApiError && err.status === 401) {
-    return 'Inicia sesión con una cuenta de administrador para validar recetas.';
-  }
-  if (err instanceof ApiError && err.status === 403) {
-    return 'Esta sección es exclusiva del administrador de contenido.';
-  }
-  return err instanceof Error ? err.message : 'No se pudo completar la operación.';
 }
 
 export function usePendingRecipes(): UsePendingRecipesResult {
@@ -38,7 +28,7 @@ export function usePendingRecipes(): UsePendingRecipesResult {
         if (active) setRecipes(data);
       })
       .catch((err: unknown) => {
-        if (active) setError(describeError(err));
+        if (active) setError(describeModerationError(err));
       })
       .finally(() => {
         if (active) setIsLoading(false);
@@ -59,7 +49,7 @@ export function usePendingRecipes(): UsePendingRecipesResult {
         setRecipes((prev) => prev.filter((r) => r.id !== recipeId));
         return true;
       } catch (err) {
-        setError(describeError(err));
+        setError(describeModerationError(err));
         return false;
       } finally {
         setReviewingId(null);

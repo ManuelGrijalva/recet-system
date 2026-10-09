@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import React from 'react';
 import '../styles/globals.css';
 import { DesktopSidebar } from '../shared/components/layout/DesktopSidebar';
@@ -18,11 +18,12 @@ export const metadata: Metadata = {
     'recetario comunitario',
   ],
   authors: [{ name: 'Manuel Ernesto Grijalva Tenas' }],
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 1,
-  },
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
   themeColor: '#ffffff',
 };
 

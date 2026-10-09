@@ -2,7 +2,9 @@ import {
   ArgumentsHost,
   Catch,
   ExceptionFilter,
+  HttpException,
   HttpStatus,
+  Logger,
 } from '@nestjs/common';
 import { Response } from 'express';
 
@@ -20,9 +22,17 @@ function isPostgresDatabaseError(err: unknown): err is PostgresDatabaseError {
 
 @Catch()
 export class DrizzleExceptionFilter implements ExceptionFilter {
+  private readonly logger = new Logger(DrizzleExceptionFilter.name);
+
   catch(exception: unknown, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
+
+    // Las excepciones HTTP de Nest (401, 403, 404, validacion) conservan su codigo
+    if (exception instanceof HttpException) {
+      response.status(exception.getStatus()).json(exception.getResponse());
+      return;
+    }
 
     if (isPostgresDatabaseError(exception)) {
       // 23505: Unique violation (ej. reaccion duplicada o correo ya existente)
@@ -48,13 +58,16 @@ export class DrizzleExceptionFilter implements ExceptionFilter {
       }
     }
 
-    const message =
-      exception instanceof Error ? exception.message : 'Error interno del servidor';
+    // No se expone el mensaje interno al cliente; queda en el log del servidor
+    this.logger.error(
+      exception instanceof Error ? exception.message : String(exception),
+      exception instanceof Error ? exception.stack : undefined,
+    );
 
     response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
       statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
       error: 'Internal Server Error',
-      message,
+      message: 'Error interno del servidor',
     });
   }
 }

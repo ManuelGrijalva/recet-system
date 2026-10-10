@@ -10,6 +10,7 @@ export interface RecipeIngredient {
   name: string;
   quantity: string;
   unit: string;
+  notes?: string | null;
 }
 
 export interface RecipeStep {
@@ -17,14 +18,6 @@ export interface RecipeStep {
   instruction: string;
 }
 
-/**
- * Receta completa para la vista de detalle. Extiende el payload del feed con
- * la información estructurada de preparación (ingredientes y pasos).
- *
- * Nota: `GET /recipes/:id` del backend aún no devuelve `ingredients`/`steps`;
- * `getRecipeDetail` completa esos arreglos desde el seed hasta que el backend
- * los exponga.
- */
 export interface RecipeDetail {
   id: string;
   title: string;
@@ -36,6 +29,8 @@ export interface RecipeDetail {
   coverImageUrl: string | null;
   originRegion: string;
   status: RecipeStatus;
+  // Solo llega con valor para el autor o el admin
+  reviewNotes?: string | null;
   createdAt: string;
   author: AuthorSummary & { role?: string };
   reactionCounts: ReactionCounts;

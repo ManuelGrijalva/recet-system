@@ -12,6 +12,7 @@ import { RecipeCookingMeta } from './RecipeCookingMeta';
 import { RecipeStory } from './RecipeStory';
 import { IngredientChecklist } from './IngredientChecklist';
 import { PreparationSteps } from './PreparationSteps';
+import { RecipeReviewNotice } from './RecipeReviewNotice';
 
 interface RecipeDetailScreenProps {
   recipeId: string;
@@ -50,6 +51,8 @@ export function RecipeDetailScreen({
           Volver al recetario
         </Link>
       </div>
+
+      <RecipeReviewNotice status={recipe.status} reviewNotes={recipe.reviewNotes} />
 
       <RecipeDetailHeader recipe={recipe} />
 

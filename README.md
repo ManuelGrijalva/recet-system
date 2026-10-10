@@ -166,7 +166,7 @@ Módulos en `backend/src/modules/`, cada uno con `*.controller.ts`, `*.service.t
 
 - `auth`: Google OAuth 2.0, emisión de JWT en cookie HTTP-Only, `dev-login` para desarrollo.
 - `users`: perfil privado (`/users/me`) y público (`/users/:id`); el teléfono es privado y editable.
-- `recipes`: alta de recetas (solo `CONTRIBUTOR` y `ADMIN`; las del colaborador nacen en `PENDING_REVIEW`, las del admin se publican directo), feed paginado (`/recipes/feed`), búsqueda (`/recipes/search`, con porcentaje y desglose de ingredientes coincidentes/faltantes), detalle y borrado.
+- `recipes`: alta de recetas (solo `CONTRIBUTOR` y `ADMIN`; las del colaborador nacen en `PENDING_REVIEW`, las del admin se publican directo), feed paginado (`/recipes/feed`), búsqueda (`/recipes/search`, con porcentaje y desglose de ingredientes coincidentes/faltantes), detalle (`GET /recipes/:id` devuelve también `ingredients`, `steps` y la `userReaction` de quien consulta; las recetas no publicadas responden 404 salvo para su autor y el admin) y borrado.
 - `interactions`: reacciones (`LIKE`, `YUMMY`, `TRIED_IT`), guardados y comentarios con un nivel de hilo.
 - `moderation` (solo `ADMIN`): `GET /moderation/recipes/pending` lista las recetas en revisión (más antiguas primero) y `PATCH /moderation/recipes/:id` con `{ "decision": "APPROVE" }` las publica o con `{ "decision": "RETURN", "notes": "..." }` las devuelve a `DRAFT` con observaciones en `reviewNotes`. `GET /moderation/users?q=` busca usuarios por nombre o correo y `PATCH /moderation/users/:id/role` con `{ "role": "CONTRIBUTOR" | "USER" }` otorga o retira el rol de colaborador (no modifica cuentas `ADMIN`).
 

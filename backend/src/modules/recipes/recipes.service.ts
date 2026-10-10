@@ -16,6 +16,8 @@ import {
 import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { SearchRecipesDto } from './dto/search-recipe.dto';
 import { UserRole } from '../../common/decorators/roles.decorator';
+import { AuthenticatedUser } from '../../common/decorators/current-user.decorator';
+import { RecipeStepInstruction } from '../../database/schema';
 
 export interface FeedRecipeItem {
   id: string;
@@ -44,6 +46,12 @@ export interface FeedRecipeItem {
   matchPercentage?: number;
   matchedIngredientNames?: string[];
   missingIngredientNames?: string[];
+}
+
+export interface RecipeDetailItem extends FeedRecipeItem {
+  ingredients: { name: string; quantity: string; unit: string; notes: string | null }[];
+  steps: RecipeStepInstruction[];
+  userReaction: 'LIKE' | 'YUMMY' | 'TRIED_IT' | null;
 }
 
 @Injectable()
@@ -350,6 +358,59 @@ export class RecipesService {
       author: row.author,
       reactionCounts: stats.reactionCounts,
       commentsCount: stats.commentsCount,
+    };
+  }
+
+  async getDetail(
+    id: string,
+    viewer?: AuthenticatedUser,
+  ): Promise<RecipeDetailItem> {
+    const db = this.databaseService.db;
+    const base = await this.getById(id);
+
+    // Lo no publicado solo lo ven su autor y el admin; al resto se le responde 404
+    const canSeeUnpublished =
+      viewer !== undefined && (viewer.id === base.author.id || viewer.role === 'ADMIN');
+    if (base.status !== 'PUBLISHED' && !canSeeUnpublished) {
+      throw new NotFoundException('Receta no encontrada');
+    }
+
+    const [recipeRow] = await db
+      .select({ instructions: recipes.instructions })
+      .from(recipes)
+      .where(eq(recipes.id, id))
+      .limit(1);
+
+    const ingredientRows = await db
+      .select({
+        name: ingredients.name,
+        quantity: recipeIngredients.quantity,
+        unit: recipeIngredients.unit,
+        notes: recipeIngredients.notes,
+      })
+      .from(recipeIngredients)
+      .innerJoin(ingredients, eq(recipeIngredients.ingredientId, ingredients.id))
+      .where(eq(recipeIngredients.recipeId, id));
+
+    let userReaction: RecipeDetailItem['userReaction'] = null;
+    if (viewer) {
+      const [reaction] = await db
+        .select({ type: recipeReactions.type })
+        .from(recipeReactions)
+        .where(
+          and(eq(recipeReactions.recipeId, id), eq(recipeReactions.userId, viewer.id)),
+        )
+        .limit(1);
+      userReaction = reaction ? reaction.type : null;
+    }
+
+    return {
+      ...base,
+      // Las observaciones de moderacion son privadas del autor y del admin
+      reviewNotes: canSeeUnpublished ? base.reviewNotes : null,
+      ingredients: ingredientRows,
+      steps: [...(recipeRow?.instructions ?? [])].sort((a, b) => a.stepNumber - b.stepNumber),
+      userReaction,
     };
   }
 

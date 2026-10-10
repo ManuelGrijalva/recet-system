@@ -6,15 +6,17 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  ParseUUIDPipe,
   Post,
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { RecipesService, FeedRecipeItem } from './recipes.service';
+import { RecipesService, FeedRecipeItem, RecipeDetailItem } from './recipes.service';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { SearchRecipesDto } from './dto/search-recipe.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
+import { OptionalJwtAuthGuard } from '../../common/guards/optional-jwt-auth.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { CurrentUser, AuthenticatedUser } from '../../common/decorators/current-user.decorator';
 
@@ -50,8 +52,12 @@ export class RecipesController {
   }
 
   @Get(':id')
-  async getRecipeById(@Param('id') id: string): Promise<FeedRecipeItem> {
-    return this.recipesService.getById(id);
+  @UseGuards(OptionalJwtAuthGuard)
+  async getRecipeById(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user: AuthenticatedUser | null,
+  ): Promise<RecipeDetailItem> {
+    return this.recipesService.getDetail(id, user ?? undefined);
   }
 
   @Delete(':id')

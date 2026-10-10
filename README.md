@@ -158,6 +158,7 @@ Slices: `recipe-feed`, `recipe-detail`, `recipe-compose`, `ingredient-search`, `
 - Móvil: barra de navegación inferior fija, feed a una columna, modales tipo bottom sheet.
 - Escritorio: barra lateral izquierda fija (`w-64`), feed central `max-w-2xl`, barra lateral derecha (`lg:` en adelante) con sugerencias y tendencias.
 - Validación (`/moderation`): el slice `moderation` tiene dos pestañas: recetas pendientes (aprobar o devolver con observaciones) y usuarios (otorgar o retirar el rol de colaborador). Es la única lectura sin datos semilla: si el backend responde 401/403 se muestra el aviso en lugar de recetas ficticias. Los errores HTTP llegan como `ApiError` (con `status`) desde `@/shared/lib/apiClient`.
+- Sesión: `@/shared/session` expone `SessionProvider` (montado en `app/layout.tsx`, consulta `GET /auth/me` una vez) y `useSession()` con `user`, `status` (`loading`/`authenticated`/`guest`), `hasRole()` y `logout()`. Las barras de navegación filtran sus enlaces con `isNavVisible` según el rol: publicar solo para `CONTRIBUTOR`/`ADMIN`, validar solo para `ADMIN`, guardados y perfil con sesión, y "Iniciar sesión" para invitados.
 - Acceso (`/login`): el slice `auth` monta `LoginScreen` como overlay `fixed inset-0` para salir del layout con barras. Escritorio: foto (`shared/assets/login-guate.jpg`) a media pantalla más el formulario; móvil: franja superior delgada con un fragmento de la misma foto. Único acceso: `GoogleLoginButton` con el logotipo de `shared/assets/google.svg`.
 
 ## Arquitectura del backend

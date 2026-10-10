@@ -4,6 +4,7 @@ import Link from 'next/link';
 import loginGuate from '@/shared/assets/login-guate.jpg';
 import { BrandMark } from '@/shared/components/ui/BrandMark';
 import { GoogleLoginButton } from './GoogleLoginButton';
+import { RedirectIfAuthenticated } from './RedirectIfAuthenticated';
 
 /**
  * Pantalla de acceso a pantalla completa. Réplica monocromática del patrón
@@ -16,6 +17,7 @@ import { GoogleLoginButton } from './GoogleLoginButton';
 export function LoginScreen(): React.JSX.Element {
   return (
     <div className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-white dark:bg-[#0a0a0a] md:flex-row">
+      <RedirectIfAuthenticated />
       {/* Franja superior con fragmento de la foto (solo móvil) */}
       <div className="relative h-28 w-full shrink-0 overflow-hidden border-b border-zinc-200 dark:border-zinc-800 md:hidden">
         <Image

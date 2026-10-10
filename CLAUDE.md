@@ -69,7 +69,7 @@ Flujo de moderación (regla 4.3.4.a): `POST /api/recipes` exige rol `CONTRIBUTOR
 
 ## Estructura del frontend
 
-Vertical Slice Architecture. Cada slice en `src/features/<slice>/` con `api/`, `components/`, `hooks/`, `types.ts` e `index.ts` (barril público). Las páginas de `src/app/**/page.tsx` solo renderizan el `Screen` de su slice. Lo transversal (UI base, `apiClient`, tipos de dominio) vive en `src/shared/`. El cliente HTTP lee `NEXT_PUBLIC_API_URL` y lanza `ApiError` con el `status` HTTP para distinguir 401/403. El slice `moderation` (`/moderation`) es el panel del admin y no usa datos semilla.
+Vertical Slice Architecture. Cada slice en `src/features/<slice>/` con `api/`, `components/`, `hooks/`, `types.ts` e `index.ts` (barril público). Las páginas de `src/app/**/page.tsx` solo renderizan el `Screen` de su slice. Lo transversal (UI base, `apiClient`, tipos de dominio) vive en `src/shared/`. El cliente HTTP lee `NEXT_PUBLIC_API_URL` y lanza `ApiError` con el `status` HTTP para distinguir 401/403. El slice `moderation` (`/moderation`) es el panel del admin y no usa datos semilla. La sesión vive en `@/shared/session` (`SessionProvider` en el layout + `useSession()`); para mostrar u ocultar algo según el rol usar `hasRole(...)`, nunca datos quemados.
 
 ## Base de datos
 

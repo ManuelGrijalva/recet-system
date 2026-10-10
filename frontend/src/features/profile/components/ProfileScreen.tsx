@@ -1,11 +1,13 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
+import { useSession } from '@/shared/session';
 import { useProfileForm } from '../hooks/useProfileForm';
 import { ProfileIdentityCard } from './ProfileIdentityCard';
 import { ProfileContactForm } from './ProfileContactForm';
 
-export function ProfileScreen(): React.JSX.Element {
+function ProfileContent(): React.JSX.Element {
   const { profile, values, isLoading, isSaving, feedback, setValue, save } =
     useProfileForm();
 
@@ -42,4 +44,30 @@ export function ProfileScreen(): React.JSX.Element {
       )}
     </div>
   );
+}
+
+export function ProfileScreen(): React.JSX.Element {
+  const { status } = useSession();
+
+  if (status === 'loading') {
+    return <p className="text-xs text-zinc-500 dark:text-zinc-400">Cargando tu perfil...</p>;
+  }
+
+  if (status === 'guest') {
+    return (
+      <div className="rounded-md border border-dashed border-zinc-200 dark:border-zinc-800 p-8 text-center space-y-3">
+        <p className="text-sm text-zinc-700 dark:text-zinc-300">
+          Inicia sesión con tu cuenta de Google para ver y editar tu perfil.
+        </p>
+        <Link
+          href="/login"
+          className="inline-flex h-9 items-center justify-center rounded-md bg-zinc-900 px-4 text-sm font-medium text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+        >
+          Iniciar sesión
+        </Link>
+      </div>
+    );
+  }
+
+  return <ProfileContent />;
 }

@@ -1,9 +1,14 @@
+'use client';
+
 import React from 'react';
 import Link from 'next/link';
+import { useSession } from '../../session';
+import { isNavVisible, type NavVisibility } from './navVisibility';
 
 interface BottomNavItem {
   label: string;
   href: string;
+  visibleTo: NavVisibility;
   isSpecialAction?: boolean;
   icon: (props: { className?: string }) => React.JSX.Element;
 }
@@ -12,6 +17,7 @@ const navItems: BottomNavItem[] = [
   {
     label: 'Inicio',
     href: '/',
+    visibleTo: 'all',
     icon: ({ className }) => (
       <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -21,6 +27,7 @@ const navItems: BottomNavItem[] = [
   {
     label: 'Ingredientes',
     href: '/search',
+    visibleTo: 'all',
     icon: ({ className }) => (
       <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -30,6 +37,7 @@ const navItems: BottomNavItem[] = [
   {
     label: 'Publicar',
     href: '/compose',
+    visibleTo: ['CONTRIBUTOR', 'ADMIN'],
     isSpecialAction: true,
     icon: ({ className }) => (
       <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -40,6 +48,7 @@ const navItems: BottomNavItem[] = [
   {
     label: 'Guardados',
     href: '/saved',
+    visibleTo: 'auth',
     icon: ({ className }) => (
       <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
@@ -47,23 +56,51 @@ const navItems: BottomNavItem[] = [
     ),
   },
   {
+    label: 'Validar',
+    href: '/moderation',
+    visibleTo: ['ADMIN'],
+    icon: ({ className }) => (
+      <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+      </svg>
+    ),
+  },
+  {
     label: 'Perfil',
     href: '/profile',
+    visibleTo: 'auth',
     icon: ({ className }) => (
       <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
       </svg>
     ),
   },
+  {
+    label: 'Entrar',
+    href: '/login',
+    visibleTo: 'guest',
+    icon: ({ className }) => (
+      <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+      </svg>
+    ),
+  },
 ];
 
 export function MobileBottomNav(): React.JSX.Element {
+  const { user, status } = useSession();
+  const role = user?.role ?? null;
+  // Mientras carga la sesion solo se muestran los enlaces publicos
+  const visibleItems = navItems.filter((item) =>
+    status === 'loading' ? item.visibleTo === 'all' : isNavVisible(item.visibleTo, role),
+  );
+
   return (
     <nav
       className="md:hidden fixed bottom-0 left-0 right-0 z-50 h-16 bg-white dark:bg-[#0a0a0a] border-t border-zinc-200 dark:border-zinc-800 px-3 flex items-center justify-around"
       aria-label="Navegación móvil"
     >
-      {navItems.map((item) => {
+      {visibleItems.map((item) => {
         const Icon = item.icon;
         if (item.isSpecialAction) {
           return (

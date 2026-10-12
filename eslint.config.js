@@ -44,6 +44,20 @@ export default [
     },
   },
   {
+    // Service worker de la PWA: corre en el contexto del navegador, no en Node
+    files: ["frontend/public/sw.js"],
+    languageOptions: {
+      sourceType: "script",
+      globals: {
+        self: "readonly",
+        caches: "readonly",
+        fetch: "readonly",
+        Response: "readonly",
+        URL: "readonly",
+      },
+    },
+  },
+  {
     ignores: [
       "**/node_modules/**",
       "**/.next/**",

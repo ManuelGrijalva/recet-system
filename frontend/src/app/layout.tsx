@@ -6,6 +6,7 @@ import { MobileBottomNav } from '../shared/components/layout/MobileBottomNav';
 import { RightSidebar } from '../shared/components/layout/RightSidebar';
 import { BrandMark } from '../shared/components/ui/BrandMark';
 import { SessionProvider } from '../shared/session';
+import { ServiceWorkerRegistrar } from '../shared/pwa';
 
 export const metadata: Metadata = {
   title: 'Recetario Tradicional de Jutiapa | Red Social Culinaria',
@@ -19,6 +20,12 @@ export const metadata: Metadata = {
     'recetario comunitario',
   ],
   authors: [{ name: 'Manuel Ernesto Grijalva Tenas' }],
+  applicationName: 'Recetario Jutiapa',
+  appleWebApp: { capable: true, title: 'Recetario Jutiapa', statusBarStyle: 'default' },
+  icons: {
+    icon: [{ url: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' }],
+    apple: [{ url: '/icons/apple-touch-icon.png', sizes: '180x180' }],
+  },
 };
 
 export const viewport: Viewport = {
@@ -36,6 +43,7 @@ export default function RootLayout({
   return (
     <html lang="es" className="h-full">
       <body className="min-h-full bg-white dark:bg-[#0a0a0a] text-zinc-900 dark:text-zinc-100 antialiased selection:bg-zinc-200 dark:selection:bg-zinc-800">
+        <ServiceWorkerRegistrar />
         <SessionProvider>
           <div className="flex min-h-screen">
             {/* 1. Navegación Lateral Izquierda (Desktop) */}

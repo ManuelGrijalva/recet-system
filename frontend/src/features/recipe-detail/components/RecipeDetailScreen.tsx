@@ -12,6 +12,7 @@ import { RecipeCookingMeta } from './RecipeCookingMeta';
 import { RecipeStory } from './RecipeStory';
 import { IngredientChecklist } from './IngredientChecklist';
 import { PreparationSteps } from './PreparationSteps';
+import { RecipeSourceNote } from './RecipeSourceNote';
 import { RecipeReviewNotice } from './RecipeReviewNotice';
 
 interface RecipeDetailScreenProps {
@@ -68,6 +69,12 @@ export function RecipeDetailScreen({
       <IngredientChecklist ingredients={recipe.ingredients} />
 
       <PreparationSteps steps={recipe.steps} />
+
+      <RecipeSourceNote
+        sourceType={recipe.sourceType}
+        sourceName={recipe.sourceName}
+        sourceUrl={recipe.sourceUrl}
+      />
 
       <div className="p-4 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a]">
         <h3 className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-3">

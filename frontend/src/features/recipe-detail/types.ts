@@ -28,6 +28,9 @@ export interface RecipeDetail {
   difficulty: Difficulty;
   coverImageUrl: string | null;
   originRegion: string;
+  sourceType?: 'REFERENCE' | 'INTERVIEW' | 'COMMUNITY';
+  sourceName?: string | null;
+  sourceUrl?: string | null;
   status: RecipeStatus;
   // Solo llega con valor para el autor o el admin
   reviewNotes?: string | null;

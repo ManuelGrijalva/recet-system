@@ -15,6 +15,13 @@
       "when": 1791320108067,
       "tag": "0001_mysterious_garia",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791816615741,
+      "tag": "0002_smiling_ultimo",
+      "breakpoints": true
     }
   ]
 }

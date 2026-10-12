@@ -29,6 +29,9 @@ export interface FeedRecipeItem {
   difficulty: 'EASY' | 'MEDIUM' | 'HARD';
   coverImageUrl: string | null;
   originRegion: string;
+  sourceType: 'REFERENCE' | 'INTERVIEW' | 'COMMUNITY';
+  sourceName: string | null;
+  sourceUrl: string | null;
   status: 'DRAFT' | 'PENDING_REVIEW' | 'PUBLISHED' | 'ARCHIVED';
   reviewNotes?: string | null;
   createdAt: Date;
@@ -150,6 +153,9 @@ export class RecipesService {
         difficulty: row.recipe.difficulty,
         coverImageUrl: row.recipe.coverImageUrl,
         originRegion: row.recipe.originRegion,
+        sourceType: row.recipe.sourceType,
+        sourceName: row.recipe.sourceName,
+        sourceUrl: row.recipe.sourceUrl,
         status: row.recipe.status,
         createdAt: row.recipe.createdAt,
         author: row.author,
@@ -252,6 +258,9 @@ export class RecipesService {
             difficulty: cand.recipe.difficulty,
             coverImageUrl: cand.recipe.coverImageUrl,
             originRegion: cand.recipe.originRegion,
+            sourceType: cand.recipe.sourceType,
+            sourceName: cand.recipe.sourceName,
+            sourceUrl: cand.recipe.sourceUrl,
             status: cand.recipe.status,
             createdAt: cand.recipe.createdAt,
             author: cand.author,
@@ -308,6 +317,9 @@ export class RecipesService {
         difficulty: row.recipe.difficulty,
         coverImageUrl: row.recipe.coverImageUrl,
         originRegion: row.recipe.originRegion,
+        sourceType: row.recipe.sourceType,
+        sourceName: row.recipe.sourceName,
+        sourceUrl: row.recipe.sourceUrl,
         status: row.recipe.status,
         createdAt: row.recipe.createdAt,
         author: row.author,
@@ -352,6 +364,9 @@ export class RecipesService {
       difficulty: row.recipe.difficulty,
       coverImageUrl: row.recipe.coverImageUrl,
       originRegion: row.recipe.originRegion,
+      sourceType: row.recipe.sourceType,
+      sourceName: row.recipe.sourceName,
+      sourceUrl: row.recipe.sourceUrl,
       status: row.recipe.status,
       reviewNotes: row.recipe.reviewNotes,
       createdAt: row.recipe.createdAt,

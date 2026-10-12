@@ -34,6 +34,7 @@ pnpm lint                             # ESLint en toda la raíz
 pnpm --filter backend db:generate     # genera SQL de migración desde el schema
 pnpm --filter backend db:migrate      # aplica migraciones
 pnpm --filter backend db:studio       # inspector de Drizzle
+pnpm --filter backend db:seed         # carga el catálogo inicial (idempotente)
 ```
 
 ## Entorno (backend)
@@ -73,7 +74,7 @@ Vertical Slice Architecture. Cada slice en `src/features/<slice>/` con `api/`, `
 
 ## Base de datos
 
-PostgreSQL 16+ con SSL forzado en entornos gestionados (`DATABASE_SSL=true`). Tablas: `users`, `recipes`, `ingredients` + `recipe_ingredients` (N:M para la búsqueda), `recipe_reactions`, `recipe_bookmarks`, `recipe_comments`. Migraciones con `drizzle-kit`; los metadatos en `backend/drizzle/meta/` están en `.gitignore`.
+PostgreSQL 16+ con SSL forzado en entornos gestionados (`DATABASE_SSL=true`). Tablas: `users`, `recipes`, `ingredients` + `recipe_ingredients` (N:M para la búsqueda), `recipe_reactions`, `recipe_bookmarks`, `recipe_comments`. `recipes.source_type` distingue `REFERENCE` (documental), `INTERVIEW` (campo) y `COMMUNITY` (colaborador); nunca marcar como `INTERVIEW` algo que no salió de una entrevista real. El seed (`backend/src/database/seed/`) corre fuera de Nest con `requireEnv()` y publica con cuentas de demostración ficticias `@demo.invalid`. Migraciones con `drizzle-kit`; los metadatos en `backend/drizzle/meta/` están en `.gitignore`.
 
 ## Flujo de trabajo esperado
 

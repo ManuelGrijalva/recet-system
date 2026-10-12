@@ -61,6 +61,12 @@ pnpm --filter backend db:migrate       # aplica las migraciones versionadas en b
 
 Alternativa para prototipar sin generar migracion: `pnpm --filter backend db:push`.
 
+### Catálogo inicial (PP-03)
+
+`pnpm --filter backend db:seed` carga 21 recetas tradicionales desde `backend/src/database/seed/seed-data.ts`: 9 de Jutiapa y el oriente (tamal de viaje, gallo en chicha, quesadilla jutiapaneca, melcochas y alboroto de Atescatempa, caldo de res, carne guisada, buñuelos) y 12 del recetario nacional. Son **recetas de referencia documental** (`source_type = REFERENCE`) con su fuente citada: Sistema de Información Cultural del Ministerio de Cultura y Deportes, Centro de Estudios Folklóricos de la USAC y Living in Guatemala, entre otras. Los textos están redactados a partir de esas fuentes.
+
+Las recetas aparecen publicadas por **seis cuentas de demostración ficticias** con correo `@demo.invalid` y rol `CONTRIBUTOR`. No son informantes reales ni entrevistas de campo. El script es idempotente: vuelve a crear las recetas del mismo título de esos autores sin duplicarlas.
+
 ### 4. Levantar ambos proyectos
 
 ```bash
@@ -94,6 +100,7 @@ Atajos equivalentes desde la raiz: `pnpm dev:backend` y `pnpm dev:frontend`.
 | Aplicar migraciones versionadas | `pnpm --filter backend db:migrate` |
 | Empujar el schema sin migración (prototipo) | `pnpm --filter backend db:push` |
 | Inspector de base de datos | `pnpm --filter backend db:studio` |
+| Cargar el catálogo inicial de recetas (idempotente) | `pnpm --filter backend db:seed` |
 
 ## Stack tecnológico
 
@@ -178,7 +185,7 @@ Configuración por entorno validada al arrancar en `backend/src/config/env.valid
 Esquema en `backend/src/database/schema/schema.ts`:
 
 1. `users`: identidad Google OAuth, avatar, nombre, teléfono privado y rol (`USER`, `CONTRIBUTOR`, `ADMIN`).
-2. `recipes`: título, porciones, tiempos, dificultad, instrucciones JSONB y ciclo de vida (`DRAFT`, `PENDING_REVIEW`, `PUBLISHED`) y `review_notes` con las observaciones del administrador. Índices para feed (`status, createdAt DESC`), autor y región.
+2. `recipes`: título, porciones, tiempos, dificultad, instrucciones JSONB y ciclo de vida (`DRAFT`, `PENDING_REVIEW`, `PUBLISHED`) y `review_notes` con las observaciones del administrador. `source_type` (`REFERENCE`, `INTERVIEW`, `COMMUNITY`), `source_name` y `source_url` registran la procedencia de cada receta y se muestran en la ficha. Índices para feed (`status, createdAt DESC`), autor y región.
 3. `ingredients` y `recipe_ingredients`: catálogo normalizado y relación N:M para el algoritmo de coincidencia por ingredientes.
 4. `recipe_reactions`: unicidad usuario-receta e índices de agregación.
 5. `recipe_bookmarks`: recetario personal con unicidad usuario-receta.

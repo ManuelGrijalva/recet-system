@@ -30,6 +30,13 @@ export const recipeStatusEnum = pgEnum('recipe_status', [
   'ARCHIVED',
 ]);
 
+// Procedencia del conocimiento: referencia documental, entrevista de campo o aporte de la comunidad
+export const recipeSourceTypeEnum = pgEnum('recipe_source_type', [
+  'REFERENCE',
+  'INTERVIEW',
+  'COMMUNITY',
+]);
+
 export const reactionTypeEnum = pgEnum('reaction_type', [
   'LIKE',
   'YUMMY',
@@ -99,6 +106,10 @@ export const recipes = pgTable(
     originRegion: text('origin_region').default('Jutiapa').notNull(),
     // Observaciones del administrador al devolver una receta en revision
     reviewNotes: text('review_notes'),
+    sourceType: recipeSourceTypeEnum('source_type').notNull().default('COMMUNITY'),
+    // Cita de la fuente o credito al informante
+    sourceName: text('source_name'),
+    sourceUrl: text('source_url'),
     instructions: jsonb('instructions')
       .$type<RecipeStepInstruction[]>()
       .notNull()

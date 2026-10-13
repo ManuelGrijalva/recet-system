@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { useSession } from '@/shared/session';
+import { MyRecipesSection } from '@/features/my-recipes';
 import { useProfileForm } from '../hooks/useProfileForm';
 import { ProfileIdentityCard } from './ProfileIdentityCard';
 import { ProfileContactForm } from './ProfileContactForm';
@@ -10,6 +11,7 @@ import { ProfileContactForm } from './ProfileContactForm';
 function ProfileContent(): React.JSX.Element {
   const { profile, values, isLoading, isSaving, feedback, setValue, save } =
     useProfileForm();
+  const { hasRole } = useSession();
 
   return (
     <div className="space-y-6">
@@ -42,6 +44,8 @@ function ProfileContent(): React.JSX.Element {
           />
         </>
       )}
+
+      {hasRole('CONTRIBUTOR', 'ADMIN') && <MyRecipesSection />}
     </div>
   );
 }

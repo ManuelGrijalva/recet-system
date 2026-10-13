@@ -1,5 +1,6 @@
 import type { Difficulty } from '@/shared/types';
 import type {
+  EditableRecipe,
   IngredientDraft,
   RecipeDraft,
   StepDraft,
@@ -23,9 +24,32 @@ export function createEmptyDraft(): RecipeDraft {
     cookTimeMinutes: 30,
     servings: 4,
     difficulty: 'MEDIUM',
+    originRegion: 'Jutiapa',
     status: 'PUBLISHED',
     ingredients: [{ ...EMPTY_INGREDIENT }],
     steps: [emptyStep(1)],
+  };
+}
+
+// Al editar, por defecto se reenvia a revision (no se guarda como borrador)
+export function draftFromRecipe(recipe: EditableRecipe): RecipeDraft {
+  return {
+    title: recipe.title,
+    description: recipe.description,
+    prepTimeMinutes: recipe.prepTimeMinutes,
+    cookTimeMinutes: recipe.cookTimeMinutes,
+    servings: recipe.servings,
+    difficulty: recipe.difficulty,
+    originRegion: recipe.originRegion,
+    status: 'PUBLISHED',
+    ingredients: recipe.ingredients.length
+      ? recipe.ingredients.map((i) => ({ name: i.name, quantity: i.quantity, unit: i.unit }))
+      : [{ ...EMPTY_INGREDIENT }],
+    steps: recipe.steps.length
+      ? [...recipe.steps]
+          .sort((a, b) => a.stepNumber - b.stepNumber)
+          .map((step, index) => ({ stepNumber: index + 1, instruction: step.instruction }))
+      : [emptyStep(1)],
   };
 }
 

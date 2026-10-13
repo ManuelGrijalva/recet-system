@@ -1,4 +1,4 @@
-import type { Difficulty } from '@/shared/types';
+import type { Difficulty, RecipeStatus } from '@/shared/types';
 
 export type ComposeStatus = 'DRAFT' | 'PUBLISHED';
 
@@ -20,6 +20,7 @@ export interface RecipeDraft {
   cookTimeMinutes: number;
   servings: number;
   difficulty: Difficulty;
+  originRegion: string;
   status: ComposeStatus;
   ingredients: IngredientDraft[];
   steps: StepDraft[];
@@ -36,7 +37,25 @@ export interface CreateRecipePayload {
   cookTimeMinutes: number;
   servings: number;
   difficulty: Difficulty;
+  originRegion: string;
   status: 'DRAFT' | 'PUBLISHED' | 'PENDING_REVIEW';
   instructions: { stepNumber: number; instruction: string }[];
   ingredients: { ingredientName: string; quantity: string; unit: string }[];
+}
+
+// Lo que GET /recipes/:id devuelve y el formulario necesita para editar
+export interface EditableRecipe {
+  id: string;
+  title: string;
+  description: string;
+  prepTimeMinutes: number;
+  cookTimeMinutes: number;
+  servings: number;
+  difficulty: Difficulty;
+  originRegion: string;
+  status: RecipeStatus;
+  reviewNotes?: string | null;
+  author: { id: string };
+  ingredients: { name: string; quantity: string; unit: string }[];
+  steps: { stepNumber: number; instruction: string }[];
 }

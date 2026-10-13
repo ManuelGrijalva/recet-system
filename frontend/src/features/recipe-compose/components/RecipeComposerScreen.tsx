@@ -7,9 +7,17 @@ import { IngredientListEditor } from './IngredientListEditor';
 import { StepListEditor } from './StepListEditor';
 import { PublishBar } from './PublishBar';
 
-export function RecipeComposerScreen(): React.JSX.Element {
+interface RecipeComposerScreenProps {
+  recipeId?: string;
+}
+
+export function RecipeComposerScreen({ recipeId }: RecipeComposerScreenProps): React.JSX.Element {
   const {
     draft,
+    isEditing,
+    isLoadingRecipe,
+    loadError,
+    reviewNotes,
     isSubmitting,
     result,
     setField,
@@ -17,18 +25,35 @@ export function RecipeComposerScreen(): React.JSX.Element {
     ingredients,
     steps,
     submit,
-  } = useRecipeComposer();
+  } = useRecipeComposer(recipeId);
+
+  if (isLoadingRecipe) {
+    return <p className="text-xs text-zinc-500 dark:text-zinc-400">Cargando receta...</p>;
+  }
+
+  if (loadError) {
+    return <p className="text-xs text-zinc-700 dark:text-zinc-300">{loadError}</p>;
+  }
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-xl font-bold tracking-tight text-zinc-950 dark:text-zinc-50">
-          Publicar receta tradicional
+          {isEditing ? 'Editar receta' : 'Publicar receta tradicional'}
         </h1>
         <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
-          Comparte las recetas y secretos gastronómicos ancestrales de tu familia y de la región de Jutiapa.
+          {isEditing
+            ? 'Al guardar, la receta vuelve a revisión del administrador antes de mostrarse en el feed.'
+            : 'Comparte las recetas y secretos gastronómicos ancestrales de tu familia y de la región de Jutiapa.'}
         </p>
       </div>
+
+      {reviewNotes && (
+        <div className="p-4 rounded-md border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 space-y-1">
+          <p className="text-xs font-medium text-zinc-900 dark:text-zinc-100">Observaciones del administrador</p>
+          <p className="text-xs text-zinc-700 dark:text-zinc-300 whitespace-pre-line">{reviewNotes}</p>
+        </div>
+      )}
 
       {result && (
         <div
@@ -66,6 +91,7 @@ export function RecipeComposerScreen(): React.JSX.Element {
         />
 
         <PublishBar
+          isEditing={isEditing}
           status={draft.status}
           isSubmitting={isSubmitting}
           onStatusChange={setStatus}

@@ -11,6 +11,7 @@ export function buildCreateRecipePayload(
     cookTimeMinutes: draft.cookTimeMinutes,
     servings: draft.servings,
     difficulty: draft.difficulty,
+    originRegion: draft.originRegion.trim() || 'Jutiapa',
     status: draft.status,
     instructions: draft.steps.map((step) => ({
       stepNumber: step.stepNumber,

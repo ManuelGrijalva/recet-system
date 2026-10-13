@@ -6,6 +6,7 @@ import { ArrowLeftIcon } from '@/shared/components/ui/icons';
 import { ReactionButtons } from '@/features/reactions';
 import { CommentSection } from '@/features/comments';
 import { BookmarkButton } from '@/features/saved-recipes';
+import { useSession } from '@/shared/session';
 import { useRecipeDetail } from '../hooks/useRecipeDetail';
 import { useRecipeComments } from '../hooks/useRecipeComments';
 import { RecipeDetailHeader } from './RecipeDetailHeader';
@@ -25,6 +26,7 @@ export function RecipeDetailScreen({
 }: RecipeDetailScreenProps): React.JSX.Element {
   const { recipe, isLoading, error } = useRecipeDetail(recipeId);
   const { comments, isLoaded: commentsLoaded } = useRecipeComments(recipeId);
+  const { user } = useSession();
 
   if (isLoading) {
     return (
@@ -77,7 +79,15 @@ export function RecipeDetailScreen({
         sourceUrl={recipe.sourceUrl}
       />
 
-      <div className="flex justify-end">
+      <div className="flex justify-end gap-2">
+        {user && (user.id === recipe.author.id || user.role === 'ADMIN') && (
+          <Link
+            href={`/recipe/${recipe.id}/edit`}
+            className="inline-flex h-8 items-center rounded-md border border-zinc-200 dark:border-zinc-800 px-3 text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-900"
+          >
+            Editar receta
+          </Link>
+        )}
         <BookmarkButton recipeId={recipe.id} initialBookmarked={recipe.isBookmarked ?? false} />
       </div>
 

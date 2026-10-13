@@ -1,14 +1,17 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ApiError } from '@/shared/lib/apiClient';
 import type { RecipeStatus } from '@/shared/types';
 import { createRecipe } from '../api/createRecipe';
+import { getEditableRecipe } from '../api/getEditableRecipe';
+import { updateRecipe } from '../api/updateRecipe';
 import { buildCreateRecipePayload } from '../lib/buildCreateRecipePayload';
 import {
   addIngredient,
   addStep,
   createEmptyDraft,
+  draftFromRecipe,
   removeIngredientAt,
   removeStepAt,
   updateIngredientAt,
@@ -28,11 +31,11 @@ const SUCCESS_MESSAGES: Record<RecipeStatus, string> = {
   ARCHIVED: 'La receta quedó archivada.',
 };
 
-function describeSubmitError(err: unknown): string {
+function describeSubmitError(err: unknown, isEditing: boolean): string {
   if (err instanceof ApiError && err.status === 401) {
     return 'Inicia sesión para publicar recetas.';
   }
-  if (err instanceof ApiError && err.status === 403) {
+  if (err instanceof ApiError && err.status === 403 && !isEditing) {
     return 'Solo los usuarios colaboradores pueden publicar recetas. Solicita el rol a un administrador.';
   }
   return err instanceof Error
@@ -47,6 +50,10 @@ interface SubmitResult {
 
 interface UseRecipeComposerResult {
   draft: RecipeDraft;
+  isEditing: boolean;
+  isLoadingRecipe: boolean;
+  loadError: string | null;
+  reviewNotes: string | null;
   isSubmitting: boolean;
   result: SubmitResult | null;
   setField: <K extends keyof RecipeDraft>(field: K, value: RecipeDraft[K]) => void;
@@ -64,10 +71,35 @@ interface UseRecipeComposerResult {
   submit: () => Promise<void>;
 }
 
-export function useRecipeComposer(): UseRecipeComposerResult {
+export function useRecipeComposer(recipeId?: string): UseRecipeComposerResult {
   const [draft, setDraft] = useState<RecipeDraft>(createEmptyDraft);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState<SubmitResult | null>(null);
+  const [isLoadingRecipe, setIsLoadingRecipe] = useState(recipeId !== undefined);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [reviewNotes, setReviewNotes] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!recipeId) return;
+    let active = true;
+
+    getEditableRecipe(recipeId)
+      .then((recipe) => {
+        if (!active) return;
+        setDraft(draftFromRecipe(recipe));
+        setReviewNotes(recipe.reviewNotes ?? null);
+      })
+      .catch(() => {
+        if (active) setLoadError('No se pudo cargar la receta para editarla.');
+      })
+      .finally(() => {
+        if (active) setIsLoadingRecipe(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [recipeId]);
 
   const setField = useCallback(
     <K extends keyof RecipeDraft>(field: K, value: RecipeDraft[K]) => {
@@ -120,17 +152,24 @@ export function useRecipeComposer(): UseRecipeComposerResult {
     setResult(null);
 
     try {
-      const created = await createRecipe(buildCreateRecipePayload(draft));
+      const payload = buildCreateRecipePayload(draft);
+      const created = recipeId
+        ? await updateRecipe(recipeId, payload)
+        : await createRecipe(payload);
       setResult({ ok: true, message: SUCCESS_MESSAGES[created.status] });
     } catch (err) {
-      setResult({ ok: false, message: describeSubmitError(err) });
+      setResult({ ok: false, message: describeSubmitError(err, recipeId !== undefined) });
     } finally {
       setIsSubmitting(false);
     }
-  }, [draft]);
+  }, [draft, recipeId]);
 
   return {
     draft,
+    isEditing: recipeId !== undefined,
+    isLoadingRecipe,
+    loadError,
+    reviewNotes,
     isSubmitting,
     result,
     setField,

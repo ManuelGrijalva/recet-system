@@ -3,12 +3,14 @@ import { Button } from '@/shared/components/ui/Button';
 import type { ComposeStatus } from '../types';
 
 interface PublishBarProps {
+  isEditing?: boolean;
   status: ComposeStatus;
   isSubmitting: boolean;
   onStatusChange: (status: ComposeStatus) => void;
 }
 
 export function PublishBar({
+  isEditing = false,
   status,
   isSubmitting,
   onStatusChange,
@@ -29,7 +31,7 @@ export function PublishBar({
       </div>
 
       <Button type="submit" size="md" variant="primary" isLoading={isSubmitting}>
-        {status === 'PUBLISHED' ? 'Publicar receta' : 'Guardar borrador'}
+        {status === 'DRAFT' ? 'Guardar borrador' : isEditing ? 'Guardar y enviar' : 'Publicar receta'}
       </Button>
     </div>
   );

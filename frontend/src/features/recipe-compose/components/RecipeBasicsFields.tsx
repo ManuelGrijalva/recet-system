@@ -40,6 +40,15 @@ export function RecipeBasicsFields({
         />
       </div>
 
+      <Input
+        label="Región o municipio de origen"
+        value={draft.originRegion}
+        onChange={(e) => onFieldChange('originRegion', e.target.value)}
+        placeholder="Ej: Asunción Mita, Jutiapa"
+        maxLength={100}
+        required
+      />
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <Input
           label="Tiempo de preparación (min)"

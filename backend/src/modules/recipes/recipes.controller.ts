@@ -7,6 +7,7 @@ import {
   HttpStatus,
   Param,
   ParseUUIDPipe,
+  Patch,
   Post,
   Query,
   UseGuards,
@@ -49,6 +50,23 @@ export class RecipesController {
     @Query() query: SearchRecipesDto,
   ): Promise<FeedRecipeItem[]> {
     return this.recipesService.search(query);
+  }
+
+  // Antes de ':id' para que "mine" no se interprete como id
+  @Get('mine')
+  @UseGuards(JwtAuthGuard)
+  async listMyRecipes(@CurrentUser() user: AuthenticatedUser): Promise<FeedRecipeItem[]> {
+    return this.recipesService.listMine(user.id);
+  }
+
+  @Patch(':id')
+  @UseGuards(JwtAuthGuard)
+  async updateRecipe(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() dto: CreateRecipeDto,
+  ): Promise<FeedRecipeItem> {
+    return this.recipesService.update(id, user, dto);
   }
 
   @Get(':id')

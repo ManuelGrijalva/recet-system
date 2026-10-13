@@ -158,7 +158,7 @@ features/<slice>/
 - La capa `api/` llama al backend real y cae a datos semilla con `withFallback`, de modo que la interfaz funciona sin backend levantado.
 - Imports mediante el alias `@/` (`@/features/...`, `@/shared/...`).
 
-Slices: `recipe-feed`, `recipe-detail`, `recipe-compose`, `ingredient-search`, `saved-recipes`, `profile`, `auth`, `comments`, `reactions`, `moderation`. Todas las páginas de `app/` están adelgazadas a un solo `Screen`.
+Slices: `recipe-feed`, `recipe-detail`, `recipe-compose` (también edita en `/recipe/[id]/edit`), `ingredient-search`, `saved-recipes`, `profile`, `auth`, `comments`, `reactions`, `moderation`, `my-recipes` (sección "Mis recetas" del perfil para colaboradores y admin: estado, observaciones, editar y eliminar), `offline`. Todas las páginas de `app/` están adelgazadas a un solo `Screen`.
 
 ### Consulta sin conexión (PWA, PP-12)
 
@@ -184,7 +184,7 @@ Módulos en `backend/src/modules/`, cada uno con `*.controller.ts`, `*.service.t
 
 - `auth`: Google OAuth 2.0, emisión de JWT en cookie HTTP-Only, `dev-login` para desarrollo.
 - `users`: perfil privado (`/users/me`) y público (`/users/:id`); el teléfono es privado y editable.
-- `recipes`: alta de recetas (solo `CONTRIBUTOR` y `ADMIN`; las del colaborador nacen en `PENDING_REVIEW`, las del admin se publican directo), feed paginado (`/recipes/feed`), búsqueda (`/recipes/search`, con porcentaje y desglose de ingredientes coincidentes/faltantes), detalle (`GET /recipes/:id` devuelve también `ingredients`, `steps`, la `userReaction` y si la tiene guardada (`isBookmarked`) quien consulta; las recetas no publicadas responden 404 salvo para su autor y el admin) y borrado.
+- `recipes`: alta de recetas (solo `CONTRIBUTOR` y `ADMIN`; las del colaborador nacen en `PENDING_REVIEW`, las del admin se publican directo), edición por su autor o el admin (`PATCH /recipes/:id`: lo editado por un colaborador vuelve a `PENDING_REVIEW` y se limpian las observaciones), listado propio en todos los estados (`GET /recipes/mine`), feed paginado (`/recipes/feed`), búsqueda (`/recipes/search`, con porcentaje y desglose de ingredientes coincidentes/faltantes), detalle (`GET /recipes/:id` devuelve también `ingredients`, `steps`, la `userReaction` y si la tiene guardada (`isBookmarked`) quien consulta; las recetas no publicadas responden 404 salvo para su autor y el admin) y borrado.
 - `interactions`: reacciones (`LIKE`, `YUMMY`, `TRIED_IT`), guardados (`GET /interactions/bookmarks` incluye el autor de cada receta) y comentarios con un nivel de hilo.
 - `moderation` (solo `ADMIN`): `GET /moderation/recipes/pending` lista las recetas en revisión (más antiguas primero) y `PATCH /moderation/recipes/:id` con `{ "decision": "APPROVE" }` las publica o con `{ "decision": "RETURN", "notes": "..." }` las devuelve a `DRAFT` con observaciones en `reviewNotes`. `GET /moderation/users?q=` busca usuarios por nombre o correo y `PATCH /moderation/users/:id/role` con `{ "role": "CONTRIBUTOR" | "USER" }` otorga o retira el rol de colaborador (no modifica cuentas `ADMIN`).
 

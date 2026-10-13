@@ -14,7 +14,7 @@ import {
   recipeBookmarks,
   users,
 } from '../../database/schema';
-import { CreateRecipeDto } from './dto/create-recipe.dto';
+import { CreateRecipeDto, RecipeIngredientInputDto } from './dto/create-recipe.dto';
 import { SearchRecipesDto } from './dto/search-recipe.dto';
 import { UserRole } from '../../common/decorators/roles.decorator';
 import { AuthenticatedUser } from '../../common/decorators/current-user.decorator';
@@ -88,34 +88,7 @@ export class RecipesService {
       })
       .returning();
 
-    // 2. Resolver o insertar ingredientes en catalogo oficial
-    for (const ing of dto.ingredients) {
-      const normalizedName = ing.ingredientName.trim().toLowerCase();
-
-      let [foundIngredient] = await db
-        .select()
-        .from(ingredients)
-        .where(eq(ingredients.name, normalizedName))
-        .limit(1);
-
-      if (!foundIngredient) {
-        [foundIngredient] = await db
-          .insert(ingredients)
-          .values({
-            name: normalizedName,
-            category: 'General',
-          })
-          .returning();
-      }
-
-      await db.insert(recipeIngredients).values({
-        recipeId: newRecipe.id,
-        ingredientId: foundIngredient.id,
-        quantity: ing.quantity,
-        unit: ing.unit,
-        notes: ing.notes,
-      });
-    }
+    await this.attachIngredients(newRecipe.id, dto.ingredients);
 
     return this.getById(newRecipe.id);
   }
@@ -442,6 +415,62 @@ export class RecipesService {
     };
   }
 
+  async update(
+    recipeId: string,
+    editor: AuthenticatedUser,
+    dto: CreateRecipeDto,
+  ): Promise<FeedRecipeItem> {
+    const db = this.databaseService.db;
+
+    const [recipe] = await db
+      .select({ authorId: recipes.authorId })
+      .from(recipes)
+      .where(eq(recipes.id, recipeId))
+      .limit(1);
+
+    if (!recipe) {
+      throw new NotFoundException('Receta no encontrada');
+    }
+    if (recipe.authorId !== editor.id && editor.role !== 'ADMIN') {
+      throw new ForbiddenException('No tienes permiso para editar esta receta');
+    }
+
+    // Lo editado por un colaborador vuelve a revision (regla 4.3.4.a); al reenviar se limpian las observaciones
+    const status = this.resolveInitialStatus(editor.role, dto.status);
+    await db
+      .update(recipes)
+      .set({
+        title: dto.title,
+        description: dto.description,
+        prepTimeMinutes: dto.prepTimeMinutes,
+        cookTimeMinutes: dto.cookTimeMinutes,
+        servings: dto.servings,
+        difficulty: dto.difficulty,
+        coverImageUrl: dto.coverImageUrl,
+        originRegion: dto.originRegion || 'Jutiapa',
+        instructions: dto.instructions,
+        status,
+        ...(status === 'DRAFT' ? {} : { reviewNotes: null }),
+        updatedAt: new Date(),
+      })
+      .where(eq(recipes.id, recipeId));
+
+    await db.delete(recipeIngredients).where(eq(recipeIngredients.recipeId, recipeId));
+    await this.attachIngredients(recipeId, dto.ingredients);
+
+    return this.getById(recipeId);
+  }
+
+  async listMine(authorId: string): Promise<FeedRecipeItem[]> {
+    const rows = await this.databaseService.db
+      .select({ id: recipes.id })
+      .from(recipes)
+      .where(eq(recipes.authorId, authorId))
+      .orderBy(desc(recipes.updatedAt));
+
+    return Promise.all(rows.map((row) => this.getById(row.id)));
+  }
+
   async delete(recipeId: string, userId: string, userRole: string): Promise<void> {
     const db = this.databaseService.db;
 
@@ -461,6 +490,39 @@ export class RecipesService {
     }
 
     await db.delete(recipes).where(eq(recipes.id, recipeId));
+  }
+
+  private async attachIngredients(
+    recipeId: string,
+    items: RecipeIngredientInputDto[],
+  ): Promise<void> {
+    const db = this.databaseService.db;
+
+    for (const ing of items) {
+      // Catalogo oficial normalizado: se reutiliza el ingrediente o se crea
+      const normalizedName = ing.ingredientName.trim().toLowerCase();
+
+      let [foundIngredient] = await db
+        .select()
+        .from(ingredients)
+        .where(eq(ingredients.name, normalizedName))
+        .limit(1);
+
+      if (!foundIngredient) {
+        [foundIngredient] = await db
+          .insert(ingredients)
+          .values({ name: normalizedName, category: 'General' })
+          .returning();
+      }
+
+      await db.insert(recipeIngredients).values({
+        recipeId,
+        ingredientId: foundIngredient.id,
+        quantity: ing.quantity,
+        unit: ing.unit,
+        notes: ing.notes,
+      });
+    }
   }
 
   // Regla de negocio 4.3.4.a: lo que publica un colaborador pasa por revision del admin

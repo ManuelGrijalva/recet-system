@@ -137,9 +137,14 @@ export class InteractionsService {
           coverImageUrl: recipes.coverImageUrl,
           originRegion: recipes.originRegion,
         },
+        author: {
+          id: users.id,
+          name: users.name,
+        },
       })
       .from(recipeBookmarks)
       .innerJoin(recipes, eq(recipeBookmarks.recipeId, recipes.id))
+      .innerJoin(users, eq(recipes.authorId, users.id))
       .where(eq(recipeBookmarks.userId, userId))
       .orderBy(desc(recipeBookmarks.createdAt));
   }

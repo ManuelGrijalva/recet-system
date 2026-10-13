@@ -11,6 +11,7 @@ import {
   recipes,
   recipeReactions,
   recipeComments,
+  recipeBookmarks,
   users,
 } from '../../database/schema';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
@@ -55,6 +56,7 @@ export interface RecipeDetailItem extends FeedRecipeItem {
   ingredients: { name: string; quantity: string; unit: string; notes: string | null }[];
   steps: RecipeStepInstruction[];
   userReaction: 'LIKE' | 'YUMMY' | 'TRIED_IT' | null;
+  isBookmarked: boolean;
 }
 
 @Injectable()
@@ -408,6 +410,7 @@ export class RecipesService {
       .where(eq(recipeIngredients.recipeId, id));
 
     let userReaction: RecipeDetailItem['userReaction'] = null;
+    let isBookmarked = false;
     if (viewer) {
       const [reaction] = await db
         .select({ type: recipeReactions.type })
@@ -417,6 +420,15 @@ export class RecipesService {
         )
         .limit(1);
       userReaction = reaction ? reaction.type : null;
+
+      const [bookmark] = await db
+        .select({ id: recipeBookmarks.id })
+        .from(recipeBookmarks)
+        .where(
+          and(eq(recipeBookmarks.recipeId, id), eq(recipeBookmarks.userId, viewer.id)),
+        )
+        .limit(1);
+      isBookmarked = bookmark !== undefined;
     }
 
     return {
@@ -426,6 +438,7 @@ export class RecipesService {
       ingredients: ingredientRows,
       steps: [...(recipeRow?.instructions ?? [])].sort((a, b) => a.stepNumber - b.stepNumber),
       userReaction,
+      isBookmarked,
     };
   }
 

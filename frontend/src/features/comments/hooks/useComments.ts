@@ -1,16 +1,10 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import type { AuthorSummary } from '@/shared/types';
+import { useSession } from '@/shared/session';
 import { addComment } from '../api/addComment';
 import type { CommentData } from '../types';
-
-// TODO: tomar el autor del slice `auth`/`profile` cuando exista sesión real.
-const CURRENT_AUTHOR: AuthorSummary = {
-  id: 'me',
-  name: 'Manuel Grijalva',
-  avatarUrl: null,
-};
 
 interface UseCommentsParams {
   recipeId: string;
@@ -28,13 +22,14 @@ interface UseCommentsResult {
 function draftComment(
   content: string,
   parentId: string | null,
+  author: AuthorSummary,
 ): CommentData {
   return {
     id: `temp-${Date.now()}`,
     content,
     createdAt: new Date().toISOString(),
     parentId,
-    author: CURRENT_AUTHOR,
+    author,
     replies: parentId ? undefined : [],
   };
 }
@@ -45,13 +40,18 @@ export function useComments({
 }: UseCommentsParams): UseCommentsResult {
   const [comments, setComments] = useState<CommentData[]>(initialComments);
   const [replyingToId, setReplyingToId] = useState<string | null>(null);
+  const { user } = useSession();
+  const author = useMemo<AuthorSummary | null>(
+    () => (user ? { id: user.id, name: user.name, avatarUrl: user.avatarUrl } : null),
+    [user],
+  );
 
   const addRootComment = useCallback(
     (content: string) => {
       const trimmed = content.trim();
-      if (!trimmed) return;
+      if (!trimmed || !author) return;
 
-      const optimistic = draftComment(trimmed, null);
+      const optimistic = draftComment(trimmed, null, author);
       setComments((prev) => [...prev, optimistic]);
 
       addComment(recipeId, { content: trimmed })
@@ -64,15 +64,15 @@ export function useComments({
           setComments((prev) => prev.filter((c) => c.id !== optimistic.id));
         });
     },
-    [recipeId],
+    [recipeId, author],
   );
 
   const addReply = useCallback(
     (parentId: string, content: string) => {
       const trimmed = content.trim();
-      if (!trimmed) return;
+      if (!trimmed || !author) return;
 
-      const optimistic = draftComment(trimmed, parentId);
+      const optimistic = draftComment(trimmed, parentId, author);
       setComments((prev) =>
         prev.map((c) =>
           c.id === parentId
@@ -112,7 +112,7 @@ export function useComments({
           );
         });
     },
-    [recipeId],
+    [recipeId, author],
   );
 
   return {

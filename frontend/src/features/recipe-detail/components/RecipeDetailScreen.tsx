@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowLeftIcon } from '@/shared/components/ui/icons';
 import { ReactionButtons } from '@/features/reactions';
 import { CommentSection } from '@/features/comments';
+import { BookmarkButton } from '@/features/saved-recipes';
 import { useRecipeDetail } from '../hooks/useRecipeDetail';
 import { useRecipeComments } from '../hooks/useRecipeComments';
 import { RecipeDetailHeader } from './RecipeDetailHeader';
@@ -75,6 +76,10 @@ export function RecipeDetailScreen({
         sourceName={recipe.sourceName}
         sourceUrl={recipe.sourceUrl}
       />
+
+      <div className="flex justify-end">
+        <BookmarkButton recipeId={recipe.id} initialBookmarked={recipe.isBookmarked ?? false} />
+      </div>
 
       <div className="p-4 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a]">
         <h3 className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-3">

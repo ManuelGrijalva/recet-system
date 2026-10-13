@@ -1,20 +1,14 @@
 import type { CreateRecipePayload, RecipeDraft } from '../types';
 
-/**
- * Traduce el borrador del formulario al cuerpo que espera `POST /recipes`.
- *
- * El formulario recoge un único "tiempo de preparación"; se mapea a
- * `prepTimeMinutes` y se deja `cookTimeMinutes` en 0 hasta que la UI separe
- * ambos tiempos.
- */
+// Traduce el borrador del formulario al cuerpo que espera POST /recipes
 export function buildCreateRecipePayload(
   draft: RecipeDraft,
 ): CreateRecipePayload {
   return {
     title: draft.title.trim(),
     description: draft.description.trim(),
-    prepTimeMinutes: draft.timeMinutes,
-    cookTimeMinutes: 0,
+    prepTimeMinutes: draft.prepTimeMinutes,
+    cookTimeMinutes: draft.cookTimeMinutes,
     servings: draft.servings,
     difficulty: draft.difficulty,
     status: draft.status,

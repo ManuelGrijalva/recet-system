@@ -19,7 +19,8 @@ export function createEmptyDraft(): RecipeDraft {
   return {
     title: '',
     description: '',
-    timeMinutes: 45,
+    prepTimeMinutes: 20,
+    cookTimeMinutes: 30,
     servings: 4,
     difficulty: 'MEDIUM',
     status: 'PUBLISHED',

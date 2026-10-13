@@ -40,14 +40,24 @@ export function RecipeBasicsFields({
         />
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <Input
           label="Tiempo de preparación (min)"
           type="number"
-          min={1}
-          value={draft.timeMinutes}
+          min={0}
+          value={draft.prepTimeMinutes}
           onChange={(e) =>
-            onFieldChange('timeMinutes', parseInt(e.target.value, 10) || 0)
+            onFieldChange('prepTimeMinutes', parseInt(e.target.value, 10) || 0)
+          }
+          required
+        />
+        <Input
+          label="Tiempo de cocción (min)"
+          type="number"
+          min={0}
+          value={draft.cookTimeMinutes}
+          onChange={(e) =>
+            onFieldChange('cookTimeMinutes', parseInt(e.target.value, 10) || 0)
           }
           required
         />

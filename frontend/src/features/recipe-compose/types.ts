@@ -16,7 +16,8 @@ export interface StepDraft {
 export interface RecipeDraft {
   title: string;
   description: string;
-  timeMinutes: number;
+  prepTimeMinutes: number;
+  cookTimeMinutes: number;
   servings: number;
   difficulty: Difficulty;
   status: ComposeStatus;

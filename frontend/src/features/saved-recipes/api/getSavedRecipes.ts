@@ -1,15 +1,17 @@
 import { apiClient } from '@/shared/lib/apiClient';
-import { withFallback } from '@/shared/lib/withFallback';
-import type { SavedRecipe } from '../types';
-import { savedRecipesMock } from './savedRecipes.mock';
+import type { BookmarkRow, SavedRecipe } from '../types';
 
-/**
- * `GET /interactions/bookmarks` — recetario guardado del usuario.
- * Requiere sesión; cae al seed local si no hay sesión o backend.
- */
-export function getSavedRecipes(): Promise<SavedRecipe[]> {
-  return withFallback(
-    () => apiClient<SavedRecipe[]>('interactions/bookmarks'),
-    savedRecipesMock,
-  );
+const savedDateFormatter = new Intl.DateTimeFormat('es-GT', { day: 'numeric', month: 'short' });
+
+// Sin datos semilla: el recetario es personal; sin conexion lo cubre el service worker
+export async function getSavedRecipes(): Promise<SavedRecipe[]> {
+  const rows = await apiClient<BookmarkRow[]>('interactions/bookmarks');
+  return rows.map((row) => ({
+    id: row.recipe.id,
+    title: row.recipe.title,
+    author: row.author.name,
+    region: row.recipe.originRegion,
+    timeMinutes: row.recipe.prepTimeMinutes + row.recipe.cookTimeMinutes,
+    savedLabel: `Guardada el ${savedDateFormatter.format(new Date(row.savedAt))}`,
+  }));
 }

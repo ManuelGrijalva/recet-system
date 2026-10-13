@@ -1,6 +1,8 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
+import { useSession } from '@/shared/session';
 import { useComments } from '../hooks/useComments';
 import type { CommentData } from '../types';
 import { CommentComposer } from './CommentComposer';
@@ -22,6 +24,7 @@ export function CommentSection({
     addRootComment,
     addReply,
   } = useComments({ recipeId, initialComments });
+  const { user } = useSession();
 
   return (
     <div className="space-y-6 pt-4 border-t border-zinc-200 dark:border-zinc-800">
@@ -29,7 +32,20 @@ export function CommentSection({
         Comentarios comunitarios ({comments.length})
       </h3>
 
-      <CommentComposer onSubmit={addRootComment} />
+      {user ? (
+        <CommentComposer
+          authorName={user.name}
+          authorAvatarUrl={user.avatarUrl}
+          onSubmit={addRootComment}
+        />
+      ) : (
+        <p className="text-xs text-zinc-500 dark:text-zinc-400">
+          <Link href="/login" className="font-medium text-zinc-900 dark:text-zinc-100 underline underline-offset-2">
+            Inicia sesión
+          </Link>{' '}
+          para comentar o responder.
+        </p>
+      )}
 
       <div className="space-y-4">
         {comments.map((comment) => (
@@ -37,8 +53,10 @@ export function CommentSection({
             key={comment.id}
             comment={comment}
             isReplying={replyingToId === comment.id}
-            onToggleReply={() =>
-              setReplyingToId(replyingToId === comment.id ? null : comment.id)
+            onToggleReply={
+              user
+                ? () => setReplyingToId(replyingToId === comment.id ? null : comment.id)
+                : undefined
             }
             onSubmitReply={(content) => addReply(comment.id, content)}
           />

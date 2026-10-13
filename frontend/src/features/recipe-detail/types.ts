@@ -38,6 +38,7 @@ export interface RecipeDetail {
   author: AuthorSummary & { role?: string };
   reactionCounts: ReactionCounts;
   userReaction: ReactionType | null;
+  isBookmarked?: boolean;
   ingredients: RecipeIngredient[];
   steps: RecipeStep[];
 }

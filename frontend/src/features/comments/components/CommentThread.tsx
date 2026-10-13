@@ -9,7 +9,8 @@ import type { CommentData } from '../types';
 interface CommentThreadProps {
   comment: CommentData;
   isReplying: boolean;
-  onToggleReply: () => void;
+  // Sin funcion (invitado) no se muestra el boton de responder
+  onToggleReply?: () => void;
   onSubmitReply: (content: string) => void;
 }
 

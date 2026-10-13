@@ -5,12 +5,14 @@ import { Avatar } from '@/shared/components/ui/Avatar';
 import { Button } from '@/shared/components/ui/Button';
 
 interface CommentComposerProps {
-  authorName?: string;
+  authorName: string;
+  authorAvatarUrl: string | null;
   onSubmit: (content: string) => void;
 }
 
 export function CommentComposer({
-  authorName = 'Manuel Grijalva',
+  authorName,
+  authorAvatarUrl,
   onSubmit,
 }: CommentComposerProps): React.JSX.Element {
   const [text, setText] = useState('');
@@ -24,7 +26,7 @@ export function CommentComposer({
 
   return (
     <form onSubmit={handleSubmit} className="flex gap-3">
-      <Avatar alt="Tú" fallbackName={authorName} size="md" />
+      <Avatar src={authorAvatarUrl} alt={authorName} fallbackName={authorName} size="md" />
       <div className="flex-1 space-y-2">
         <textarea
           value={text}

@@ -129,6 +129,35 @@ export class EnvironmentVariables {
     { message: 'GOOGLE_CALLBACK_URL debe ser una URL http(s) valida' },
   )
   GOOGLE_CALLBACK_URL!: string;
+
+  // Cloudflare R2 (fotos de recetas)
+  @Matches(/^[a-f0-9]{32}$/, {
+    message: 'R2_ACCOUNT_ID debe ser el Account ID de Cloudflare (32 caracteres hexadecimales)',
+  })
+  R2_ACCOUNT_ID!: string;
+
+  @IsString()
+  @IsNotPlaceholder()
+  @MinLength(16, { message: 'R2_ACCESS_KEY_ID debe ser el Access Key ID del token de R2' })
+  R2_ACCESS_KEY_ID!: string;
+
+  @IsString()
+  @IsNotPlaceholder()
+  @MinLength(32, { message: 'R2_SECRET_ACCESS_KEY debe ser el Secret Access Key del token de R2' })
+  R2_SECRET_ACCESS_KEY!: string;
+
+  @Matches(/^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$/, {
+    message: 'R2_BUCKET debe ser un nombre de bucket valido (minusculas, numeros y guiones)',
+  })
+  R2_BUCKET!: string;
+
+  @IsNotPlaceholder()
+  @IsUrl(
+    { require_tld: false, protocols: ['https'], require_protocol: true },
+    { message: 'R2_PUBLIC_URL debe ser la URL https publica del bucket' },
+  )
+  @Matches(/[^/]$/, { message: 'R2_PUBLIC_URL no debe terminar en barra' })
+  R2_PUBLIC_URL!: string;
 }
 
 /**

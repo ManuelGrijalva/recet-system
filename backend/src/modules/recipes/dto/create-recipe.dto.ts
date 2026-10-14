@@ -67,9 +67,10 @@ export class CreateRecipeDto {
   @IsEnum(['EASY', 'MEDIUM', 'HARD'])
   difficulty!: 'EASY' | 'MEDIUM' | 'HARD';
 
+  // null quita la foto al editar
   @IsOptional()
   @IsString()
-  coverImageUrl?: string;
+  coverImageUrl?: string | null;
 
   @IsOptional()
   @IsIn(['DRAFT', 'PUBLISHED', 'PENDING_REVIEW'])

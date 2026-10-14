@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -19,6 +20,7 @@ import { SearchRecipesDto } from './dto/search-recipe.dto';
 import { UserRole } from '../../common/decorators/roles.decorator';
 import { AuthenticatedUser } from '../../common/decorators/current-user.decorator';
 import { RecipeStepInstruction } from '../../database/schema';
+import { MediaService } from '../media/media.service';
 
 export interface FeedRecipeItem {
   id: string;
@@ -61,13 +63,24 @@ export interface RecipeDetailItem extends FeedRecipeItem {
 
 @Injectable()
 export class RecipesService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly mediaService: MediaService,
+  ) {}
+
+  // Rechaza portadas que no salieron de nuestra subida a R2
+  private assertCoverImage(url: string | null | undefined): void {
+    if (url && !this.mediaService.isOwnRecipeImage(url)) {
+      throw new BadRequestException('La foto de portada debe subirse desde el formulario de la receta');
+    }
+  }
 
   async create(
     authorId: string,
     authorRole: UserRole,
     dto: CreateRecipeDto,
   ): Promise<FeedRecipeItem> {
+    this.assertCoverImage(dto.coverImageUrl);
     const db = this.databaseService.db;
 
     // 1. Insertar receta base
@@ -420,6 +433,7 @@ export class RecipesService {
     editor: AuthenticatedUser,
     dto: CreateRecipeDto,
   ): Promise<FeedRecipeItem> {
+    this.assertCoverImage(dto.coverImageUrl);
     const db = this.databaseService.db;
 
     const [recipe] = await db

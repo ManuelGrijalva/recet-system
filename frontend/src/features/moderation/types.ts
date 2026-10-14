@@ -37,3 +37,15 @@ export interface ManagedUser {
   role: ManagedUserRole;
   createdAt: string;
 }
+
+// Solicitud pendiente de GET /moderation/contributor-requests
+export interface ContributorRequestItem {
+  id: string;
+  motivation: string | null;
+  createdAt: string;
+  user: Omit<ManagedUser, 'createdAt'>;
+}
+
+export type ContributorRequestDecision =
+  | { decision: 'APPROVE' }
+  | { decision: 'REJECT'; notes?: string };

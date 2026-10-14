@@ -36,7 +36,7 @@ function describeSubmitError(err: unknown, isEditing: boolean): string {
     return 'Inicia sesión para publicar recetas.';
   }
   if (err instanceof ApiError && err.status === 403 && !isEditing) {
-    return 'Solo los usuarios colaboradores pueden publicar recetas. Solicita el rol a un administrador.';
+    return 'Solo los usuarios colaboradores pueden publicar recetas. Solicita el rol desde tu perfil.';
   }
   return err instanceof Error
     ? err.message

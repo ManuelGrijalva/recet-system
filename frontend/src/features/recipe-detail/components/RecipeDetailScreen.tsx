@@ -16,6 +16,7 @@ import { IngredientChecklist } from './IngredientChecklist';
 import { PreparationSteps } from './PreparationSteps';
 import { RecipeSourceNote } from './RecipeSourceNote';
 import { RecipeReviewNotice } from './RecipeReviewNotice';
+import { AdminDeleteRecipeButton } from './AdminDeleteRecipeButton';
 
 interface RecipeDetailScreenProps {
   recipeId: string;
@@ -79,8 +80,11 @@ export function RecipeDetailScreen({
         sourceUrl={recipe.sourceUrl}
       />
 
-      <div className="flex justify-end gap-2">
-        {user && (user.id === recipe.author.id || user.role === 'ADMIN') && (
+      <div className="flex flex-wrap justify-end gap-2">
+        {user?.role === 'ADMIN' && user.id !== recipe.author.id && (
+          <AdminDeleteRecipeButton recipeId={recipe.id} />
+        )}
+        {user && user.id === recipe.author.id && (
           <Link
             href={`/recipe/${recipe.id}/edit`}
             className="inline-flex h-8 items-center rounded-md border border-zinc-200 dark:border-zinc-800 px-3 text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-900"

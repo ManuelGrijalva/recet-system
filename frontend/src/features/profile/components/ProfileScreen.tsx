@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { useSession } from '@/shared/session';
 import { MyRecipesSection } from '@/features/my-recipes';
+import { ContributorRequestSection } from '@/features/contributor-request';
 import { useProfileForm } from '../hooks/useProfileForm';
 import { ProfileIdentityCard } from './ProfileIdentityCard';
 import { ProfileContactForm } from './ProfileContactForm';
@@ -45,6 +46,7 @@ function ProfileContent(): React.JSX.Element {
         </>
       )}
 
+      {hasRole('USER') && <ContributorRequestSection />}
       {hasRole('CONTRIBUTOR', 'ADMIN') && <MyRecipesSection />}
     </div>
   );

@@ -1,4 +1,4 @@
-# Directrices del Proyecto Recetario Jutiapa (Antigravity Memory)
+# Directrices del Proyecto Memoria del Comal (Antigravity Memory)
 
 ## 1. Gestor de Paquetes Exclusivo
 - **pnpm:** Todo comando de instalación, compilación, ejecución o linteo DEBE ejecutarse con `pnpm` (`pnpm install`, `pnpm add`, `pnpm run`, etc.).

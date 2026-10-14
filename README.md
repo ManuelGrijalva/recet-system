@@ -1,6 +1,6 @@
-# Red Social Gastronómica Tradicional de Jutiapa (MVP)
+# Memoria del Comal: red social gastronómica tradicional de Jutiapa (MVP)
 
-Plataforma comunitaria para la difusión y el rescate de la gastronomía tradicional del departamento de Jutiapa, Guatemala, con un motor de búsqueda inteligente por ingredientes disponibles. Proyecto de graduación para la Universidad Mariano Gálvez de Guatemala, Campus Jutiapa.
+**Memoria del Comal** (`memoriadelcomal.com`) es una plataforma comunitaria para la difusión y el rescate de la gastronomía tradicional del departamento de Jutiapa, Guatemala, con un motor de búsqueda inteligente por ingredientes disponibles. Proyecto de graduación para la Universidad Mariano Gálvez de Guatemala, Campus Jutiapa.
 
 Este README es documentación viva: se actualiza en la misma edición que introduce cada módulo, endpoint o decisión de arquitectura nueva.
 

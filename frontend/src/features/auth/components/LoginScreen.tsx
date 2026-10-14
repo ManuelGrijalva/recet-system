@@ -78,7 +78,15 @@ export function LoginScreen(): React.JSX.Element {
           </div>
 
           <p className="mt-6 text-center text-xs text-zinc-500 dark:text-zinc-400">
-            Al continuar aceptas las condiciones de uso y la política de privacidad.
+            Al continuar aceptas las{' '}
+            <Link href="/terminos" className="underline underline-offset-2 hover:text-zinc-900 dark:hover:text-zinc-100">
+              condiciones del servicio
+            </Link>{' '}
+            y la{' '}
+            <Link href="/privacidad" className="underline underline-offset-2 hover:text-zinc-900 dark:hover:text-zinc-100">
+              política de privacidad
+            </Link>
+            .
           </p>
 
           <div className="mt-8 border-t border-zinc-100 dark:border-zinc-900 pt-6 text-center">

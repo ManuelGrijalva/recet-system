@@ -162,6 +162,14 @@ export function DesktopSidebar(): React.JSX.Element {
 
       <div className="pt-4 border-t border-zinc-200 dark:border-zinc-800">
         <SessionCard />
+        <div className="mt-3 flex justify-center gap-3 text-[11px] text-zinc-400">
+          <Link href="/privacidad" className="hover:text-zinc-700 dark:hover:text-zinc-200">
+            Privacidad
+          </Link>
+          <Link href="/terminos" className="hover:text-zinc-700 dark:hover:text-zinc-200">
+            Condiciones
+          </Link>
+        </div>
       </div>
     </aside>
   );

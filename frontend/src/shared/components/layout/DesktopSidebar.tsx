@@ -132,7 +132,7 @@ export function DesktopSidebar(): React.JSX.Element {
           <BrandMark size="md" />
           <div>
             <span className="font-semibold text-lg tracking-tight text-zinc-950 dark:text-zinc-50 block leading-tight">
-              Recetario Jutiapa
+              Memoria del Comal
             </span>
             <span className="text-xs text-zinc-500 dark:text-zinc-400 block">
               Saberes tradicionales

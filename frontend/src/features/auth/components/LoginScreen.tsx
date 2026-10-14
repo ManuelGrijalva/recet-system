@@ -32,7 +32,7 @@ export function LoginScreen(): React.JSX.Element {
         <div className="absolute bottom-3 left-4 flex items-center gap-2">
           <BrandMark size="sm" />
           <span className="text-sm font-semibold tracking-tight text-zinc-950 dark:text-zinc-50">
-            Recetario Jutiapa
+            Memoria del Comal
           </span>
         </div>
       </div>

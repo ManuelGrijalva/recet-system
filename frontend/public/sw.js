@@ -1,6 +1,6 @@
-// Service worker del Recetario Jutiapa (PP-12): consulta sin conexión de lo ya visitado.
+// Service worker de Memoria del Comal (PP-12): consulta sin conexión de lo ya visitado.
 // Subir CACHE_VERSION invalida las cachés anteriores al activarse.
-const CACHE_VERSION = 'v1';
+const CACHE_VERSION = 'v2';
 const STATIC_CACHE = `static-${CACHE_VERSION}`;
 const PAGES_CACHE = `pages-${CACHE_VERSION}`;
 const API_CACHE = `api-${CACHE_VERSION}`;

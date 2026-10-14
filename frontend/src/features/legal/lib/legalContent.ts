@@ -4,7 +4,7 @@ export const LEGAL_UPDATED_AT = '14 de octubre de 2026';
 export const LEGAL_CONTACT_EMAIL = 'mgrijalvat1@miumg.edu.gt';
 
 export const PRIVACY_INTRO =
-  'Recetario Jutiapa es un proyecto de graduación de la Universidad Mariano Gálvez de Guatemala, Campus Jutiapa, desarrollado por Manuel Ernesto Grijalva Tenas. Esta política explica qué datos recopila la plataforma, para qué los usa y cómo puedes pedir que se eliminen.';
+  'Memoria del Comal es un proyecto de graduación de la Universidad Mariano Gálvez de Guatemala, Campus Jutiapa, desarrollado por Manuel Ernesto Grijalva Tenas. Esta política explica qué datos recopila la plataforma, para qué los usa y cómo puedes pedir que se eliminen.';
 
 export const PRIVACY_SECTIONS: LegalSection[] = [
   {
@@ -49,7 +49,7 @@ export const PRIVACY_SECTIONS: LegalSection[] = [
 ];
 
 export const TERMS_INTRO =
-  'Al usar Recetario Jutiapa aceptas estas condiciones. La plataforma es un proyecto académico sin fines de lucro dedicado al rescate de la cocina tradicional de Jutiapa.';
+  'Al usar Memoria del Comal aceptas estas condiciones. La plataforma es un proyecto académico sin fines de lucro dedicado al rescate de la cocina tradicional de Jutiapa.';
 
 export const TERMS_SECTIONS: LegalSection[] = [
   {

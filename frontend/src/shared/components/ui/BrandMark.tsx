@@ -13,7 +13,7 @@ const SIZE_CLASSES: Record<NonNullable<BrandMarkProps['size']>, string> = {
 };
 
 /**
- * Isotipo monocromático del Recetario Jutiapa. Único punto donde vive la "R".
+ * Isotipo monocromático de Memoria del Comal. Único punto donde vive la "M".
  */
 export function BrandMark({
   size = 'md',
@@ -28,7 +28,7 @@ export function BrandMark({
       )}
       aria-hidden="true"
     >
-      R
+      M
     </div>
   );
 }

@@ -9,7 +9,7 @@ import { SessionProvider } from '../shared/session';
 import { ServiceWorkerRegistrar } from '../shared/pwa';
 
 export const metadata: Metadata = {
-  title: 'Recetario Tradicional de Jutiapa | Red Social Culinaria',
+  title: 'Memoria del Comal | Cocina tradicional de Jutiapa',
   description:
     'Plataforma para el rescate y difusión de recetas tradicionales guatemaltecas con búsqueda inteligente por ingredientes disponibles.',
   keywords: [
@@ -20,8 +20,8 @@ export const metadata: Metadata = {
     'recetario comunitario',
   ],
   authors: [{ name: 'Manuel Ernesto Grijalva Tenas' }],
-  applicationName: 'Recetario Jutiapa',
-  appleWebApp: { capable: true, title: 'Recetario Jutiapa', statusBarStyle: 'default' },
+  applicationName: 'Memoria del Comal',
+  appleWebApp: { capable: true, title: 'Memoria del Comal', statusBarStyle: 'default' },
   icons: {
     icon: [{ url: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' }],
     apple: [{ url: '/icons/apple-touch-icon.png', sizes: '180x180' }],
@@ -54,7 +54,7 @@ export default function RootLayout({
               <div className="flex items-center gap-2">
                 <BrandMark size="sm" />
                 <span className="font-semibold text-sm tracking-tight text-zinc-950 dark:text-zinc-50">
-                  Recetario Jutiapa
+                  Memoria del Comal
                 </span>
               </div>
               <div className="flex items-center gap-2">

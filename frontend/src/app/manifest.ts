@@ -2,8 +2,8 @@ import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Recetario Tradicional de Jutiapa',
-    short_name: 'Recetario Jutiapa',
+    name: 'Memoria del Comal',
+    short_name: 'Memoria del Comal',
     description:
       'Recetas tradicionales de Jutiapa con búsqueda por ingredientes disponibles. Consulta sin conexión las recetas que ya visitaste.',
     start_url: '/',

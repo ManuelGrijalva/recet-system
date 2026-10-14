@@ -160,6 +160,10 @@ features/<slice>/
 
 Slices: `recipe-feed`, `recipe-detail`, `recipe-compose` (también edita en `/recipe/[id]/edit`), `ingredient-search`, `saved-recipes`, `profile`, `auth`, `comments`, `reactions`, `moderation`, `my-recipes` (sección "Mis recetas" del perfil para colaboradores y admin: estado, observaciones, editar y eliminar), `offline`. Todas las páginas de `app/` están adelgazadas a un solo `Screen`.
 
+### Páginas legales
+
+`/privacidad` y `/terminos` (slice `legal`, contenido en `features/legal/lib/legalContent.ts`). Google las exige para publicar la pantalla de consentimiento OAuth; están enlazadas desde el login y la barra lateral.
+
 ### Consulta sin conexión (PWA, PP-12)
 
 La web es una aplicación web progresiva: se puede agregar a la pantalla de inicio del teléfono y abrir sin internet las recetas ya visitadas.
@@ -211,3 +215,18 @@ Las directrices completas están en `AGENTS.md`. Resumen:
 - Diseño monocromático (blanco, negro, `zinc`); `rounded-full` solo en avatares; prohibido `uppercase`.
 - Commits con Conventional Commits (`tipo(scope): resumen`), resumen y cuerpo en español e imperativo. Tipos: `feat`, `fix`, `refactor`, `perf`, `docs`, `test`, `build`, `ci`, `chore`, `style`.
 - Prohibido incluir trailers `Co-Authored-By` o cualquier atribución a un agente en commits o Pull Request. El autor es siempre el desarrollador humano.
+
+## Despliegue en Railway
+
+Dos servicios del mismo repositorio, ambos con **Root Directory = raíz del repo** (lo necesita el workspace de pnpm) y su archivo de configuración:
+
+| Servicio | Config file path | Dominio sugerido |
+|---|---|---|
+| API (NestJS) | `/backend/railway.json` | `api.memoriadelcomal.com` |
+| Web (Next.js) | `/frontend/railway.json` | `memoriadelcomal.com` y `www.memoriadelcomal.com` |
+
+- API: variables de `backend/.env.example` con `NODE_ENV=production` (activa la cookie `secure` y desactiva `dev-login`), `FRONTEND_URL=https://memoriadelcomal.com` y `GOOGLE_CALLBACK_URL=https://api.memoriadelcomal.com/api/auth/google/callback`. Railway inyecta `PORT`.
+- Web: `NEXT_PUBLIC_API_URL=https://api.memoriadelcomal.com/api` (se lee en el build).
+- Con frontend y API bajo el mismo dominio, la cookie de sesión (`sameSite: lax`) funciona sin cambios.
+- Las migraciones se aplican desde local con `pnpm --filter backend db:migrate` antes de desplegar.
+

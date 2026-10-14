@@ -1,0 +1,13 @@
+{
+  "$schema": "https://railway.com/railway.schema.json",
+  "build": {
+    "builder": "RAILPACK",
+    "buildCommand": "pnpm --filter backend build",
+    "watchPatterns": ["backend/**", "pnpm-lock.yaml"]
+  },
+  "deploy": {
+    "startCommand": "pnpm --filter backend start:prod",
+    "healthcheckPath": "/api/recipes/feed",
+    "restartPolicyType": "ON_FAILURE"
+  }
+}

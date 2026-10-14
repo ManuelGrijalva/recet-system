@@ -4,13 +4,14 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { asc, eq, ilike, or } from 'drizzle-orm';
+import { and, asc, desc, eq, ilike, or } from 'drizzle-orm';
 import { DatabaseService } from '../../database/database.service';
-import { recipes, users } from '../../database/schema';
+import { contributorRequests, recipes, users } from '../../database/schema';
 import { UserRole } from '../../common/decorators/roles.decorator';
 import { FeedRecipeItem, RecipesService } from '../recipes/recipes.service';
 import { ReviewRecipeDto } from './dto/review-recipe.dto';
 import { UpdateUserRoleDto } from './dto/update-user-role.dto';
+import { ReviewContributorRequestDto } from './dto/review-contributor-request.dto';
 
 export interface ManagedUser {
   id: string;
@@ -19,6 +20,13 @@ export interface ManagedUser {
   avatarUrl: string | null;
   role: UserRole;
   createdAt: Date;
+}
+
+export interface PendingContributorRequest {
+  id: string;
+  motivation: string | null;
+  createdAt: Date;
+  user: { id: string; name: string; email: string; avatarUrl: string | null; role: UserRole };
 }
 
 const managedUserColumns = {
@@ -120,5 +128,90 @@ export class ModerationService {
       .returning(managedUserColumns);
 
     return updated;
+  }
+
+  // Publicadas mas recientes primero, para retirar lo que no corresponda
+  async listPublished(q?: string): Promise<FeedRecipeItem[]> {
+    const term = q?.trim();
+    const rows = await this.databaseService.db
+      .select({ id: recipes.id })
+      .from(recipes)
+      .where(
+        and(
+          eq(recipes.status, 'PUBLISHED'),
+          term ? ilike(recipes.title, `%${term}%`) : undefined,
+        ),
+      )
+      .orderBy(desc(recipes.createdAt))
+      .limit(50);
+
+    return Promise.all(rows.map((row) => this.recipesService.getById(row.id)));
+  }
+
+  async listContributorRequests(): Promise<PendingContributorRequest[]> {
+    const rows = await this.databaseService.db
+      .select({
+        id: contributorRequests.id,
+        motivation: contributorRequests.motivation,
+        createdAt: contributorRequests.createdAt,
+        user: managedUserColumns,
+      })
+      .from(contributorRequests)
+      .innerJoin(users, eq(users.id, contributorRequests.userId))
+      .where(eq(contributorRequests.status, 'PENDING'))
+      .orderBy(asc(contributorRequests.createdAt));
+
+    return rows.map((row) => ({
+      id: row.id,
+      motivation: row.motivation,
+      createdAt: row.createdAt,
+      user: {
+        id: row.user.id,
+        name: row.user.name,
+        email: row.user.email,
+        avatarUrl: row.user.avatarUrl,
+        role: row.user.role,
+      },
+    }));
+  }
+
+  // Aprobar otorga el rol de colaborador en la misma transaccion
+  async reviewContributorRequest(
+    requestId: string,
+    reviewerId: string,
+    dto: ReviewContributorRequestDto,
+  ): Promise<void> {
+    await this.databaseService.db.transaction(async (tx) => {
+      const [request] = await tx
+        .select({ userId: contributorRequests.userId, status: contributorRequests.status })
+        .from(contributorRequests)
+        .where(eq(contributorRequests.id, requestId))
+        .limit(1);
+
+      if (!request) {
+        throw new NotFoundException('Solicitud no encontrada');
+      }
+      if (request.status !== 'PENDING') {
+        throw new ConflictException('La solicitud ya fue revisada');
+      }
+
+      const approved = dto.decision === 'APPROVE';
+      await tx
+        .update(contributorRequests)
+        .set({
+          status: approved ? 'APPROVED' : 'REJECTED',
+          reviewNotes: approved ? null : dto.notes?.trim() || null,
+          reviewedBy: reviewerId,
+          reviewedAt: new Date(),
+        })
+        .where(eq(contributorRequests.id, requestId));
+
+      if (approved) {
+        await tx
+          .update(users)
+          .set({ role: 'CONTRIBUTOR', updatedAt: new Date() })
+          .where(and(eq(users.id, request.userId), eq(users.role, 'USER')));
+      }
+    });
   }
 }

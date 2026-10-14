@@ -8,6 +8,7 @@ import { RecipesModule } from './modules/recipes/recipes.module';
 import { InteractionsModule } from './modules/interactions/interactions.module';
 import { ModerationModule } from './modules/moderation/moderation.module';
 import { MediaModule } from './modules/media/media.module';
+import { ContributorRequestsModule } from './modules/contributor-requests/contributor-requests.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { MediaModule } from './modules/media/media.module';
     InteractionsModule,
     ModerationModule,
     MediaModule,
+    ContributorRequestsModule,
   ],
 })
 export class AppModule {}

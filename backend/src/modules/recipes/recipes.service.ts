@@ -445,8 +445,9 @@ export class RecipesService {
     if (!recipe) {
       throw new NotFoundException('Receta no encontrada');
     }
-    if (recipe.authorId !== editor.id && editor.role !== 'ADMIN') {
-      throw new ForbiddenException('No tienes permiso para editar esta receta');
+    // Solo el autor edita; el admin modera aprobando, devolviendo o eliminando
+    if (recipe.authorId !== editor.id) {
+      throw new ForbiddenException('Solo el autor puede editar esta receta');
     }
 
     // Lo editado por un colaborador vuelve a revision (regla 4.3.4.a); al reenviar se limpian las observaciones

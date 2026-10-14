@@ -9,7 +9,7 @@ import {
   index,
   jsonb,
 } from 'drizzle-orm/pg-core';
-import { relations } from 'drizzle-orm';
+import { relations, sql } from 'drizzle-orm';
 
 // ============================================================================
 // 1. ENUMS
@@ -41,6 +41,12 @@ export const reactionTypeEnum = pgEnum('reaction_type', [
   'LIKE',
   'YUMMY',
   'TRIED_IT',
+]);
+
+export const contributorRequestStatusEnum = pgEnum('contributor_request_status', [
+  'PENDING',
+  'APPROVED',
+  'REJECTED',
 ]);
 
 // ============================================================================
@@ -281,6 +287,38 @@ export const recipeComments = pgTable(
     // Indice para resolver respuestas anidadas a un comentario raiz
     index('recipe_comments_parent_id_idx').on(table.parentId),
     index('recipe_comments_user_id_idx').on(table.userId),
+  ],
+);
+
+/**
+ * Solicitudes para obtener el rol de colaborador
+ * El usuario acepta las normas de contenido al enviarla; el admin la aprueba o la rechaza.
+ */
+export const contributorRequests = pgTable(
+  'contributor_requests',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    motivation: text('motivation'),
+    status: contributorRequestStatusEnum('status').notNull().default('PENDING'),
+    // Motivo del rechazo, visible para el solicitante
+    reviewNotes: text('review_notes'),
+    reviewedBy: uuid('reviewed_by').references(() => users.id, { onDelete: 'set null' }),
+    reviewedAt: timestamp('reviewed_at', { withTimezone: true }),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    // Bandeja del admin: pendientes en orden de llegada
+    index('contributor_requests_status_created_idx').on(table.status, table.createdAt),
+    index('contributor_requests_user_id_idx').on(table.userId),
+    // Una sola solicitud pendiente por usuario
+    uniqueIndex('contributor_requests_one_pending_idx')
+      .on(table.userId)
+      .where(sql`${table.status} = 'PENDING'`),
   ],
 );
 

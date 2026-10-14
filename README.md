@@ -218,15 +218,16 @@ Las directrices completas están en `AGENTS.md`. Resumen:
 
 ## Despliegue en Railway
 
-Dos servicios del mismo repositorio, ambos con **Root Directory = raíz del repo** (lo necesita el workspace de pnpm) y su archivo de configuración:
+Proyecto `athletic-celebration`, región `us-west2` (la misma de Postgres), tres servicios. Los comandos se configuran en cada servicio (Railway dejó obsoleto `railway.json`); el Root Directory es la raíz del repo porque lo necesita el workspace de pnpm.
 
-| Servicio | Config file path | Dominio sugerido |
-|---|---|---|
-| API (NestJS) | `/backend/railway.json` | `api.memoriadelcomal.com` |
-| Web (Next.js) | `/frontend/railway.json` | `memoriadelcomal.com` y `www.memoriadelcomal.com` |
+| Servicio | Build | Start | Healthcheck | Dominio |
+|---|---|---|---|---|
+| `api` (NestJS) | `pnpm --filter backend build` | `pnpm --filter backend start:prod` | `/api/recipes/feed` | `api.memoriadelcomal.com` |
+| `web` (Next.js) | `pnpm --filter frontend build` | `pnpm --filter frontend start` | `/` | `memoriadelcomal.com` |
+| `Postgres` | imagen de Railway | | | |
 
-- API: variables de `backend/.env.example` con `NODE_ENV=production` (activa la cookie `secure` y desactiva `dev-login`), `FRONTEND_URL=https://memoriadelcomal.com` y `GOOGLE_CALLBACK_URL=https://api.memoriadelcomal.com/api/auth/google/callback`. Railway inyecta `PORT`.
-- Web: `NEXT_PUBLIC_API_URL=https://api.memoriadelcomal.com/api` (se lee en el build).
-- Con frontend y API bajo el mismo dominio, la cookie de sesión (`sameSite: lax`) funciona sin cambios.
+- `api`: `NODE_ENV=production` (cookie `secure`, sin `dev-login`), `DATABASE_URL=${{Postgres.DATABASE_URL}}` con `DATABASE_SSL=false` (red privada), `JWT_SECRET` propio de producción, `FRONTEND_URL=https://memoriadelcomal.com` y `GOOGLE_CALLBACK_URL=https://api.memoriadelcomal.com/api/auth/google/callback`. Railway inyecta `PORT`.
+- `web`: `NEXT_PUBLIC_API_URL=https://api.memoriadelcomal.com/api` (se lee en el build).
+- Frontend y API comparten dominio, así que la cookie de sesión (`sameSite: lax`) funciona sin cambios. Usar el dominio sin `www`: CORS acepta un solo origen.
+- DNS en Cloudflare en modo "DNS only". Cada push a `main` redespliega los servicios cuyos archivos cambiaron.
 - Las migraciones se aplican desde local con `pnpm --filter backend db:migrate` antes de desplegar.
-

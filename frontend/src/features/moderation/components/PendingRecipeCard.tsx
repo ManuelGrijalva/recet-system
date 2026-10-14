@@ -49,6 +49,14 @@ export function PendingRecipeCard({
         <p className="text-xs text-zinc-700 dark:text-zinc-300 line-clamp-3">
           {recipe.description}
         </p>
+        {recipe.coverImageUrl && (
+          <img
+            src={recipe.coverImageUrl}
+            alt={`Foto de ${recipe.title}`}
+            loading="lazy"
+            className="w-full max-w-xs aspect-[4/3] object-cover rounded-md border border-zinc-200 dark:border-zinc-800"
+          />
+        )}
       </CardContent>
 
       <CardFooter>

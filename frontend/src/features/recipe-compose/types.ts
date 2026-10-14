@@ -21,6 +21,7 @@ export interface RecipeDraft {
   servings: number;
   difficulty: Difficulty;
   originRegion: string;
+  coverImageUrl: string | null;
   status: ComposeStatus;
   ingredients: IngredientDraft[];
   steps: StepDraft[];
@@ -38,6 +39,7 @@ export interface CreateRecipePayload {
   servings: number;
   difficulty: Difficulty;
   originRegion: string;
+  coverImageUrl: string | null;
   status: 'DRAFT' | 'PUBLISHED' | 'PENDING_REVIEW';
   instructions: { stepNumber: number; instruction: string }[];
   ingredients: { ingredientName: string; quantity: string; unit: string }[];
@@ -53,9 +55,17 @@ export interface EditableRecipe {
   servings: number;
   difficulty: Difficulty;
   originRegion: string;
+  coverImageUrl: string | null;
   status: RecipeStatus;
   reviewNotes?: string | null;
   author: { id: string };
   ingredients: { name: string; quantity: string; unit: string }[];
   steps: { stepNumber: number; instruction: string }[];
+}
+
+// Respuesta de POST /media/recipe-images
+export interface ImageUploadTicket {
+  uploadUrl: string;
+  publicUrl: string;
+  expiresInSeconds: number;
 }

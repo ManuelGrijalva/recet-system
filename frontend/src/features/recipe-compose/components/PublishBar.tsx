@@ -6,6 +6,8 @@ interface PublishBarProps {
   isEditing?: boolean;
   status: ComposeStatus;
   isSubmitting: boolean;
+  // Mientras sube la foto no se puede enviar
+  isBlocked?: boolean;
   onStatusChange: (status: ComposeStatus) => void;
 }
 
@@ -13,6 +15,7 @@ export function PublishBar({
   isEditing = false,
   status,
   isSubmitting,
+  isBlocked = false,
   onStatusChange,
 }: PublishBarProps): React.JSX.Element {
   return (
@@ -30,7 +33,7 @@ export function PublishBar({
         </label>
       </div>
 
-      <Button type="submit" size="md" variant="primary" isLoading={isSubmitting}>
+      <Button type="submit" size="md" variant="primary" isLoading={isSubmitting} disabled={isBlocked}>
         {status === 'DRAFT' ? 'Guardar borrador' : isEditing ? 'Guardar y enviar' : 'Publicar receta'}
       </Button>
     </div>

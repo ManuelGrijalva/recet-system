@@ -1,7 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useRecipeComposer } from '../hooks/useRecipeComposer';
+import { useCoverImageUpload } from '../hooks/useCoverImageUpload';
+import { CoverImageField } from './CoverImageField';
 import { RecipeBasicsFields } from './RecipeBasicsFields';
 import { IngredientListEditor } from './IngredientListEditor';
 import { StepListEditor } from './StepListEditor';
@@ -26,6 +28,8 @@ export function RecipeComposerScreen({ recipeId }: RecipeComposerScreenProps): R
     steps,
     submit,
   } = useRecipeComposer(recipeId);
+  const setCoverImage = useCallback((url: string) => setField('coverImageUrl', url), [setField]);
+  const cover = useCoverImageUpload(setCoverImage);
 
   if (isLoadingRecipe) {
     return <p className="text-xs text-zinc-500 dark:text-zinc-400">Cargando receta...</p>;
@@ -76,6 +80,14 @@ export function RecipeComposerScreen({ recipeId }: RecipeComposerScreenProps): R
       >
         <RecipeBasicsFields draft={draft} onFieldChange={setField} />
 
+        <CoverImageField
+          imageUrl={draft.coverImageUrl}
+          isUploading={cover.isUploading}
+          error={cover.error}
+          onSelectFile={(file) => void cover.upload(file)}
+          onRemove={() => setField('coverImageUrl', null)}
+        />
+
         <IngredientListEditor
           rows={draft.ingredients}
           onAdd={ingredients.add}
@@ -94,6 +106,7 @@ export function RecipeComposerScreen({ recipeId }: RecipeComposerScreenProps): R
           isEditing={isEditing}
           status={draft.status}
           isSubmitting={isSubmitting}
+          isBlocked={cover.isUploading}
           onStatusChange={setStatus}
         />
       </form>

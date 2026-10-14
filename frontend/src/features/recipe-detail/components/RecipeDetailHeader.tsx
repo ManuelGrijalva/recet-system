@@ -39,6 +39,14 @@ export function RecipeDetailHeader({
           )}
         </div>
       </div>
+
+      {recipe.coverImageUrl && (
+        <img
+          src={recipe.coverImageUrl}
+          alt={recipe.title}
+          className="w-full aspect-[4/3] object-cover rounded-lg border border-zinc-200 dark:border-zinc-800 mt-2"
+        />
+      )}
     </div>
   );
 }

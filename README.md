@@ -36,7 +36,7 @@ cp backend/.env.example backend/.env
 ```
 
 Completar como minimo `DATABASE_URL`, `DATABASE_SSL` y las credenciales de Google
-(`GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`). El backend no inicia si falta una
+(`GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`) y de Cloudflare R2 (`R2_*`, ver "Fotos de recetas"). El backend no inicia si falta una
 variable, tiene formato invalido o conserva texto de plantilla.
 
 Frontend (`frontend/.env.local`, ignorado por git):
@@ -126,7 +126,7 @@ recet-system/
 │       ├── common/         Decoradores, filtros y guards
 │       ├── config/         Validación de variables de entorno al arranque
 │       ├── database/       Conexión SSL y esquema Drizzle
-│       └── modules/        auth, users, recipes, interactions, moderation
+│       └── modules/        auth, users, recipes, interactions, moderation, media, contributor-requests
 ├── frontend/               Web Next.js (App Router)
 │   ├── .env.example        Plantilla de entorno (copiar a frontend/.env.local)
 │   └── src/
@@ -158,7 +158,7 @@ features/<slice>/
 - La capa `api/` llama al backend real y cae a datos semilla con `withFallback`, de modo que la interfaz funciona sin backend levantado.
 - Imports mediante el alias `@/` (`@/features/...`, `@/shared/...`).
 
-Slices: `recipe-feed`, `recipe-detail`, `recipe-compose` (también edita en `/recipe/[id]/edit`), `ingredient-search`, `saved-recipes`, `profile`, `auth`, `comments`, `reactions`, `moderation`, `my-recipes` (sección "Mis recetas" del perfil para colaboradores y admin: estado, observaciones, editar y eliminar), `offline`. Todas las páginas de `app/` están adelgazadas a un solo `Screen`.
+Slices: `recipe-feed`, `recipe-detail`, `recipe-compose` (también edita en `/recipe/[id]/edit`), `ingredient-search`, `saved-recipes`, `profile`, `auth`, `comments`, `reactions`, `moderation`, `contributor-request`, `my-recipes` (sección "Mis recetas" del perfil para colaboradores y admin: estado, observaciones, editar y eliminar), `offline`. Todas las páginas de `app/` están adelgazadas a un solo `Screen`.
 
 ### Páginas legales
 
@@ -178,7 +178,8 @@ La web es una aplicación web progresiva: se puede agregar a la pantalla de inic
 
 - Móvil: barra de navegación inferior fija, feed a una columna, modales tipo bottom sheet.
 - Escritorio: barra lateral izquierda fija (`w-64`), feed central `max-w-2xl`, barra lateral derecha (`lg:` en adelante) con sugerencias y tendencias.
-- Validación (`/moderation`): el slice `moderation` tiene dos pestañas: recetas pendientes (aprobar o devolver con observaciones) y usuarios (otorgar o retirar el rol de colaborador). Es la única lectura sin datos semilla: si el backend responde 401/403 se muestra el aviso en lugar de recetas ficticias. Los errores HTTP llegan como `ApiError` (con `status`) desde `@/shared/lib/apiClient`.
+- Validación (`/moderation`): el slice `moderation` tiene cuatro pestañas: recetas pendientes (aprobar o devolver con observaciones), publicadas (buscar y eliminar las que no cumplan las normas), solicitudes (aprobar o rechazar a quien pide ser colaborador) y usuarios (otorgar o retirar el rol de colaborador). El admin también ve "Eliminar receta" en el detalle de recetas ajenas; no las edita.
+- Solicitud de colaborador: el slice `contributor-request` se muestra en el perfil de los usuarios con rol `USER`. Explica qué permite el rol, las normas de contenido y la advertencia de eliminación; exige aceptar las normas y admite un texto opcional sobre las recetas que quiere compartir. Muestra el estado (en revisión, aprobada o rechazada con motivo) y permite volver a solicitar tras un rechazo. Es la única lectura sin datos semilla: si el backend responde 401/403 se muestra el aviso en lugar de recetas ficticias. Los errores HTTP llegan como `ApiError` (con `status`) desde `@/shared/lib/apiClient`.
 - Sesión: `@/shared/session` expone `SessionProvider` (montado en `app/layout.tsx`, consulta `GET /auth/me` una vez) y `useSession()` con `user`, `status` (`loading`/`authenticated`/`guest`), `hasRole()` y `logout()`. Las barras de navegación filtran sus enlaces con `isNavVisible` según el rol: publicar solo para `CONTRIBUTOR`/`ADMIN`, validar solo para `ADMIN`, guardados y perfil con sesión, y "Iniciar sesión" para invitados.
 - Acceso (`/login`): el slice `auth` monta `LoginScreen` como overlay `fixed inset-0` para salir del layout con barras. Escritorio: foto (`shared/assets/login-guate.jpg`) a media pantalla más el formulario; móvil: franja superior delgada con un fragmento de la misma foto. Único acceso: `GoogleLoginButton` con el logotipo de `shared/assets/google.svg`.
 
@@ -188,9 +189,16 @@ Módulos en `backend/src/modules/`, cada uno con `*.controller.ts`, `*.service.t
 
 - `auth`: Google OAuth 2.0, emisión de JWT en cookie HTTP-Only, `dev-login` para desarrollo.
 - `users`: perfil privado (`/users/me`) y público (`/users/:id`); el teléfono es privado y editable.
-- `recipes`: alta de recetas (solo `CONTRIBUTOR` y `ADMIN`; las del colaborador nacen en `PENDING_REVIEW`, las del admin se publican directo), edición por su autor o el admin (`PATCH /recipes/:id`: lo editado por un colaborador vuelve a `PENDING_REVIEW` y se limpian las observaciones), listado propio en todos los estados (`GET /recipes/mine`), feed paginado (`/recipes/feed`), búsqueda (`/recipes/search`, con porcentaje y desglose de ingredientes coincidentes/faltantes), detalle (`GET /recipes/:id` devuelve también `ingredients`, `steps`, la `userReaction` y si la tiene guardada (`isBookmarked`) quien consulta; las recetas no publicadas responden 404 salvo para su autor y el admin) y borrado.
+- `recipes`: alta de recetas (solo `CONTRIBUTOR` y `ADMIN`; las del colaborador nacen en `PENDING_REVIEW`, las del admin se publican directo), edición solo por su autor (`PATCH /recipes/:id`; el admin modera aprobando, devolviendo o eliminando, no edita contenido ajeno; lo editado por un colaborador vuelve a `PENDING_REVIEW` y se limpian las observaciones), listado propio en todos los estados (`GET /recipes/mine`), feed paginado (`/recipes/feed`), búsqueda (`/recipes/search`, con porcentaje y desglose de ingredientes coincidentes/faltantes), detalle (`GET /recipes/:id` devuelve también `ingredients`, `steps`, la `userReaction` y si la tiene guardada (`isBookmarked`) quien consulta; las recetas no publicadas responden 404 salvo para su autor y el admin) y borrado.
 - `interactions`: reacciones (`LIKE`, `YUMMY`, `TRIED_IT`), guardados (`GET /interactions/bookmarks` incluye el autor de cada receta) y comentarios con un nivel de hilo.
-- `moderation` (solo `ADMIN`): `GET /moderation/recipes/pending` lista las recetas en revisión (más antiguas primero) y `PATCH /moderation/recipes/:id` con `{ "decision": "APPROVE" }` las publica o con `{ "decision": "RETURN", "notes": "..." }` las devuelve a `DRAFT` con observaciones en `reviewNotes`. `GET /moderation/users?q=` busca usuarios por nombre o correo y `PATCH /moderation/users/:id/role` con `{ "role": "CONTRIBUTOR" | "USER" }` otorga o retira el rol de colaborador (no modifica cuentas `ADMIN`).
+- `contributor-requests` (sesión): `GET /contributor-requests/mine` devuelve `{ request }` con la solicitud más reciente o `null`; `POST /contributor-requests` con `{ "acceptedGuidelines": true, "motivation"?: "..." }` la crea (solo rol `USER`, una pendiente a la vez).
+- `moderation` (solo `ADMIN`): `GET /moderation/recipes/pending` lista las recetas en revisión (más antiguas primero), `GET /moderation/recipes/published?q=` lista las publicadas más recientes (máx. 50, filtro por título) para eliminarlas con `DELETE /recipes/:id`, y `PATCH /moderation/recipes/:id` con `{ "decision": "APPROVE" }` las publica o con `{ "decision": "RETURN", "notes": "..." }` las devuelve a `DRAFT` con observaciones en `reviewNotes`. `GET /moderation/users?q=` busca usuarios por nombre o correo y `PATCH /moderation/users/:id/role` con `{ "role": "CONTRIBUTOR" | "USER" }` otorga o retira el rol de colaborador (no modifica cuentas `ADMIN`). `GET /moderation/contributor-requests` lista las solicitudes pendientes con su usuario y `PATCH /moderation/contributor-requests/:id` con `{ "decision": "APPROVE" }` otorga el rol `CONTRIBUTOR` en la misma transacción, o con `{ "decision": "REJECT", "notes"?: "..." }` la rechaza con un motivo visible para el usuario.
+
+- `media` (`CONTRIBUTOR` y `ADMIN`): `POST /media/recipe-images` con `{ "contentType": "image/webp" | "image/jpeg", "size": <bytes> }` (máx. 3 MB) devuelve `uploadUrl` (URL prefirmada de R2, válida 5 minutos, que firma tipo y tamaño) y `publicUrl`. `recipes` solo acepta un `coverImageUrl` que empiece por `R2_PUBLIC_URL/recipes/`; `null` quita la foto al editar.
+
+### Fotos de recetas (Cloudflare R2)
+
+El navegador reduce la foto a 1600 px por lado y la codifica en WebP (JPEG si no hay WebP), pide la URL prefirmada al backend y la sube directo al bucket con `PUT`; el backend nunca recibe el archivo. Las fotos se sirven desde el dominio público del bucket. Variables: `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY` (token "Object Read & Write" limitado al bucket), `R2_BUCKET` y `R2_PUBLIC_URL` (sin barra final). El bucket necesita una política CORS que permita `PUT` con el encabezado `Content-Type` desde el origen del frontend (`https://memoriadelcomal.com` y `http://localhost:3000`). Al cambiar o quitar una foto, el archivo anterior queda en el bucket.
 
 Configuración por entorno validada al arrancar en `backend/src/config/env.validation.ts`; el consumo se hace con `configService.getOrThrow(...)`. No se queman valores en el código.
 
@@ -204,6 +212,7 @@ Esquema en `backend/src/database/schema/schema.ts`:
 4. `recipe_reactions`: unicidad usuario-receta e índices de agregación.
 5. `recipe_bookmarks`: recetario personal con unicidad usuario-receta.
 6. `recipe_comments`: un nivel de respuestas (`parent_id`) e índices cronológicos.
+7. `contributor_requests`: solicitudes del rol de colaborador (`PENDING`, `APPROVED`, `REJECTED`) con motivación, motivo de rechazo, quién y cuándo la revisó. Un índice único parcial permite una sola solicitud pendiente por usuario.
 
 ## Convenciones del proyecto
 
@@ -226,8 +235,8 @@ Proyecto `athletic-celebration`, región `us-west2` (la misma de Postgres), tres
 | `web` (Next.js) | `pnpm --filter frontend build` | `pnpm --filter frontend start` | `/` | `memoriadelcomal.com` |
 | `Postgres` | imagen de Railway | | | |
 
-- `api`: `NODE_ENV=production` (cookie `secure`, sin `dev-login`), `DATABASE_URL=${{Postgres.DATABASE_URL}}` con `DATABASE_SSL=false` (red privada), `JWT_SECRET` propio de producción, `FRONTEND_URL=https://memoriadelcomal.com` y `GOOGLE_CALLBACK_URL=https://api.memoriadelcomal.com/api/auth/google/callback`. Railway inyecta `PORT`.
+- `api`: `NODE_ENV=production` (cookie `secure`, sin `dev-login`), `DATABASE_URL=${{Postgres.DATABASE_URL}}` con `DATABASE_SSL=false` (red privada), `JWT_SECRET` propio de producción, `FRONTEND_URL=https://memoriadelcomal.com` `GOOGLE_CALLBACK_URL=https://api.memoriadelcomal.com/api/auth/google/callback` y las `R2_*` con `R2_PUBLIC_URL=https://img.memoriadelcomal.com`. Railway inyecta `PORT`.
 - `web`: `NEXT_PUBLIC_API_URL=https://api.memoriadelcomal.com/api` (se lee en el build).
 - Frontend y API comparten dominio, así que la cookie de sesión (`sameSite: lax`) funciona sin cambios. Usar el dominio sin `www`: CORS acepta un solo origen.
-- DNS en Cloudflare en modo "DNS only". Cada push a `main` redespliega los servicios cuyos archivos cambiaron.
+- DNS en Cloudflare en modo "DNS only". El push a `main` no despliega solo: después se lanza `railway service redeploy --service <api|web> --from-source --yes`.
 - Las migraciones se aplican desde local con `pnpm --filter backend db:migrate` antes de desplegar.

@@ -46,7 +46,7 @@ El backend no arranca sin un `.env` válido. El contrato está en `backend/src/c
 - Plantilla: `backend/.env.example`. Para preparar local, copiar a `backend/.env` y llenar valores reales.
 - Al agregar una variable: sumarla a `EnvironmentVariables` con su validador, documentarla en `.env.example` y leerla con `getOrThrow`.
 
-Variables actuales: `NODE_ENV`, `PORT`, `DATABASE_URL`, `DATABASE_SSL`, `JWT_SECRET`, `JWT_EXPIRES_IN`, `FRONTEND_URL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_CALLBACK_URL`.
+Variables actuales: `NODE_ENV`, `PORT`, `DATABASE_URL`, `DATABASE_SSL`, `JWT_SECRET`, `JWT_EXPIRES_IN`, `FRONTEND_URL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_CALLBACK_URL`, `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `R2_PUBLIC_URL`.
 
 ## Estructura del backend
 
@@ -62,11 +62,13 @@ backend/src/
     recipes/                   CRUD de recetas y búsqueda por ingredientes
     interactions/              reacciones y comentarios (1 nivel de hilo)
     moderation/                validación de recetas pendientes (solo ADMIN)
+    media/                     URL prefirmada para subir fotos a Cloudflare R2
+    contributor-requests/      solicitud del rol de colaborador (lado del usuario)
 ```
 
 Prefijo global de la API: `/api`. Auth por cookie `jwt` HTTP-only (o `Authorization: Bearer`). Roles: `USER`, `CONTRIBUTOR`, `ADMIN`. `POST /api/auth/dev-login` solo funciona con `NODE_ENV=development`.
 
-Flujo de moderación (regla 4.3.4.a): `POST /api/recipes` exige rol `CONTRIBUTOR` o `ADMIN`; lo del colaborador nace en `PENDING_REVIEW` y no aparece en feed ni búsqueda hasta que el admin lo aprueba en `PATCH /api/moderation/recipes/:id` (`APPROVE` publica, `RETURN` regresa a `DRAFT` con `reviewNotes`). El autor corrige y reenvía con `PATCH /api/recipes/:id` (vuelve a `PENDING_REVIEW` y limpia `reviewNotes`) y ve todas las suyas en `GET /api/recipes/mine`. El admin otorga o retira `CONTRIBUTOR` con `PATCH /api/moderation/users/:id/role`; el rol se relee de BD en cada petición (`JwtStrategy.validate`), así que aplica sin reloguear. Rutas solo-admin: `@UseGuards(JwtAuthGuard, RolesGuard)` + `@Roles('ADMIN')`. Rutas públicas que se enriquecen con la sesión (p. ej. `GET /recipes/:id`): `@UseGuards(OptionalJwtAuthGuard)`, que deja pasar al invitado con `user` nulo.
+Flujo de moderación (regla 4.3.4.a): `POST /api/recipes` exige rol `CONTRIBUTOR` o `ADMIN`; lo del colaborador nace en `PENDING_REVIEW` y no aparece en feed ni búsqueda hasta que el admin lo aprueba en `PATCH /api/moderation/recipes/:id` (`APPROVE` publica, `RETURN` regresa a `DRAFT` con `reviewNotes`). Solo el autor edita: el admin no edita contenido ajeno, lo retira con `DELETE /api/recipes/:id` (pestaña "Publicadas" de `/moderation` o botón en el detalle). El autor corrige y reenvía con `PATCH /api/recipes/:id` (vuelve a `PENDING_REVIEW` y limpia `reviewNotes`) y ve todas las suyas en `GET /api/recipes/mine`. El usuario pide el rol desde su perfil (`POST /api/contributor-requests`, aceptando las normas de contenido; una pendiente a la vez) y el admin la resuelve en `PATCH /api/moderation/contributor-requests/:id` (`APPROVE` otorga `CONTRIBUTOR`). El admin también otorga o retira `CONTRIBUTOR` directo con `PATCH /api/moderation/users/:id/role`; el rol se relee de BD en cada petición (`JwtStrategy.validate`), así que aplica sin reloguear. Rutas solo-admin: `@UseGuards(JwtAuthGuard, RolesGuard)` + `@Roles('ADMIN')`. Fotos (R2): el navegador comprime a WebP 1600px (`recipe-compose/lib/compressImage.ts`), pide `POST /api/media/recipe-images` y sube directo al bucket; `RecipesService` rechaza un `coverImageUrl` que no sea de `R2_PUBLIC_URL`. Rutas públicas que se enriquecen con la sesión (p. ej. `GET /recipes/:id`): `@UseGuards(OptionalJwtAuthGuard)`, que deja pasar al invitado con `user` nulo.
 
 ## Estructura del frontend
 
@@ -74,7 +76,7 @@ Vertical Slice Architecture. Cada slice en `src/features/<slice>/` con `api/`, `
 
 ## Base de datos
 
-PostgreSQL 16+ con SSL forzado en entornos gestionados (`DATABASE_SSL=true`). Tablas: `users`, `recipes`, `ingredients` + `recipe_ingredients` (N:M para la búsqueda), `recipe_reactions`, `recipe_bookmarks`, `recipe_comments`. `recipes.source_type` distingue `REFERENCE` (documental), `INTERVIEW` (campo) y `COMMUNITY` (colaborador); nunca marcar como `INTERVIEW` algo que no salió de una entrevista real. El seed (`backend/src/database/seed/`) corre fuera de Nest con `requireEnv()` y publica con cuentas de demostración ficticias `@demo.invalid`. Migraciones con `drizzle-kit`; los metadatos en `backend/drizzle/meta/` están en `.gitignore`.
+PostgreSQL 16+ con SSL forzado en entornos gestionados (`DATABASE_SSL=true`). Tablas: `users`, `recipes`, `ingredients` + `recipe_ingredients` (N:M para la búsqueda), `recipe_reactions`, `recipe_bookmarks`, `recipe_comments`, `contributor_requests`. `recipes.source_type` distingue `REFERENCE` (documental), `INTERVIEW` (campo) y `COMMUNITY` (colaborador); nunca marcar como `INTERVIEW` algo que no salió de una entrevista real. El seed (`backend/src/database/seed/`) corre fuera de Nest con `requireEnv()` y publica con cuentas de demostración ficticias `@demo.invalid`. Migraciones con `drizzle-kit`; los SQL y `backend/drizzle/meta/` (snapshots y `_journal.json`, que `db:migrate` necesita) se versionan. `backend/.env` local apunta a la base de producción en Railway: `db:migrate` desde local aplica en producción.
 
 ## Flujo de trabajo esperado
 

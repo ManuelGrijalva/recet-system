@@ -3,13 +3,16 @@ import Link from 'next/link';
 import { RecipeCardAuthor } from './RecipeCardAuthor';
 import { RecipeMetaTags } from './RecipeMetaTags';
 import { RecipeCardActions } from './RecipeCardActions';
+import type { ReactionType } from '@/features/reactions';
 import type { FeedRecipe } from '../types';
 
 interface RecipeCardProps {
   recipe: FeedRecipe;
+  // Reaccion propia, si el usuario tiene sesion
+  userReaction?: ReactionType | null;
 }
 
-export function RecipeCard({ recipe }: RecipeCardProps): React.JSX.Element {
+export function RecipeCard({ recipe, userReaction = null }: RecipeCardProps): React.JSX.Element {
   const totalTimeMinutes = recipe.prepTimeMinutes + recipe.cookTimeMinutes;
 
   return (
@@ -47,6 +50,8 @@ export function RecipeCard({ recipe }: RecipeCardProps): React.JSX.Element {
         recipeId={recipe.id}
         title={recipe.title}
         reactionCounts={recipe.reactionCounts}
+        commentsCount={recipe.commentsCount}
+        userReaction={userReaction}
       />
     </article>
   );

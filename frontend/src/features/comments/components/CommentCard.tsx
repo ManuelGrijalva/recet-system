@@ -1,4 +1,6 @@
-import React from 'react';
+'use client';
+
+import React, { useState } from 'react';
 import { Avatar } from '@/shared/components/ui/Avatar';
 import type { CommentData } from '../types';
 import { formatCommentDate } from '../lib/formatCommentDate';
@@ -7,14 +9,17 @@ interface CommentCardProps {
   comment: CommentData;
   variant?: 'root' | 'reply';
   onReply?: () => void;
+  onDelete?: () => void;
 }
 
 export function CommentCard({
   comment,
   variant = 'root',
   onReply,
+  onDelete,
 }: CommentCardProps): React.JSX.Element {
   const isReply = variant === 'reply';
+  const [confirming, setConfirming] = useState(false);
 
   return (
     <div className="flex items-start gap-2.5">
@@ -48,15 +53,37 @@ export function CommentCard({
         <p className="text-xs text-zinc-700 dark:text-zinc-300 leading-relaxed">
           {comment.content}
         </p>
-        {onReply && (
-          <div className="mt-2">
-            <button
-              type="button"
-              onClick={onReply}
-              className="text-[11px] font-medium text-zinc-500 hover:text-zinc-950 dark:hover:text-zinc-100"
-            >
-              Responder
-            </button>
+        {(onReply || onDelete) && (
+          <div className="mt-2 flex items-center gap-3">
+            {onReply && (
+              <button
+                type="button"
+                onClick={onReply}
+                className="text-[11px] font-medium text-zinc-500 hover:text-zinc-950 dark:hover:text-zinc-100"
+              >
+                Responder
+              </button>
+            )}
+            {onDelete &&
+              (confirming ? (
+                <span className="flex items-center gap-2 text-[11px]">
+                  <span className="text-zinc-500">{isReply ? '¿Eliminar?' : '¿Eliminar con sus respuestas?'}</span>
+                  <button type="button" onClick={onDelete} className="font-semibold text-zinc-900 dark:text-zinc-100 hover:underline">
+                    Sí, eliminar
+                  </button>
+                  <button type="button" onClick={() => setConfirming(false)} className="text-zinc-500 hover:underline">
+                    Cancelar
+                  </button>
+                </span>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setConfirming(true)}
+                  className="text-[11px] font-medium text-zinc-500 hover:text-zinc-950 dark:hover:text-zinc-100"
+                >
+                  Eliminar
+                </button>
+              ))}
           </div>
         )}
       </div>

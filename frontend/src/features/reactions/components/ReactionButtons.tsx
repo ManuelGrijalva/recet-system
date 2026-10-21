@@ -1,6 +1,8 @@
 'use client';
 
 import React from 'react';
+import { useRouter } from 'next/navigation';
+import { useSession } from '@/shared/session';
 import {
   CheckCircleIcon,
   EmojiHappyIcon,
@@ -15,6 +17,7 @@ interface ReactionButtonsProps {
   recipeId: string;
   initialStats: ReactionCounts;
   initialUserReaction?: ReactionType | null;
+  compact?: boolean;
 }
 
 const ICON_SIZE = 'w-3.5 h-3.5';
@@ -23,7 +26,10 @@ export function ReactionButtons({
   recipeId,
   initialStats,
   initialUserReaction = null,
+  compact = false,
 }: ReactionButtonsProps): React.JSX.Element {
+  const router = useRouter();
+  const { status } = useSession();
   const { stats, userReaction, isPending, toggle } = useReactions({
     recipeId,
     initialStats,
@@ -51,7 +57,8 @@ export function ReactionButtons({
           count={btn.count}
           active={userReaction === btn.type}
           disabled={isPending}
-          onClick={() => toggle(btn.type)}
+          compact={compact}
+          onClick={() => (status === 'guest' ? router.push('/login') : toggle(btn.type))}
         />
       ))}
     </div>

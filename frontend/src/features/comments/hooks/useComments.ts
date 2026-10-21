@@ -4,6 +4,7 @@ import { useCallback, useMemo, useState } from 'react';
 import type { AuthorSummary } from '@/shared/types';
 import { useSession } from '@/shared/session';
 import { addComment } from '../api/addComment';
+import { deleteComment } from '../api/deleteComment';
 import type { CommentData } from '../types';
 
 interface UseCommentsParams {
@@ -17,6 +18,8 @@ interface UseCommentsResult {
   setReplyingToId: (id: string | null) => void;
   addRootComment: (content: string) => void;
   addReply: (parentId: string, content: string) => void;
+  canDelete: (comment: CommentData) => boolean;
+  removeComment: (commentId: string) => void;
 }
 
 function draftComment(
@@ -115,11 +118,31 @@ export function useComments({
     [recipeId, author],
   );
 
+  // El autor borra lo suyo; el admin puede retirar cualquier comentario
+  const canDelete = useCallback(
+    (comment: CommentData) =>
+      user !== null && !comment.id.startsWith('temp-') && (comment.author.id === user.id || user.role === 'ADMIN'),
+    [user],
+  );
+
+  const removeComment = useCallback((commentId: string) => {
+    let previous: CommentData[] = [];
+    setComments((prev) => {
+      previous = prev;
+      return prev
+        .filter((c) => c.id !== commentId)
+        .map((c) => ({ ...c, replies: c.replies?.filter((r) => r.id !== commentId) }));
+    });
+    deleteComment(commentId).catch(() => setComments(previous));
+  }, []);
+
   return {
     comments,
     replyingToId,
     setReplyingToId,
     addRootComment,
     addReply,
+    canDelete,
+    removeComment,
   };
 }

@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useSession } from '@/shared/session';
+import { useMyReactions } from '@/features/reactions';
 import { useRecipeFeed } from '../hooks/useRecipeFeed';
 import type { FeedMode } from '../types';
 import { FeedHeader } from './FeedHeader';
@@ -11,6 +12,7 @@ export function RecipeFeedScreen(): React.JSX.Element {
   const { status } = useSession();
   const [mode, setMode] = useState<FeedMode>('all');
   const { recipes, isLoading, error } = useRecipeFeed({}, mode);
+  const myReactions = useMyReactions(recipes.map((r) => r.id));
 
   return (
     <div className="space-y-6">
@@ -33,7 +35,7 @@ export function RecipeFeedScreen(): React.JSX.Element {
       ) : (
         <div className="space-y-6">
           {recipes.map((recipe) => (
-            <RecipeCard key={recipe.id} recipe={recipe} />
+            <RecipeCard key={recipe.id} recipe={recipe} userReaction={myReactions[recipe.id] ?? null} />
           ))}
         </div>
       )}

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Avatar } from '@/shared/components/ui/Avatar';
 import { ROLE_LABELS, useSession } from '@/shared/session';
 import { RecipeCard } from '@/features/recipe-feed';
+import { useMyReactions } from '@/features/reactions';
 import { usePublicProfile } from '../hooks/usePublicProfile';
 import { FollowButton } from './FollowButton';
 
@@ -22,6 +23,7 @@ function Stat({ value, label }: { value: number; label: string }): React.JSX.Ele
 export function UserProfileScreen({ userId }: { userId: string }): React.JSX.Element {
   const { profile, recipes, isLoading, error, isToggling, followError, follow } = usePublicProfile(userId);
   const { user, status } = useSession();
+  const myReactions = useMyReactions(recipes.map((r) => r.id));
 
   if (isLoading) {
     return <p className="text-xs text-zinc-500 dark:text-zinc-400">Cargando perfil...</p>;
@@ -78,7 +80,9 @@ export function UserProfileScreen({ userId }: { userId: string }): React.JSX.Ele
             <p className="text-xs text-zinc-500">Todavía no ha publicado recetas.</p>
           </div>
         ) : (
-          recipes.map((recipe) => <RecipeCard key={recipe.id} recipe={recipe} />)
+          recipes.map((recipe) => (
+            <RecipeCard key={recipe.id} recipe={recipe} userReaction={myReactions[recipe.id] ?? null} />
+          ))
         )}
       </section>
     </div>

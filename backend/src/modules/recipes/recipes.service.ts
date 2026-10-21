@@ -21,6 +21,7 @@ import { UserRole } from '../../common/decorators/roles.decorator';
 import { AuthenticatedUser } from '../../common/decorators/current-user.decorator';
 import { RecipeStepInstruction } from '../../database/schema';
 import { MediaService } from '../media/media.service';
+import { IngredientCatalogService } from '../ingredients/ingredient-catalog.service';
 
 export interface FeedRecipeItem {
   id: string;
@@ -66,6 +67,7 @@ export class RecipesService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly mediaService: MediaService,
+    private readonly ingredientCatalog: IngredientCatalogService,
   ) {}
 
   // Rechaza portadas que no salieron de nuestra subida a R2
@@ -171,10 +173,13 @@ export class RecipesService {
     const offset = (page - 1) * limit;
 
     if (dto.ingredients && dto.ingredients.trim().length > 0) {
-      const availableList = dto.ingredients
-        .split(',')
-        .map((s) => s.trim().toLowerCase())
-        .filter((s) => s.length > 0);
+      // Sinonimos, plurales y errores de escritura se traducen al nombre oficial (RR-03)
+      const availableList = await this.ingredientCatalog.resolveNames(
+        dto.ingredients
+          .split(',')
+          .map((s) => s.trim())
+          .filter((s) => s.length > 0),
+      );
 
       if (availableList.length > 0) {
         // Obtenemos los id de los ingredientes coincidentes

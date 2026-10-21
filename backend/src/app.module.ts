@@ -10,6 +10,7 @@ import { ModerationModule } from './modules/moderation/moderation.module';
 import { MediaModule } from './modules/media/media.module';
 import { ContributorRequestsModule } from './modules/contributor-requests/contributor-requests.module';
 import { ExportsModule } from './modules/exports/exports.module';
+import { IngredientsModule } from './modules/ingredients/ingredients.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { ExportsModule } from './modules/exports/exports.module';
     MediaModule,
     ContributorRequestsModule,
     ExportsModule,
+    IngredientsModule,
   ],
 })
 export class AppModule {}

@@ -9,6 +9,7 @@ import { InteractionsModule } from './modules/interactions/interactions.module';
 import { ModerationModule } from './modules/moderation/moderation.module';
 import { MediaModule } from './modules/media/media.module';
 import { ContributorRequestsModule } from './modules/contributor-requests/contributor-requests.module';
+import { ExportsModule } from './modules/exports/exports.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ContributorRequestsModule } from './modules/contributor-requests/contri
     ModerationModule,
     MediaModule,
     ContributorRequestsModule,
+    ExportsModule,
   ],
 })
 export class AppModule {}

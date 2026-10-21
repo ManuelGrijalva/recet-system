@@ -7,11 +7,13 @@ import {
   HttpStatus,
   Param,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { InteractionsService, CommentWithAuthor } from './interactions.service';
 import { ToggleReactionDto } from './dto/reaction.dto';
 import { CreateCommentDto } from './dto/comment.dto';
+import { MyReactionsDto } from './dto/my-reactions.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { CurrentUser, AuthenticatedUser } from '../../common/decorators/current-user.decorator';
 
@@ -20,6 +22,16 @@ export class InteractionsController {
   constructor(private readonly interactionsService: InteractionsService) {}
 
   // 1. REACCIONES
+  // Fuera de /recipes para que el service worker no guarde datos de la sesion
+  @Get('reactions/mine')
+  @UseGuards(JwtAuthGuard)
+  async getMyReactions(
+    @CurrentUser() user: AuthenticatedUser,
+    @Query() query: MyReactionsDto,
+  ): Promise<Record<string, 'LIKE' | 'YUMMY' | 'TRIED_IT'>> {
+    return this.interactionsService.getMyReactions(user.id, query.recipeIds.split(','));
+  }
+
   @Post('recipes/:recipeId/reactions')
   @UseGuards(JwtAuthGuard)
   async toggleReaction(

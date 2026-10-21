@@ -4,7 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { and, asc, desc, eq } from 'drizzle-orm';
+import { and, asc, desc, eq, inArray, or } from 'drizzle-orm';
 import { DatabaseService } from '../../database/database.service';
 import {
   recipeBookmarks,
@@ -84,6 +84,19 @@ export class InteractionsService {
   /**
    * Alternar guardado (Bookmark) para coleccion privada de recetas.
    */
+  // Reaccion del usuario en cada receta visible, para resaltarla en el feed
+  async getMyReactions(
+    userId: string,
+    recipeIds: string[],
+  ): Promise<Record<string, 'LIKE' | 'YUMMY' | 'TRIED_IT'>> {
+    if (recipeIds.length === 0) return {};
+    const rows = await this.databaseService.db
+      .select({ recipeId: recipeReactions.recipeId, type: recipeReactions.type })
+      .from(recipeReactions)
+      .where(and(eq(recipeReactions.userId, userId), inArray(recipeReactions.recipeId, recipeIds)));
+    return Object.fromEntries(rows.map((r) => [r.recipeId, r.type]));
+  }
+
   async toggleBookmark(
     userId: string,
     recipeId: string,
@@ -279,6 +292,9 @@ export class InteractionsService {
       throw new ForbiddenException('No tienes permiso para eliminar este comentario');
     }
 
-    await db.delete(recipeComments).where(eq(recipeComments.id, commentId));
+    // Al borrar un comentario principal se van tambien sus respuestas
+    await db
+      .delete(recipeComments)
+      .where(or(eq(recipeComments.id, commentId), eq(recipeComments.parentId, commentId)));
   }
 }

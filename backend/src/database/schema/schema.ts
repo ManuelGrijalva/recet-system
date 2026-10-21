@@ -78,6 +78,9 @@ export const users = pgTable(
     name: text('name').notNull(),
     avatarUrl: text('avatar_url'),
     phone: text('phone'), // Editable y privado
+    // Presentacion corta y foto de portada del perfil publico
+    bio: text('bio'),
+    coverImageUrl: text('cover_image_url'),
     role: userRoleEnum('role').default('USER').notNull(),
     createdAt: timestamp('created_at', { withTimezone: true })
       .defaultNow()

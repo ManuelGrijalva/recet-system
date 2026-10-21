@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { RecipeImageType, RequestImageUploadDto } from './dto/request-image-upload.dto';
+import { RequestProfileImageUploadDto } from './dto/request-profile-image-upload.dto';
 
 export interface ImageUploadTicket {
   uploadUrl: string;
@@ -45,7 +46,18 @@ export class MediaService {
     userId: string,
     dto: RequestImageUploadDto,
   ): Promise<ImageUploadTicket> {
-    const key = `recipes/${userId}/${randomUUID()}.${EXTENSIONS[dto.contentType]}`;
+    return this.sign(`recipes/${userId}/${randomUUID()}.${EXTENSIONS[dto.contentType]}`, dto);
+  }
+
+  // Foto de perfil o portada, siempre bajo la carpeta del propio usuario
+  async createProfileImageUpload(
+    userId: string,
+    dto: RequestProfileImageUploadDto,
+  ): Promise<ImageUploadTicket> {
+    return this.sign(`users/${userId}/${dto.kind}-${randomUUID()}.${EXTENSIONS[dto.contentType]}`, dto);
+  }
+
+  private async sign(key: string, dto: RequestImageUploadDto): Promise<ImageUploadTicket> {
     const command = new PutObjectCommand({
       Bucket: this.bucket,
       Key: key,
@@ -69,5 +81,10 @@ export class MediaService {
   // Solo se aceptan portadas alojadas en nuestro bucket
   isOwnRecipeImage(url: string): boolean {
     return url.startsWith(`${this.publicUrl}/recipes/`);
+  }
+
+  // Una foto de perfil solo puede venir de la carpeta de ese usuario
+  isOwnProfileImage(url: string, userId: string): boolean {
+    return url.startsWith(`${this.publicUrl}/users/${userId}/`);
   }
 }

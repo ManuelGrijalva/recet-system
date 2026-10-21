@@ -8,6 +8,8 @@ import {
   uniqueIndex,
   index,
   jsonb,
+  primaryKey,
+  check,
 } from 'drizzle-orm/pg-core';
 import { relations, sql } from 'drizzle-orm';
 
@@ -319,6 +321,31 @@ export const contributorRequests = pgTable(
     uniqueIndex('contributor_requests_one_pending_idx')
       .on(table.userId)
       .where(sql`${table.status} = 'PENDING'`),
+  ],
+);
+
+/**
+ * Seguimiento entre usuarios (alcance e: seguir a otros usuarios)
+ * La pareja seguidor-seguido es la clave; nadie puede seguirse a si mismo.
+ */
+export const userFollows = pgTable(
+  'user_follows',
+  {
+    followerId: uuid('follower_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    followedId: uuid('followed_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.followerId, table.followedId] }),
+    // Contar seguidores de un autor
+    index('user_follows_followed_id_idx').on(table.followedId),
+    check('user_follows_not_self', sql`${table.followerId} <> ${table.followedId}`),
   ],
 );
 

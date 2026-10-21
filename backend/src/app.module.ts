@@ -11,6 +11,7 @@ import { MediaModule } from './modules/media/media.module';
 import { ContributorRequestsModule } from './modules/contributor-requests/contributor-requests.module';
 import { ExportsModule } from './modules/exports/exports.module';
 import { IngredientsModule } from './modules/ingredients/ingredients.module';
+import { FollowsModule } from './modules/follows/follows.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { IngredientsModule } from './modules/ingredients/ingredients.module';
     ContributorRequestsModule,
     ExportsModule,
     IngredientsModule,
+    FollowsModule,
   ],
 })
 export class AppModule {}

@@ -108,9 +108,19 @@ export class RecipesService {
     return this.getById(newRecipe.id);
   }
 
-  async getFeed(page = 1, limit = 10): Promise<{ items: FeedRecipeItem[]; total: number }> {
+  // authorIds limita el feed a ciertos autores (perfil publico o "Siguiendo")
+  async getFeed(
+    page = 1,
+    limit = 10,
+    authorIds?: string[],
+  ): Promise<{ items: FeedRecipeItem[]; total: number }> {
     const db = this.databaseService.db;
     const offset = (page - 1) * limit;
+    if (authorIds && authorIds.length === 0) return { items: [], total: 0 };
+    const visible = and(
+      eq(recipes.status, 'PUBLISHED'),
+      authorIds ? inArray(recipes.authorId, authorIds) : undefined,
+    );
 
     // Consulta optimizada aprovechando el indice compuesto (status, created_at desc)
     const publishedRecipes = await db
@@ -124,7 +134,7 @@ export class RecipesService {
       })
       .from(recipes)
       .innerJoin(users, eq(recipes.authorId, users.id))
-      .where(eq(recipes.status, 'PUBLISHED'))
+      .where(visible)
       .orderBy(desc(recipes.createdAt))
       .limit(limit)
       .offset(offset);
@@ -157,7 +167,7 @@ export class RecipesService {
     const [totalRow] = await db
       .select({ count: sql<number>`count(*)::int` })
       .from(recipes)
-      .where(eq(recipes.status, 'PUBLISHED'));
+      .where(visible);
 
     return { items, total: totalRow ? totalRow.count : 0 };
   }

@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { eq } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 import { DatabaseService } from '../../database/database.service';
-import { users } from '../../database/schema';
+import { recipes, users } from '../../database/schema';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 
 export interface UserPrivateProfile {
@@ -21,6 +21,14 @@ export interface UserPublicProfile {
   avatarUrl: string | null;
   role: 'USER' | 'CONTRIBUTOR' | 'ADMIN';
   createdAt: Date;
+}
+
+// Perfil publico con su actividad, para la pagina /user/:id
+export interface UserPublicProfileView extends UserPublicProfile {
+  publishedRecipesCount: number;
+  followersCount: number;
+  followingCount: number;
+  isFollowing: boolean;
 }
 
 @Injectable()
@@ -59,6 +67,14 @@ export class UsersService {
     }
 
     return user;
+  }
+
+  async countPublishedRecipes(authorId: string): Promise<number> {
+    const [row] = await this.databaseService.db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(recipes)
+      .where(and(eq(recipes.authorId, authorId), eq(recipes.status, 'PUBLISHED')));
+    return row?.count ?? 0;
   }
 
   async updateProfile(

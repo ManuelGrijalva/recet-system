@@ -36,3 +36,6 @@ export interface RecipeFeedQuery {
   page?: number;
   limit?: number;
 }
+
+// all: toda la comunidad; following: solo autores que sigue el usuario
+export type FeedMode = 'all' | 'following';

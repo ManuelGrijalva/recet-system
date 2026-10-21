@@ -1,16 +1,12 @@
 import React from 'react';
 import Link from 'next/link';
-import {
-  BookmarkIcon,
-  CheckCircleIcon,
-  EmojiHappyIcon,
-  ShareIcon,
-  ThumbUpIcon,
-} from '@/shared/components/ui/icons';
+import { CheckCircleIcon, EmojiHappyIcon, ThumbUpIcon } from '@/shared/components/ui/icons';
+import { ShareRecipeButton } from '@/features/recipe-share';
 import type { ReactionCounts } from '@/shared/types';
 
 interface RecipeCardActionsProps {
   recipeId: string;
+  title: string;
   reactionCounts: ReactionCounts;
 }
 
@@ -36,6 +32,7 @@ function Stat({
  */
 export function RecipeCardActions({
   recipeId,
+  title,
   reactionCounts,
 }: RecipeCardActionsProps): React.JSX.Element {
   return (
@@ -50,22 +47,7 @@ export function RecipeCardActions({
         <Stat icon={<CheckCircleIcon />} label={`La preparé (${reactionCounts.triedIt})`} />
       </Link>
 
-      <div className="flex items-center gap-1">
-        <button
-          type="button"
-          className="p-2 rounded-md text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-50 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
-          aria-label="Guardar en recetario"
-        >
-          <BookmarkIcon />
-        </button>
-        <button
-          type="button"
-          className="p-2 rounded-md text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-50 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
-          aria-label="Compartir receta"
-        >
-          <ShareIcon />
-        </button>
-      </div>
+      <ShareRecipeButton recipeId={recipeId} title={title} />
     </div>
   );
 }

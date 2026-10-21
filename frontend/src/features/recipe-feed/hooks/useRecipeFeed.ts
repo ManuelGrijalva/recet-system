@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { getRecipeFeed } from '../api/getRecipeFeed';
-import type { FeedRecipe, RecipeFeedQuery } from '../types';
+import { getFollowingFeed } from '../api/getFollowingFeed';
+import type { FeedMode, FeedRecipe, RecipeFeedQuery } from '../types';
 
 interface UseRecipeFeedResult {
   recipes: FeedRecipe[];
@@ -12,7 +13,7 @@ interface UseRecipeFeedResult {
   refetch: () => void;
 }
 
-export function useRecipeFeed(query: RecipeFeedQuery = {}): UseRecipeFeedResult {
+export function useRecipeFeed(query: RecipeFeedQuery = {}, mode: FeedMode = 'all'): UseRecipeFeedResult {
   const { page = 1, limit = 10 } = query;
 
   const [recipes, setRecipes] = useState<FeedRecipe[]>([]);
@@ -25,7 +26,7 @@ export function useRecipeFeed(query: RecipeFeedQuery = {}): UseRecipeFeedResult 
     setIsLoading(true);
     setError(null);
 
-    getRecipeFeed({ page, limit })
+    (mode === 'following' ? getFollowingFeed : getRecipeFeed)({ page, limit })
       .then((data) => {
         if (!active) return;
         setRecipes(data.items);
@@ -42,7 +43,7 @@ export function useRecipeFeed(query: RecipeFeedQuery = {}): UseRecipeFeedResult 
     return () => {
       active = false;
     };
-  }, [page, limit]);
+  }, [page, limit, mode]);
 
   useEffect(() => load(), [load]);
 

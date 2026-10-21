@@ -45,6 +45,7 @@ export function RecipeCard({ recipe }: RecipeCardProps): React.JSX.Element {
 
       <RecipeCardActions
         recipeId={recipe.id}
+        title={recipe.title}
         reactionCounts={recipe.reactionCounts}
       />
     </article>

@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import { Avatar } from '@/shared/components/ui/Avatar';
 import type { RecipeDetail } from '../types';
 
@@ -21,7 +22,7 @@ export function RecipeDetailHeader({
         {recipe.title}
       </h1>
 
-      <div className="flex items-center gap-3 pt-1">
+      <Link href={`/user/${recipe.author.id}`} className="flex items-center gap-3 pt-1 group w-fit">
         <Avatar
           src={recipe.author.avatarUrl}
           alt={recipe.author.name}
@@ -29,7 +30,7 @@ export function RecipeDetailHeader({
           size="md"
         />
         <div>
-          <p className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">
+          <p className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 group-hover:underline">
             {recipe.author.name}
           </p>
           {recipe.author.role && (
@@ -38,7 +39,7 @@ export function RecipeDetailHeader({
             </p>
           )}
         </div>
-      </div>
+      </Link>
 
       {recipe.coverImageUrl && (
         <img

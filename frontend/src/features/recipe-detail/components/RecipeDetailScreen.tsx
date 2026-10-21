@@ -7,6 +7,7 @@ import { ReactionButtons } from '@/features/reactions';
 import { CommentSection } from '@/features/comments';
 import { BookmarkButton } from '@/features/saved-recipes';
 import { RecipePdfButton } from '@/features/recipe-export';
+import { ShareRecipeButton } from '@/features/recipe-share';
 import { useSession } from '@/shared/session';
 import { useRecipeDetail } from '../hooks/useRecipeDetail';
 import { useRecipeComments } from '../hooks/useRecipeComments';
@@ -82,6 +83,7 @@ export function RecipeDetailScreen({
       />
 
       <div className="flex flex-wrap justify-end gap-2">
+        <ShareRecipeButton recipeId={recipe.id} title={recipe.title} variant="button" />
         <RecipePdfButton recipeId={recipe.id} />
         {user?.role === 'ADMIN' && user.id !== recipe.author.id && (
           <AdminDeleteRecipeButton recipeId={recipe.id} />

@@ -1,5 +1,5 @@
 import { apiClient } from '@/shared/lib/apiClient';
-import type { CompressedImage } from '../lib/compressImage';
+import type { CompressedImage } from '@/shared/lib/compressImage';
 import type { ImageUploadTicket } from '../types';
 
 // Pide una URL prefirmada al backend y sube la foto directo a R2; devuelve la URL pública

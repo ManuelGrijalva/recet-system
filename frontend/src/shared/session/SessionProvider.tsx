@@ -9,6 +9,8 @@ interface SessionContextValue {
   status: SessionStatus;
   hasRole: (...roles: UserRole[]) => boolean;
   logout: () => Promise<void>;
+  // Relee /auth/me, por ejemplo tras cambiar la foto de perfil
+  refresh: () => Promise<void>;
 }
 
 const SessionContext = createContext<SessionContextValue | null>(null);
@@ -45,9 +47,15 @@ export function SessionProvider({ children }: { children: React.ReactNode }): Re
     }
   }, []);
 
+  const refresh = useCallback(async () => {
+    const sessionUser = await fetchSessionUser();
+    setUser(sessionUser);
+    setStatus(sessionUser ? 'authenticated' : 'guest');
+  }, []);
+
   const value = useMemo(
-    () => ({ user, status, hasRole, logout }),
-    [user, status, hasRole, logout],
+    () => ({ user, status, hasRole, logout, refresh }),
+    [user, status, hasRole, logout, refresh],
   );
 
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;

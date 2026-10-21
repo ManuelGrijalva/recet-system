@@ -1,4 +1,4 @@
-const MAX_SIDE_PX = 1600;
+const DEFAULT_MAX_SIDE_PX = 1600;
 const WEBP_QUALITY = 0.82;
 const JPEG_QUALITY = 0.85;
 
@@ -11,8 +11,8 @@ function canvasToBlob(canvas: HTMLCanvasElement, type: string, quality: number):
   return new Promise((resolve) => canvas.toBlob(resolve, type, quality));
 }
 
-// Reduce la foto a 1600px por lado y la codifica en WebP (JPEG si el navegador no soporta WebP)
-export async function compressImage(file: File): Promise<CompressedImage> {
+// Reduce la foto al lado maximo indicado y la codifica en WebP (JPEG si el navegador no soporta WebP)
+export async function compressImage(file: File, maxSide = DEFAULT_MAX_SIDE_PX): Promise<CompressedImage> {
   let bitmap: ImageBitmap;
   try {
     bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' });
@@ -20,7 +20,7 @@ export async function compressImage(file: File): Promise<CompressedImage> {
     throw new Error('No se pudo leer la foto. Usa una imagen JPG, PNG o WebP.');
   }
 
-  const scale = Math.min(1, MAX_SIDE_PX / Math.max(bitmap.width, bitmap.height));
+  const scale = Math.min(1, maxSide / Math.max(bitmap.width, bitmap.height));
   const canvas = document.createElement('canvas');
   canvas.width = Math.round(bitmap.width * scale);
   canvas.height = Math.round(bitmap.height * scale);

@@ -5,6 +5,8 @@ export const profileMock: UserProfile = {
   email: 'manuel.grijalva@umg.edu.gt',
   name: 'Manuel Ernesto Grijalva Tenas',
   avatarUrl: null,
+  bio: null,
+  coverImageUrl: null,
   phone: '+502 5555-1234',
   role: 'CONTRIBUTOR',
   createdAt: '2026-08-01T00:00:00.000Z',

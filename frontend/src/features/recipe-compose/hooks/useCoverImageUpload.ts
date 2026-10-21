@@ -3,7 +3,7 @@
 import { useCallback, useState } from 'react';
 import { ApiError } from '@/shared/lib/apiClient';
 import { uploadRecipeImage } from '../api/uploadRecipeImage';
-import { compressImage } from '../lib/compressImage';
+import { compressImage } from '@/shared/lib/compressImage';
 
 interface UseCoverImageUploadResult {
   isUploading: boolean;

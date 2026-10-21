@@ -3,7 +3,7 @@ import React from 'react';
 interface AvatarProps {
   src?: string | null;
   alt: string;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'md' | 'lg' | 'xl';
   fallbackName?: string;
 }
 
@@ -17,6 +17,8 @@ export function Avatar({
     sm: 'w-7 h-7 text-xs',
     md: 'w-9 h-9 text-sm',
     lg: 'w-11 h-11 text-base',
+    // Perfil: foto superpuesta a la portada
+    xl: 'w-20 h-20 sm:w-24 sm:h-24 text-2xl',
   };
 
   const initials = fallbackName

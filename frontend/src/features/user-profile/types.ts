@@ -5,6 +5,8 @@ export interface PublicProfile {
   id: string;
   name: string;
   avatarUrl: string | null;
+  bio: string | null;
+  coverImageUrl: string | null;
   role: UserRole;
   createdAt: string;
   publishedRecipesCount: number;

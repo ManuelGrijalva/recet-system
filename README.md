@@ -126,7 +126,7 @@ recet-system/
 │       ├── common/         Decoradores, filtros y guards
 │       ├── config/         Validación de variables de entorno al arranque
 │       ├── database/       Conexión SSL y esquema Drizzle
-│       └── modules/        auth, users, recipes, interactions, moderation, media, contributor-requests, exports, ingredients
+│       └── modules/        auth, users, recipes, interactions, moderation, media, contributor-requests, exports, ingredients, follows
 ├── frontend/               Web Next.js (App Router)
 │   ├── .env.example        Plantilla de entorno (copiar a frontend/.env.local)
 │   └── src/
@@ -158,7 +158,7 @@ features/<slice>/
 - La capa `api/` llama al backend real y cae a datos semilla con `withFallback`, de modo que la interfaz funciona sin backend levantado.
 - Imports mediante el alias `@/` (`@/features/...`, `@/shared/...`).
 
-Slices: `recipe-feed`, `recipe-detail`, `recipe-compose` (también edita en `/recipe/[id]/edit`), `ingredient-search`, `saved-recipes`, `profile`, `auth`, `comments`, `reactions`, `moderation`, `contributor-request`, `recipe-export` (botones "Descargar PDF" en el detalle y "Descargar mi recetario en PDF" en guardados; son enlaces directos al backend), `my-recipes` (sección "Mis recetas" del perfil para colaboradores y admin: estado, observaciones, editar y eliminar), `offline`. Todas las páginas de `app/` están adelgazadas a un solo `Screen`.
+Slices: `recipe-feed`, `recipe-detail`, `recipe-compose` (también edita en `/recipe/[id]/edit`), `ingredient-search`, `saved-recipes`, `profile`, `auth`, `comments`, `reactions`, `moderation`, `contributor-request`, `user-profile` (perfil público en `/user/[id]` con seguir y sus recetas; se llega tocando el autor), `recipe-share` (compartir con el menú nativo del celular o copiando el enlace), `recipe-export` (botones "Descargar PDF" en el detalle y "Descargar mi recetario en PDF" en guardados; son enlaces directos al backend), `my-recipes` (sección "Mis recetas" del perfil para colaboradores y admin: estado, observaciones, editar y eliminar), `offline`. Todas las páginas de `app/` están adelgazadas a un solo `Screen`.
 
 ### Páginas legales
 
@@ -188,7 +188,8 @@ La web es una aplicación web progresiva: se puede agregar a la pantalla de inic
 Módulos en `backend/src/modules/`, cada uno con `*.controller.ts`, `*.service.ts` y `dto/`:
 
 - `auth`: Google OAuth 2.0, emisión de JWT en cookie HTTP-Only, `dev-login` para desarrollo.
-- `users`: perfil privado (`/users/me`) y público (`/users/:id`); el teléfono es privado y editable.
+- `users`: perfil privado (`/users/me`) y público (`GET /users/:id`, con `publishedRecipesCount`, `followersCount`, `followingCount` e `isFollowing` para quien consulta con sesión); el teléfono es privado y editable.
+- `follows` (alcance e): `POST /users/:id/follow` (sesión) sigue o deja de seguir y devuelve `{ isFollowing, followersCount }`; nadie puede seguirse a sí mismo. `GET /recipes/following` (sesión) es el feed de los autores que sigue y `GET /recipes/author/:authorId` lista las publicadas de un autor; ambos reutilizan `getFeed` con filtro de autores.
 - `recipes`: alta de recetas (solo `CONTRIBUTOR` y `ADMIN`; las del colaborador nacen en `PENDING_REVIEW`, las del admin se publican directo), edición solo por su autor (`PATCH /recipes/:id`; el admin modera aprobando, devolviendo o eliminando, no edita contenido ajeno; lo editado por un colaborador vuelve a `PENDING_REVIEW` y se limpian las observaciones), listado propio en todos los estados (`GET /recipes/mine`), feed paginado (`/recipes/feed`), búsqueda (`/recipes/search`, con porcentaje y desglose de ingredientes coincidentes/faltantes), detalle (`GET /recipes/:id` devuelve también `ingredients`, `steps`, la `userReaction` y si la tiene guardada (`isBookmarked`) quien consulta; las recetas no publicadas responden 404 salvo para su autor y el admin) y borrado.
 - `interactions`: reacciones (`LIKE`, `YUMMY`, `TRIED_IT`), guardados (`GET /interactions/bookmarks` incluye el autor de cada receta) y comentarios con un nivel de hilo.
 - `ingredients` (público): `GET /ingredients` devuelve el catálogo usado por recetas publicadas con su `recipeCount` (los más usados primero) y `GET /ingredients/resolve?terms=a,b` explica cómo se interpreta cada término: `exact`, `synonym` (diccionario de sinónimos regionales en `ingredient-synonyms.ts`, riesgo RR-03), `family` ("queso" abarca "queso seco" y "queso fresco"), `typo` (errores de escritura según el largo de la palabra, solo si hay un único candidato) o `none` (no está en el catálogo, regla de negocio b). Ignora acentos, mayúsculas y plurales. `GET /recipes/search` usa el mismo resolvedor antes de calcular el porcentaje.
@@ -215,6 +216,7 @@ Esquema en `backend/src/database/schema/schema.ts`:
 5. `recipe_bookmarks`: recetario personal con unicidad usuario-receta.
 6. `recipe_comments`: un nivel de respuestas (`parent_id`) e índices cronológicos.
 7. `contributor_requests`: solicitudes del rol de colaborador (`PENDING`, `APPROVED`, `REJECTED`) con motivación, motivo de rechazo, quién y cuándo la revisó. Un índice único parcial permite una sola solicitud pendiente por usuario.
+8. `user_follows`: seguimiento entre usuarios; clave primaria (`follower_id`, `followed_id`), índice por seguido y restricción que impide seguirse a sí mismo.
 
 ## Convenciones del proyecto
 

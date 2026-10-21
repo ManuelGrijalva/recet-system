@@ -1,15 +1,15 @@
-/** Ingredientes tradicionales frecuentes en la cocina de Jutiapa. */
+// Respaldo sin conexion: ingredientes reales del catalogo, los mas usados primero
 export const COMMON_JUTIAPA_INGREDIENTS: string[] = [
-  'Harina de arroz',
-  'Queso artesanal',
-  'Crema fresca de vaca',
-  'Panela / Chancaca',
-  'Canela en raja',
-  'Gallina criolla',
-  'Almidón de yuca',
-  'Pimienta gorda',
-  'Ajonjolí tostado',
-  'Manteca de cerdo',
-  'Huevos de patio',
-  'Clavos de olor',
+  'tomate',
+  'cebolla',
+  'ajo',
+  'canela',
+  'queso seco',
+  'frijol negro',
+  'panela',
+  'masa de maíz',
+  'chile pimiento',
+  'güisquil',
+  'plátano maduro',
+  'pepitoria',
 ];

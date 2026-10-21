@@ -1,6 +1,7 @@
 import React from 'react';
 import { cn } from '@/shared/lib/utils';
 import { CheckCircleIcon } from '@/shared/components/ui/icons';
+import { capitalizeIngredientName } from '../lib/capitalizeIngredientName';
 
 interface IngredientChipsProps {
   options: string[];
@@ -16,7 +17,7 @@ export function IngredientChips({
   return (
     <div className="space-y-2">
       <p className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-        Ingredientes tradicionales comunes
+        Ingredientes más usados en las recetas
       </p>
       <div className="flex flex-wrap gap-2">
         {options.map((ingredient) => {
@@ -35,7 +36,7 @@ export function IngredientChips({
               )}
             >
               {selected && <CheckCircleIcon className="w-3 h-3" />}
-              {ingredient}
+              {capitalizeIngredientName(ingredient)}
             </button>
           );
         })}

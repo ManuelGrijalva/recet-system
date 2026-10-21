@@ -2,13 +2,13 @@
 
 import React from 'react';
 import { useIngredientSearch } from '../hooks/useIngredientSearch';
-import { COMMON_JUTIAPA_INGREDIENTS } from '../lib/commonIngredients';
 import { CustomIngredientForm } from './CustomIngredientForm';
 import { IngredientChips } from './IngredientChips';
 import { MatchResultList } from './MatchResultList';
+import { SelectedIngredients } from './SelectedIngredients';
 
 export function IngredientSearchScreen(): React.JSX.Element {
-  const { results, isLoading, isSelected, toggle, addCustom } =
+  const { selected, quickPicks, catalog, results, isLoading, isAdding, notice, isSelected, toggle, remove, addCustom } =
     useIngredientSearch();
 
   return (
@@ -18,19 +18,26 @@ export function IngredientSearchScreen(): React.JSX.Element {
           Búsqueda inteligente por ingredientes
         </h1>
         <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
-          Selecciona los ingredientes que tienes en tu cocina para saber qué recetas tradicionales puedes preparar de inmediato.
+          Escribe o elige los ingredientes que tienes en tu cocina para saber qué recetas tradicionales puedes preparar. Entendemos nombres regionales, plurales y pequeños errores de escritura.
         </p>
       </div>
 
-      <CustomIngredientForm onAdd={addCustom} />
+      <CustomIngredientForm
+        suggestions={catalog.map((c) => c.name)}
+        isAdding={isAdding}
+        notice={notice}
+        onAdd={addCustom}
+      />
+
+      <SelectedIngredients selected={selected} onRemove={remove} />
 
       <IngredientChips
-        options={COMMON_JUTIAPA_INGREDIENTS}
+        options={quickPicks}
         isSelected={isSelected}
         onToggle={toggle}
       />
 
-      <MatchResultList results={results} isLoading={isLoading} />
+      {selected.length > 0 && <MatchResultList results={results} isLoading={isLoading} />}
     </div>
   );
 }

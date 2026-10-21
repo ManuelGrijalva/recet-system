@@ -19,3 +19,15 @@ export interface MatchedRecipe {
   matchedIngredients: string[];
   missingIngredients: string[];
 }
+
+export interface CatalogIngredient {
+  name: string;
+  recipeCount: number;
+}
+
+// Como interpreto el backend lo que escribio el usuario (regla de negocio b)
+export interface IngredientResolution {
+  input: string;
+  matches: string[];
+  via: 'exact' | 'synonym' | 'family' | 'typo' | 'none';
+}

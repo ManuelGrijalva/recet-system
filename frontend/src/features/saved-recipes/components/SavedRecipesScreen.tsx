@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { useSession } from '@/shared/session';
 import { useSavedRecipes } from '../hooks/useSavedRecipes';
+import { CookbookPdfButton } from '@/features/recipe-export';
 import { SavedRecipeCard } from './SavedRecipeCard';
 
 function SavedRecipesContent(): React.JSX.Element {
@@ -34,6 +35,11 @@ function SavedRecipesContent(): React.JSX.Element {
         </div>
       ) : (
         <div className="space-y-3">
+          {recipes.length > 0 && (
+            <div className="flex justify-end">
+              <CookbookPdfButton />
+            </div>
+          )}
           {recipes.map((recipe) => (
             <SavedRecipeCard key={recipe.id} recipe={recipe} />
           ))}

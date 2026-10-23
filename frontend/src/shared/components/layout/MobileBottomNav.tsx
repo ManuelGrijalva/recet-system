@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '../../lib/utils';
 import { useSession } from '../../session';
-import { TextilePattern } from '../ui/TextilePattern';
 import { isNavVisible, type NavVisibility } from './navVisibility';
 import { NavTextile, isActiveRoute, navChipClass } from './NavTextile';
 
@@ -117,19 +116,8 @@ export function MobileBottomNav(): React.JSX.Element {
               className="group flex flex-col items-center justify-center -mt-2 p-1.5 focus:outline-none"
               aria-label={item.label}
             >
-              <div className="relative overflow-hidden w-10 h-10 rounded-md bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 flex items-center justify-center shadow-sm">
-                <span
-                  aria-hidden="true"
-                  className={cn(
-                    'pointer-events-none absolute inset-0 transition-opacity duration-200',
-                    active ? 'opacity-100' : 'opacity-0 group-active:opacity-100',
-                  )}
-                >
-                  <TextilePattern variant="color" />
-                </span>
-                <span className="relative flex items-center justify-center w-7 h-7 rounded-md bg-zinc-900/80 dark:bg-zinc-100/80">
-                  <Icon className="w-5 h-5" />
-                </span>
+              <div className="w-10 h-10 rounded-md bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 flex items-center justify-center shadow-sm">
+                <Icon className="w-5 h-5" />
               </div>
               <span className="text-[10px] font-medium text-zinc-800 dark:text-zinc-200 mt-0.5">
                 {item.label}

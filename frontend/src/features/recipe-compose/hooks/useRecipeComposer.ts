@@ -58,6 +58,8 @@ interface UseRecipeComposerResult {
   result: SubmitResult | null;
   setField: <K extends keyof RecipeDraft>(field: K, value: RecipeDraft[K]) => void;
   setStatus: (status: ComposeStatus) => void;
+  // Actualizacion funcional: las subidas terminan en paralelo
+  updateImages: (updater: (images: string[]) => string[]) => void;
   ingredients: {
     add: () => void;
     remove: (index: number) => void;
@@ -110,6 +112,10 @@ export function useRecipeComposer(recipeId?: string): UseRecipeComposerResult {
 
   const setStatus = useCallback((status: ComposeStatus) => {
     setDraft((prev) => ({ ...prev, status }));
+  }, []);
+
+  const updateImages = useCallback((updater: (images: string[]) => string[]) => {
+    setDraft((prev) => ({ ...prev, images: updater(prev.images) }));
   }, []);
 
   const ingredients = useMemo(
@@ -174,6 +180,7 @@ export function useRecipeComposer(recipeId?: string): UseRecipeComposerResult {
     result,
     setField,
     setStatus,
+    updateImages,
     ingredients,
     steps,
     submit,

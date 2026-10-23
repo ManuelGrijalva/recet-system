@@ -12,7 +12,8 @@ export function buildCreateRecipePayload(
     servings: draft.servings,
     difficulty: draft.difficulty,
     originRegion: draft.originRegion.trim() || 'Jutiapa',
-    coverImageUrl: draft.coverImageUrl,
+    coverImageUrl: draft.images[0] ?? null,
+    galleryImageUrls: draft.images.slice(1),
     status: draft.status,
     instructions: draft.steps.map((step) => ({
       stepNumber: step.stepNumber,

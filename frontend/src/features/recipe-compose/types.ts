@@ -21,7 +21,8 @@ export interface RecipeDraft {
   servings: number;
   difficulty: Difficulty;
   originRegion: string;
-  coverImageUrl: string | null;
+  // Fotos en orden; la primera es la portada
+  images: string[];
   status: ComposeStatus;
   ingredients: IngredientDraft[];
   steps: StepDraft[];
@@ -40,6 +41,7 @@ export interface CreateRecipePayload {
   difficulty: Difficulty;
   originRegion: string;
   coverImageUrl: string | null;
+  galleryImageUrls: string[];
   status: 'DRAFT' | 'PUBLISHED' | 'PENDING_REVIEW';
   instructions: { stepNumber: number; instruction: string }[];
   ingredients: { ingredientName: string; quantity: string; unit: string }[];
@@ -56,6 +58,8 @@ export interface EditableRecipe {
   difficulty: Difficulty;
   originRegion: string;
   coverImageUrl: string | null;
+  // Opcional: el backend anterior a la galeria no lo envia
+  galleryImageUrls?: string[];
   status: RecipeStatus;
   reviewNotes?: string | null;
   author: { id: string };

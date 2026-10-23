@@ -1,6 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
 import { Avatar } from '@/shared/components/ui/Avatar';
+import { RecipeCoverPlaceholder } from '@/shared/components/ui/RecipeCoverPlaceholder';
+import { RecipeGallery } from './RecipeGallery';
 import type { RecipeDetail } from '../types';
 
 interface RecipeDetailHeaderProps {
@@ -41,11 +43,15 @@ export function RecipeDetailHeader({
         </div>
       </Link>
 
-      {recipe.coverImageUrl && (
-        <img
-          src={recipe.coverImageUrl}
-          alt={recipe.title}
-          className="w-full aspect-[4/3] object-cover rounded-lg border border-zinc-200 dark:border-zinc-800 mt-2"
+      {recipe.coverImageUrl ? (
+        <RecipeGallery
+          title={recipe.title}
+          images={[recipe.coverImageUrl, ...(recipe.galleryImageUrls ?? [])]}
+        />
+      ) : (
+        <RecipeCoverPlaceholder
+          title={recipe.title}
+          className="w-full aspect-[16/7] rounded-lg border border-zinc-200 dark:border-zinc-800 mt-2"
         />
       )}
     </div>

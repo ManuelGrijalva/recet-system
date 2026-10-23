@@ -25,7 +25,7 @@ export function createEmptyDraft(): RecipeDraft {
     servings: 4,
     difficulty: 'MEDIUM',
     originRegion: 'Jutiapa',
-    coverImageUrl: null,
+    images: [],
     status: 'PUBLISHED',
     ingredients: [{ ...EMPTY_INGREDIENT }],
     steps: [emptyStep(1)],
@@ -42,7 +42,10 @@ export function draftFromRecipe(recipe: EditableRecipe): RecipeDraft {
     servings: recipe.servings,
     difficulty: recipe.difficulty,
     originRegion: recipe.originRegion,
-    coverImageUrl: recipe.coverImageUrl,
+    images: [
+      ...(recipe.coverImageUrl ? [recipe.coverImageUrl] : []),
+      ...(recipe.galleryImageUrls ?? []),
+    ],
     status: 'PUBLISHED',
     ingredients: recipe.ingredients.length
       ? recipe.ingredients.map((i) => ({ name: i.name, quantity: i.quantity, unit: i.unit }))

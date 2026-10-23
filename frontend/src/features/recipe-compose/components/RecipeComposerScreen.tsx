@@ -2,8 +2,10 @@
 
 import React, { useCallback } from 'react';
 import { useRecipeComposer } from '../hooks/useRecipeComposer';
-import { useCoverImageUpload } from '../hooks/useCoverImageUpload';
-import { CoverImageField } from './CoverImageField';
+import { useRecipePhotos } from '../hooks/useRecipePhotos';
+import { moveToFront, removeAt } from '../lib/recipePhotos';
+import { RecipePhotosField } from './RecipePhotosField';
+import { PhotoCropModal } from './PhotoCropModal';
 import { RecipeBasicsFields } from './RecipeBasicsFields';
 import { IngredientListEditor } from './IngredientListEditor';
 import { StepListEditor } from './StepListEditor';
@@ -24,12 +26,13 @@ export function RecipeComposerScreen({ recipeId }: RecipeComposerScreenProps): R
     result,
     setField,
     setStatus,
+    updateImages,
     ingredients,
     steps,
     submit,
   } = useRecipeComposer(recipeId);
-  const setCoverImage = useCallback((url: string) => setField('coverImageUrl', url), [setField]);
-  const cover = useCoverImageUpload(setCoverImage);
+  const appendImage = useCallback((url: string) => updateImages((prev) => [...prev, url]), [updateImages]);
+  const photos = useRecipePhotos(draft.images.length, appendImage);
 
   if (isLoadingRecipe) {
     return <p className="text-xs text-zinc-500 dark:text-zinc-400">Cargando receta...</p>;
@@ -80,13 +83,24 @@ export function RecipeComposerScreen({ recipeId }: RecipeComposerScreenProps): R
       >
         <RecipeBasicsFields draft={draft} onFieldChange={setField} />
 
-        <CoverImageField
-          imageUrl={draft.coverImageUrl}
-          isUploading={cover.isUploading}
-          error={cover.error}
-          onSelectFile={(file) => void cover.upload(file)}
-          onRemove={() => setField('coverImageUrl', null)}
+        <RecipePhotosField
+          images={draft.images}
+          uploadingCount={photos.uploadingCount}
+          error={photos.error}
+          onSelectFiles={photos.addFiles}
+          onMakeCover={(index) => updateImages((prev) => moveToFront(prev, index))}
+          onRemove={(index) => updateImages((prev) => removeAt(prev, index))}
         />
+
+        {photos.pendingFile && (
+          <PhotoCropModal
+            key={`${photos.pendingFile.name}-${photos.pendingFile.lastModified}-${photos.queuedCount}`}
+            file={photos.pendingFile}
+            remaining={photos.queuedCount - 1}
+            onConfirm={photos.confirmCrop}
+            onSkip={photos.skipPending}
+          />
+        )}
 
         <IngredientListEditor
           rows={draft.ingredients}
@@ -106,7 +120,7 @@ export function RecipeComposerScreen({ recipeId }: RecipeComposerScreenProps): R
           isEditing={isEditing}
           status={draft.status}
           isSubmitting={isSubmitting}
-          isBlocked={cover.isUploading}
+          isBlocked={photos.uploadingCount > 0 || photos.pendingFile !== null}
           onStatusChange={setStatus}
         />
       </form>

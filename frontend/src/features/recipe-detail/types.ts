@@ -39,6 +39,8 @@ export interface RecipeDetail {
   reactionCounts: ReactionCounts;
   userReaction: ReactionType | null;
   isBookmarked?: boolean;
+  // Fotos despues de la portada; opcional mientras convive con el backend anterior
+  galleryImageUrls?: string[];
   ingredients: RecipeIngredient[];
   steps: RecipeStep[];
 }

@@ -67,6 +67,8 @@ Alternativa para prototipar sin generar migracion: `pnpm --filter backend db:pus
 
 Las recetas aparecen publicadas por **seis cuentas de demostración ficticias** con correo `@demo.invalid` y rol `CONTRIBUTOR`. No son informantes reales ni entrevistas de campo. El script es idempotente: vuelve a crear las recetas del mismo título de esos autores sin duplicarlas.
 
+Fotos del catálogo: `pnpm --filter backend db:seed-photos` asigna portadas con licencia libre de Wikimedia Commons a las recetas sin foto, según la lista revisada a mano en `backend/src/database/seed/recipe-photos.ts` (solo fotos del mismo platillo; las marcadas `equivalente` son de otro país, de un platillo que se prepara igual). Comprueba la licencia en Commons al momento de asignar, recorta a 4:3 y sube a R2, y guarda el crédito (autor, licencia y enlace) en `recipes.cover_image_credit` y `cover_image_credit_url`, que se muestran sobre la foto y en el PDF. Es idempotente: no toca recetas que ya tienen foto. Las recetas sin foto libre conservan el patrón de tejido.
+
 ### 4. Levantar ambos proyectos
 
 ```bash
@@ -101,6 +103,7 @@ Atajos equivalentes desde la raiz: `pnpm dev:backend` y `pnpm dev:frontend`.
 | Empujar el schema sin migración (prototipo) | `pnpm --filter backend db:push` |
 | Inspector de base de datos | `pnpm --filter backend db:studio` |
 | Cargar el catálogo inicial de recetas (idempotente) | `pnpm --filter backend db:seed` |
+| Asignar portadas con licencia libre a recetas sin foto (idempotente) | `pnpm --filter backend db:seed-photos` |
 | Medir los indicadores técnicos de la Tabla 1 (conteo, cobertura, tiempo de respuesta y eficiencia de la búsqueda) | `pnpm --filter backend indicators -- --api=https://api.memoriadelcomal.com/api [--reps=5]` |
 
 ## Stack tecnológico
@@ -227,7 +230,7 @@ Las directrices completas están en `AGENTS.md`. Resumen:
 - pnpm exclusivo; prohibido `npm` y `yarn`.
 - TypeScript estricto; prohibido `any`. Un `any` hace fallar el linteo.
 - Sin emojis en código, documentación ni control de versiones.
-- Diseño monocromático (blanco, negro, `zinc`); `rounded-full` solo en avatares; prohibido `uppercase`. La única pieza con color es el isotipo: un comal de barro sobre el fuego con una franja de tejido (`BrandMark`, que muestra `public/brand/comal.png` con fondo transparente). Los íconos de la PWA (`public/icons/`, incluido el adaptable con el dibujo dentro de la zona segura) y el favicon salen de la misma imagen; al cambiarlos se sube `CACHE_VERSION` en `sw.js`.
+- Diseño monocromático (blanco, negro, `zinc`); `rounded-full` solo en avatares; prohibido `uppercase`. Los botones de la barra lateral y de la barra inferior muestran el tejido gris al pasar el cursor y se vuelven de los colores de los tejidos guatemaltecos al presionarlos y en la sección actual (`NavTextile`, `TextilePattern variant="color"`); el ícono y el texto quedan sobre una pastilla blanca para que se lean. La otra pieza con color es el isotipo: un comal de barro sobre el fuego con una franja de tejido (`BrandMark`, que muestra `public/brand/comal.png` con fondo transparente). Los íconos de la PWA (`public/icons/`, incluido el adaptable con el dibujo dentro de la zona segura) y el favicon salen de la misma imagen; al cambiarlos se sube `CACHE_VERSION` en `sw.js`.
 - Tipografía: los `h1`, los títulos de receta y el nombre de la marca usan la serifa Lora (`next/font`, clase `font-serif`); el resto, la fuente del sistema. Las recetas sin foto muestran `RecipeCoverPlaceholder` (patrón de tejido `TextilePattern` con el título) en el feed y el detalle. Las tarjetas se elevan con sombra y borde al pasar el mouse; `hoverOnlyWhenSupported` evita que `hover:` se quede pegado al tocar en el celular. El feed muestra a los invitados la portada `FeedWelcome`, con accesos a buscar por ingredientes y a iniciar sesión.
 - Commits con Conventional Commits (`tipo(scope): resumen`), resumen y cuerpo en español e imperativo. Tipos: `feat`, `fix`, `refactor`, `perf`, `docs`, `test`, `build`, `ci`, `chore`, `style`.
 - Prohibido incluir trailers `Co-Authored-By` o cualquier atribución a un agente en commits o Pull Request. El autor es siempre el desarrollador humano.

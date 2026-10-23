@@ -173,7 +173,7 @@ Slices: `recipe-feed`, `recipe-detail`, `recipe-compose` (también edita en `/re
 La web es una aplicación web progresiva: se puede agregar a la pantalla de inicio del teléfono y abrir sin internet las recetas ya visitadas.
 
 - `src/app/manifest.ts`: manifiesto (nombre, íconos de `public/icons/`, `display: standalone`).
-- `public/sw.js`: service worker sin dependencias. Archivos estáticos con *cache-first*; páginas y lecturas públicas de la API (`/api/recipes...` y comentarios) con *network-first*, cayendo a la caché sin conexión. Nunca guarda datos de sesión. Sin caché, las páginas muestran `/offline` y la API responde 503 "Sin conexión".
+- `public/sw.js`: service worker sin dependencias. Archivos estáticos con *cache-first*; páginas y lecturas públicas de la API (`/api/recipes...` y comentarios) con *network-first*, cayendo a la caché sin conexión. Nunca guarda datos de sesión. Sin caché, las páginas muestran `/offline` y la API responde 503 "Sin conexión". Las fotos de recetas (`img.memoriadelcomal.com`, que responde con CORS para el sitio) se piden en modo `cors` y se guardan con *cache-first* en `photos-<versión>`, hasta 60 (se borran las más antiguas), para que las recetas visitadas se vean completas sin conexión.
 - `src/shared/pwa/ServiceWorkerRegistrar.tsx`: registra el service worker **solo en producción**, para que en desarrollo no se sirvan versiones viejas.
 - Para probarlo en local: `pnpm --filter frontend build` y `pnpm --filter frontend start`; en Chrome, DevTools > Application > Service workers, y marcar "Offline" en la pestaña Network. En un teléfono requiere HTTPS (el despliegue), salvo en `localhost`.
 - Al cambiar la estrategia de caché, subir `CACHE_VERSION` en `sw.js`.

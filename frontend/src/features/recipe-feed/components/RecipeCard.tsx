@@ -4,6 +4,7 @@ import { RecipeCardAuthor } from './RecipeCardAuthor';
 import { RecipeMetaTags } from './RecipeMetaTags';
 import { RecipeCardActions } from './RecipeCardActions';
 import { RecipeCoverPlaceholder } from '@/shared/components/ui/RecipeCoverPlaceholder';
+import { PhotoCredit } from '@/shared/components/ui/PhotoCredit';
 import type { ReactionType } from '@/features/reactions';
 import type { FeedRecipe } from '../types';
 
@@ -20,21 +21,26 @@ export function RecipeCard({ recipe, userReaction = null }: RecipeCardProps): Re
     <article className="rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a] overflow-hidden transition-[border-color,box-shadow] duration-200 hover:border-zinc-300 hover:shadow-md dark:hover:border-zinc-700">
       <RecipeCardAuthor author={recipe.author} originRegion={recipe.originRegion} />
 
-      <Link href={`/recipe/${recipe.id}`} className="block mb-3">
-        {recipe.coverImageUrl ? (
-          <img
-            src={recipe.coverImageUrl}
-            alt={recipe.title}
-            loading="lazy"
-            className="w-full aspect-[4/3] object-cover border-y border-zinc-200 dark:border-zinc-800"
-          />
-        ) : (
-          <RecipeCoverPlaceholder
-            title={recipe.title}
-            className="w-full aspect-[16/7] border-y border-zinc-200 dark:border-zinc-800"
-          />
+      <div className="relative mb-3">
+        <Link href={`/recipe/${recipe.id}`} className="block">
+          {recipe.coverImageUrl ? (
+            <img
+              src={recipe.coverImageUrl}
+              alt={recipe.title}
+              loading="lazy"
+              className="w-full aspect-[4/3] object-cover border-y border-zinc-200 dark:border-zinc-800"
+            />
+          ) : (
+            <RecipeCoverPlaceholder
+              title={recipe.title}
+              className="w-full aspect-[16/7] border-y border-zinc-200 dark:border-zinc-800"
+            />
+          )}
+        </Link>
+        {recipe.coverImageUrl && (
+          <PhotoCredit credit={recipe.coverImageCredit} url={recipe.coverImageCreditUrl} />
         )}
-      </Link>
+      </div>
 
       <div className="px-4 pb-3">
         <h2 className="font-serif text-lg font-semibold leading-snug text-zinc-950 dark:text-zinc-50 mb-1.5">

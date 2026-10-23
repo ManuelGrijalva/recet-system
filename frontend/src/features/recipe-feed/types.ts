@@ -19,6 +19,9 @@ export interface FeedRecipe {
   servings: number;
   difficulty: Difficulty;
   coverImageUrl: string | null;
+  // Credito de fotos con licencia libre; opcional mientras convive con el backend anterior
+  coverImageCredit?: string | null;
+  coverImageCreditUrl?: string | null;
   originRegion: string;
   status: RecipeStatus;
   createdAt: string;

@@ -47,6 +47,8 @@ export function RecipeDetailHeader({
         <RecipeGallery
           title={recipe.title}
           images={[recipe.coverImageUrl, ...(recipe.galleryImageUrls ?? [])]}
+          coverCredit={recipe.coverImageCredit}
+          coverCreditUrl={recipe.coverImageCreditUrl}
         />
       ) : (
         <RecipeCoverPlaceholder

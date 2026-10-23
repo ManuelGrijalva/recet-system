@@ -27,6 +27,8 @@ export interface RecipeDetail {
   servings: number;
   difficulty: Difficulty;
   coverImageUrl: string | null;
+  coverImageCredit?: string | null;
+  coverImageCreditUrl?: string | null;
   originRegion: string;
   sourceType?: 'REFERENCE' | 'INTERVIEW' | 'COMMUNITY';
   sourceName?: string | null;

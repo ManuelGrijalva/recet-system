@@ -33,6 +33,8 @@ export interface FeedRecipeItem {
   servings: number;
   difficulty: 'EASY' | 'MEDIUM' | 'HARD';
   coverImageUrl: string | null;
+  coverImageCredit: string | null;
+  coverImageCreditUrl: string | null;
   originRegion: string;
   sourceType: 'REFERENCE' | 'INTERVIEW' | 'COMMUNITY';
   sourceName: string | null;
@@ -403,7 +405,7 @@ export class RecipesService {
     const db = this.databaseService.db;
 
     const [recipe] = await db
-      .select({ authorId: recipes.authorId })
+      .select({ authorId: recipes.authorId, coverImageUrl: recipes.coverImageUrl })
       .from(recipes)
       .where(eq(recipes.id, recipeId))
       .limit(1);
@@ -415,6 +417,8 @@ export class RecipesService {
     if (recipe.authorId !== editor.id) {
       throw new ForbiddenException('Solo el autor puede editar esta receta');
     }
+    // El credito pertenece a la foto: si cambia la portada, se borra
+    const coverChanged = images.coverImageUrl !== undefined && images.coverImageUrl !== recipe.coverImageUrl;
 
     // Lo editado por un colaborador vuelve a revision (regla 4.3.4.a); al reenviar se limpian las observaciones
     const status = this.resolveInitialStatus(editor.role, dto.status);
@@ -432,6 +436,7 @@ export class RecipesService {
         instructions: dto.instructions,
         status,
         ...(status === 'DRAFT' ? {} : { reviewNotes: null }),
+        ...(coverChanged ? { coverImageCredit: null, coverImageCreditUrl: null } : {}),
         updatedAt: new Date(),
       })
       .where(eq(recipes.id, recipeId));
@@ -615,6 +620,8 @@ function toFeedItem(row: RecipeWithAuthor, stats: Map<string, RecipeStats>): Fee
     servings: row.recipe.servings,
     difficulty: row.recipe.difficulty,
     coverImageUrl: row.recipe.coverImageUrl,
+    coverImageCredit: row.recipe.coverImageCredit,
+    coverImageCreditUrl: row.recipe.coverImageCreditUrl,
     originRegion: row.recipe.originRegion,
     sourceType: row.recipe.sourceType,
     sourceName: row.recipe.sourceName,

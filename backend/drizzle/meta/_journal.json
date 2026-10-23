@@ -50,6 +50,13 @@
       "when": 1792595400443,
       "tag": "0006_flat_marten_broadcloak",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1792785905599,
+      "tag": "0007_careful_stryfe",
+      "breakpoints": true
     }
   ]
 }

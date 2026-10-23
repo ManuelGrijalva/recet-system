@@ -183,6 +183,13 @@ export class RecipePdfService {
       if (recipe.sourceUrl) doc.text(recipe.sourceUrl, { width, link: recipe.sourceUrl });
     }
 
+    // La licencia de la foto exige mostrar el credito donde aparezca
+    if (cover && recipe.coverImageCredit) {
+      this.rule(doc);
+      doc.font('Helvetica').fontSize(9).fillColor(MUTED)
+        .text(`Foto: ${recipe.coverImageCredit}`, { width, link: recipe.coverImageCreditUrl ?? undefined });
+    }
+
     this.rule(doc);
     const recipeUrl = `${this.frontendUrl}/recipe/${recipe.id}`;
     doc.font('Helvetica').fontSize(9).fillColor(MUTED)

@@ -113,6 +113,9 @@ export const recipes = pgTable(
     servings: integer('servings').notNull().default(1),
     difficulty: recipeDifficultyEnum('difficulty').notNull().default('MEDIUM'),
     coverImageUrl: text('cover_image_url'),
+    // Credito de la portada cuando viene de un banco con licencia libre (autor, licencia y enlace)
+    coverImageCredit: text('cover_image_credit'),
+    coverImageCreditUrl: text('cover_image_credit_url'),
     status: recipeStatusEnum('status').notNull().default('DRAFT'),
     originRegion: text('origin_region').default('Jutiapa').notNull(),
     // Observaciones del administrador al devolver una receta en revision

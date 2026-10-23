@@ -31,7 +31,7 @@ export function LoginScreen(): React.JSX.Element {
         <div className="absolute inset-0 bg-gradient-to-t from-white/85 to-transparent dark:from-[#0a0a0a]/85" />
         <div className="absolute bottom-3 left-4 flex items-center gap-2">
           <BrandMark size="sm" />
-          <span className="text-sm font-semibold tracking-tight text-zinc-950 dark:text-zinc-50">
+          <span className="font-serif text-sm font-semibold text-zinc-950 dark:text-zinc-50">
             Memoria del Comal
           </span>
         </div>

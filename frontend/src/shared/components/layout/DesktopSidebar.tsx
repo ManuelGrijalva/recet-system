@@ -131,7 +131,7 @@ export function DesktopSidebar(): React.JSX.Element {
         <Link href="/" className="inline-flex items-center gap-2.5 group">
           <BrandMark size="md" />
           <div>
-            <span className="font-semibold text-lg tracking-tight text-zinc-950 dark:text-zinc-50 block leading-tight">
+            <span className="font-serif font-semibold text-lg text-zinc-950 dark:text-zinc-50 block leading-tight">
               Memoria del Comal
             </span>
             <span className="text-xs text-zinc-500 dark:text-zinc-400 block">

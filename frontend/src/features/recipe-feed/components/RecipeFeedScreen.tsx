@@ -6,6 +6,7 @@ import { useMyReactions } from '@/features/reactions';
 import { useRecipeFeed } from '../hooks/useRecipeFeed';
 import type { FeedMode } from '../types';
 import { FeedHeader } from './FeedHeader';
+import { FeedWelcome } from './FeedWelcome';
 import { RecipeCard } from './RecipeCard';
 
 export function RecipeFeedScreen(): React.JSX.Element {
@@ -16,6 +17,7 @@ export function RecipeFeedScreen(): React.JSX.Element {
 
   return (
     <div className="space-y-6">
+      {status === 'guest' && <FeedWelcome />}
       <FeedHeader mode={mode} canFollow={status === 'authenticated'} onModeChange={setMode} />
 
       {error && (

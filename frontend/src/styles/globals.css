@@ -60,6 +60,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Titulos de pagina con serifa de recetario */
+h1 {
+  font-family: var(--font-serif), Georgia, serif;
+  letter-spacing: normal;
+}
+
 /* Restriccion de geometria: maximo border-radius 6px a 8px */
 .app-card,
 .app-button,

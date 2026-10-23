@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { RecipeCardAuthor } from './RecipeCardAuthor';
 import { RecipeMetaTags } from './RecipeMetaTags';
 import { RecipeCardActions } from './RecipeCardActions';
+import { RecipeCoverPlaceholder } from '@/shared/components/ui/RecipeCoverPlaceholder';
 import type { ReactionType } from '@/features/reactions';
 import type { FeedRecipe } from '../types';
 
@@ -16,22 +17,27 @@ export function RecipeCard({ recipe, userReaction = null }: RecipeCardProps): Re
   const totalTimeMinutes = recipe.prepTimeMinutes + recipe.cookTimeMinutes;
 
   return (
-    <article className="rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a] overflow-hidden">
+    <article className="rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a] overflow-hidden transition-[border-color,box-shadow] duration-200 hover:border-zinc-300 hover:shadow-md dark:hover:border-zinc-700">
       <RecipeCardAuthor author={recipe.author} originRegion={recipe.originRegion} />
 
-      {recipe.coverImageUrl && (
-        <Link href={`/recipe/${recipe.id}`} className="block mb-3">
+      <Link href={`/recipe/${recipe.id}`} className="block mb-3">
+        {recipe.coverImageUrl ? (
           <img
             src={recipe.coverImageUrl}
             alt={recipe.title}
             loading="lazy"
-            className="w-full aspect-[16/10] object-cover border-y border-zinc-200 dark:border-zinc-800"
+            className="w-full aspect-[4/3] object-cover border-y border-zinc-200 dark:border-zinc-800"
           />
-        </Link>
-      )}
+        ) : (
+          <RecipeCoverPlaceholder
+            title={recipe.title}
+            className="w-full aspect-[16/7] border-y border-zinc-200 dark:border-zinc-800"
+          />
+        )}
+      </Link>
 
       <div className="px-4 pb-3">
-        <h2 className="text-base font-bold text-zinc-950 dark:text-zinc-50 mb-1.5">
+        <h2 className="font-serif text-lg font-semibold leading-snug text-zinc-950 dark:text-zinc-50 mb-1.5">
           <Link href={`/recipe/${recipe.id}`} className="hover:underline">
             {recipe.title}
           </Link>

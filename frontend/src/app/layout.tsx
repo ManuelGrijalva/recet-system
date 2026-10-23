@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import { Lora } from 'next/font/google';
 import React from 'react';
 import '../styles/globals.css';
 import { DesktopSidebar } from '../shared/components/layout/DesktopSidebar';
@@ -7,6 +8,9 @@ import { RightSidebar } from '../shared/components/layout/RightSidebar';
 import { BrandMark } from '../shared/components/ui/BrandMark';
 import { SessionProvider } from '../shared/session';
 import { ServiceWorkerRegistrar } from '../shared/pwa';
+
+// Serifa de recetario para titulos; Next la sirve desde el propio dominio
+const serif = Lora({ subsets: ['latin'], variable: '--font-serif', display: 'swap' });
 
 export const metadata: Metadata = {
   title: 'Memoria del Comal | Cocina tradicional de Jutiapa',
@@ -23,7 +27,10 @@ export const metadata: Metadata = {
   applicationName: 'Memoria del Comal',
   appleWebApp: { capable: true, title: 'Memoria del Comal', statusBarStyle: 'default' },
   icons: {
-    icon: [{ url: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' }],
+    icon: [
+      { url: '/icons/favicon-48.png', sizes: '48x48', type: 'image/png' },
+      { url: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
+    ],
     apple: [{ url: '/icons/apple-touch-icon.png', sizes: '180x180' }],
   },
 };
@@ -41,7 +48,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }): React.JSX.Element {
   return (
-    <html lang="es" className="h-full">
+    <html lang="es" className={`h-full ${serif.variable}`}>
       <body className="min-h-full bg-white dark:bg-[#0a0a0a] text-zinc-900 dark:text-zinc-100 antialiased selection:bg-zinc-200 dark:selection:bg-zinc-800">
         <ServiceWorkerRegistrar />
         <SessionProvider>
@@ -53,7 +60,7 @@ export default function RootLayout({
             <header className="md:hidden fixed top-0 left-0 right-0 h-14 bg-white/90 dark:bg-[#0a0a0a]/90 backdrop-blur-sm border-b border-zinc-200 dark:border-zinc-800 z-40 px-4 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <BrandMark size="sm" />
-                <span className="font-semibold text-sm tracking-tight text-zinc-950 dark:text-zinc-50">
+                <span className="font-serif font-semibold text-sm text-zinc-950 dark:text-zinc-50">
                   Memoria del Comal
                 </span>
               </div>

@@ -7,8 +7,13 @@ const config: Config = {
     './src/features/**/*.{js,ts,jsx,tsx,mdx}',
     './src/shared/**/*.{js,ts,jsx,tsx,mdx}',
   ],
+  // hover: solo en dispositivos con puntero; evita estados pegados al tocar en el celular
+  future: { hoverOnlyWhenSupported: true },
   theme: {
     extend: {
+      fontFamily: {
+        serif: ['var(--font-serif)', 'Georgia', 'serif'],
+      },
       colors: {
         // Paleta estrictamente monocromatica en escala zinc / neutral
         background: 'var(--background)',

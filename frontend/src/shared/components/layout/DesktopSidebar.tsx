@@ -2,11 +2,14 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { cn } from '../../lib/utils';
 import { Avatar } from '../ui/Avatar';
 import { BrandMark } from '../ui/BrandMark';
 import { Button } from '../ui/Button';
 import { ROLE_LABELS, useSession } from '../../session';
 import { isNavVisible, type NavVisibility } from './navVisibility';
+import { NavTextile, isActiveRoute, navChipClass } from './NavTextile';
 
 interface NavItem {
   label: string;
@@ -123,6 +126,7 @@ function SessionCard(): React.JSX.Element {
 export function DesktopSidebar(): React.JSX.Element {
   const { user } = useSession();
   const role = user?.role ?? null;
+  const pathname = usePathname();
 
   return (
     <aside className="hidden md:flex flex-col w-64 h-screen fixed left-0 top-0 border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a] px-5 py-6 z-40">
@@ -147,14 +151,29 @@ export function DesktopSidebar(): React.JSX.Element {
           .filter((item) => isNavVisible(item.visibleTo, role))
           .map((item) => {
             const Icon = item.icon;
+            const active = isActiveRoute(pathname, item.href);
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className="flex items-center gap-3.5 px-3 py-2.5 rounded-md text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-zinc-50 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
+                aria-current={active ? 'page' : undefined}
+                className={cn(
+                  'group relative overflow-hidden flex items-center px-1.5 py-1.5 rounded-md text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400',
+                  active
+                    ? 'text-zinc-950 dark:text-zinc-50'
+                    : 'text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-zinc-50',
+                )}
               >
-                <Icon className="w-5 h-5 shrink-0 text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-900" />
-                <span>{item.label}</span>
+                <NavTextile active={active} />
+                <span className={cn(navChipClass(active), 'gap-3.5 px-1.5 py-1')}>
+                  <Icon
+                    className={cn(
+                      'w-5 h-5 shrink-0',
+                      active ? 'text-zinc-900 dark:text-zinc-100' : 'text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-zinc-100',
+                    )}
+                  />
+                  <span>{item.label}</span>
+                </span>
               </Link>
             );
           })}

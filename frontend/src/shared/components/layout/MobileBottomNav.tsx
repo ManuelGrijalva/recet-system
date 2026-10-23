@@ -2,8 +2,12 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { cn } from '../../lib/utils';
 import { useSession } from '../../session';
+import { TextilePattern } from '../ui/TextilePattern';
 import { isNavVisible, type NavVisibility } from './navVisibility';
+import { NavTextile, isActiveRoute, navChipClass } from './NavTextile';
 
 interface BottomNavItem {
   label: string;
@@ -89,6 +93,7 @@ const navItems: BottomNavItem[] = [
 
 export function MobileBottomNav(): React.JSX.Element {
   const { user, status } = useSession();
+  const pathname = usePathname();
   const role = user?.role ?? null;
   // Mientras carga la sesion solo se muestran los enlaces publicos
   const visibleItems = navItems.filter((item) =>
@@ -102,16 +107,29 @@ export function MobileBottomNav(): React.JSX.Element {
     >
       {visibleItems.map((item) => {
         const Icon = item.icon;
+        const active = isActiveRoute(pathname, item.href);
         if (item.isSpecialAction) {
           return (
             <Link
               key={item.href}
               href={item.href}
-              className="flex flex-col items-center justify-center -mt-2 p-1.5 focus:outline-none"
+              aria-current={active ? 'page' : undefined}
+              className="group flex flex-col items-center justify-center -mt-2 p-1.5 focus:outline-none"
               aria-label={item.label}
             >
-              <div className="w-10 h-10 rounded-md bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 flex items-center justify-center shadow-sm">
-                <Icon className="w-5 h-5" />
+              <div className="relative overflow-hidden w-10 h-10 rounded-md bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 flex items-center justify-center shadow-sm">
+                <span
+                  aria-hidden="true"
+                  className={cn(
+                    'pointer-events-none absolute inset-0 transition-opacity duration-200',
+                    active ? 'opacity-100' : 'opacity-0 group-active:opacity-100',
+                  )}
+                >
+                  <TextilePattern variant="color" />
+                </span>
+                <span className="relative flex items-center justify-center w-7 h-7 rounded-md bg-zinc-900/80 dark:bg-zinc-100/80">
+                  <Icon className="w-5 h-5" />
+                </span>
               </div>
               <span className="text-[10px] font-medium text-zinc-800 dark:text-zinc-200 mt-0.5">
                 {item.label}
@@ -124,10 +142,19 @@ export function MobileBottomNav(): React.JSX.Element {
           <Link
             key={item.href}
             href={item.href}
-            className="flex flex-col items-center justify-center py-1 px-2 rounded-md text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-50 transition-colors focus:outline-none"
+            aria-current={active ? 'page' : undefined}
+            className={cn(
+              'group relative overflow-hidden flex flex-col items-center justify-center p-1 rounded-md transition-colors focus:outline-none',
+              active
+                ? 'text-zinc-950 dark:text-zinc-50'
+                : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-50',
+            )}
           >
-            <Icon className="w-5 h-5" />
-            <span className="text-[10px] font-medium mt-0.5">{item.label}</span>
+            <NavTextile active={active} />
+            <span className={cn(navChipClass(active), 'flex-col px-1.5 py-0.5')}>
+              <Icon className="w-5 h-5" />
+              <span className="text-[10px] font-medium mt-0.5">{item.label}</span>
+            </span>
           </Link>
         );
       })}

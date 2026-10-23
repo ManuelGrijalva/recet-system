@@ -1,4 +1,5 @@
 import {
+  ArrayMaxSize,
   IsArray,
   IsEnum,
   IsIn,
@@ -10,6 +11,9 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
+
+// Portada + 4 fotos mas
+export const MAX_GALLERY_IMAGES = 4;
 
 export class RecipeStepDto {
   @IsInt()
@@ -71,6 +75,13 @@ export class CreateRecipeDto {
   @IsOptional()
   @IsString()
   coverImageUrl?: string | null;
+
+  // Fotos despues de la portada, en orden; ausente conserva la galeria al editar y [] la vacia
+  @IsOptional()
+  @IsArray()
+  @ArrayMaxSize(MAX_GALLERY_IMAGES, { message: `Una receta admite hasta ${MAX_GALLERY_IMAGES + 1} fotos` })
+  @IsString({ each: true })
+  galleryImageUrls?: string[];
 
   @IsOptional()
   @IsIn(['DRAFT', 'PUBLISHED', 'PENDING_REVIEW'])

@@ -4,10 +4,11 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { and, desc, eq, ilike, inArray, sql } from 'drizzle-orm';
+import { and, asc, desc, eq, ilike, inArray, sql } from 'drizzle-orm';
 import { DatabaseService } from '../../database/database.service';
 import {
   ingredients,
+  recipeImages,
   recipeIngredients,
   recipes,
   recipeReactions,
@@ -57,6 +58,8 @@ export interface FeedRecipeItem {
 
 export interface RecipeDetailItem extends FeedRecipeItem {
   ingredients: { name: string; quantity: string; unit: string; notes: string | null }[];
+  // Fotos despues de la portada, en orden
+  galleryImageUrls: string[];
   steps: RecipeStepInstruction[];
   userReaction: 'LIKE' | 'YUMMY' | 'TRIED_IT' | null;
   isBookmarked: boolean;
@@ -70,10 +73,31 @@ export class RecipesService {
     private readonly ingredientCatalog: IngredientCatalogService,
   ) {}
 
-  // Rechaza portadas que no salieron de nuestra subida a R2
-  private assertCoverImage(url: string | null | undefined): void {
-    if (url && !this.mediaService.isOwnRecipeImage(url)) {
-      throw new BadRequestException('La foto de portada debe subirse desde el formulario de la receta');
+  // Rechaza fotos que no salieron de nuestra subida a R2 y ordena portada + galeria
+  private resolveImages(dto: CreateRecipeDto): {
+    coverImageUrl: string | null | undefined;
+    gallery: string[] | undefined;
+  } {
+    const all = [dto.coverImageUrl, ...(dto.galleryImageUrls ?? [])];
+    for (const url of all) {
+      if (url && !this.mediaService.isOwnRecipeImage(url)) {
+        throw new BadRequestException('Las fotos deben subirse desde el formulario de la receta');
+      }
+    }
+    if (dto.galleryImageUrls === undefined) {
+      return { coverImageUrl: dto.coverImageUrl, gallery: undefined };
+    }
+    // Sin portada, la primera foto de la galeria toma su lugar; se descartan repetidas
+    const unique = [...new Set(all.filter((url): url is string => Boolean(url)))];
+    return { coverImageUrl: unique[0] ?? null, gallery: unique.slice(1) };
+  }
+
+  private async replaceGallery(recipeId: string, urls: string[] | undefined): Promise<void> {
+    if (urls === undefined) return;
+    const db = this.databaseService.db;
+    await db.delete(recipeImages).where(eq(recipeImages.recipeId, recipeId));
+    if (urls.length > 0) {
+      await db.insert(recipeImages).values(urls.map((url, i) => ({ recipeId, url, position: i + 1 })));
     }
   }
 
@@ -82,7 +106,7 @@ export class RecipesService {
     authorRole: UserRole,
     dto: CreateRecipeDto,
   ): Promise<FeedRecipeItem> {
-    this.assertCoverImage(dto.coverImageUrl);
+    const images = this.resolveImages(dto);
     const db = this.databaseService.db;
 
     // 1. Insertar receta base
@@ -96,7 +120,7 @@ export class RecipesService {
         cookTimeMinutes: dto.cookTimeMinutes,
         servings: dto.servings,
         difficulty: dto.difficulty,
-        coverImageUrl: dto.coverImageUrl,
+        coverImageUrl: images.coverImageUrl,
         status: this.resolveInitialStatus(authorRole, dto.status),
         originRegion: dto.originRegion || 'Jutiapa',
         instructions: dto.instructions,
@@ -104,6 +128,7 @@ export class RecipesService {
       .returning();
 
     await this.attachIngredients(newRecipe.id, dto.ingredients);
+    await this.replaceGallery(newRecipe.id, images.gallery);
 
     return this.getById(newRecipe.id);
   }
@@ -139,30 +164,8 @@ export class RecipesService {
       .limit(limit)
       .offset(offset);
 
-    const items: FeedRecipeItem[] = [];
-
-    for (const row of publishedRecipes) {
-      const stats = await this.getRecipeStats(row.recipe.id);
-      items.push({
-        id: row.recipe.id,
-        title: row.recipe.title,
-        description: row.recipe.description,
-        prepTimeMinutes: row.recipe.prepTimeMinutes,
-        cookTimeMinutes: row.recipe.cookTimeMinutes,
-        servings: row.recipe.servings,
-        difficulty: row.recipe.difficulty,
-        coverImageUrl: row.recipe.coverImageUrl,
-        originRegion: row.recipe.originRegion,
-        sourceType: row.recipe.sourceType,
-        sourceName: row.recipe.sourceName,
-        sourceUrl: row.recipe.sourceUrl,
-        status: row.recipe.status,
-        createdAt: row.recipe.createdAt,
-        author: row.author,
-        reactionCounts: stats.reactionCounts,
-        commentsCount: stats.commentsCount,
-      });
-    }
+    const stats = await this.getStatsFor(publishedRecipes.map((row) => row.recipe.id));
+    const items = publishedRecipes.map((row) => toFeedItem(row, stats));
 
     const [totalRow] = await db
       .select({ count: sql<number>`count(*)::int` })
@@ -244,36 +247,21 @@ export class RecipesService {
             ),
           );
 
-        const results: FeedRecipeItem[] = [];
-        for (const cand of candidateRecipes) {
-          const stats = await this.getRecipeStats(cand.recipe.id);
-          const breakdown = await this.getIngredientBreakdown(
-            cand.recipe.id,
-            matchedIds,
-          );
-          results.push({
-            id: cand.recipe.id,
-            title: cand.recipe.title,
-            description: cand.recipe.description,
-            prepTimeMinutes: cand.recipe.prepTimeMinutes,
-            cookTimeMinutes: cand.recipe.cookTimeMinutes,
-            servings: cand.recipe.servings,
-            difficulty: cand.recipe.difficulty,
-            coverImageUrl: cand.recipe.coverImageUrl,
-            originRegion: cand.recipe.originRegion,
-            sourceType: cand.recipe.sourceType,
-            sourceName: cand.recipe.sourceName,
-            sourceUrl: cand.recipe.sourceUrl,
-            status: cand.recipe.status,
-            createdAt: cand.recipe.createdAt,
-            author: cand.author,
-            reactionCounts: stats.reactionCounts,
-            commentsCount: stats.commentsCount,
+        // Estadisticas y desglose de todas las candidatas en consultas agrupadas, no receta por receta
+        const candidateIds = candidateRecipes.map((cand) => cand.recipe.id);
+        const [stats, breakdowns] = await Promise.all([
+          this.getStatsFor(candidateIds),
+          this.getBreakdownsFor(candidateIds, matchedIds),
+        ]);
+        const results: FeedRecipeItem[] = candidateRecipes.map((cand) => {
+          const breakdown = breakdowns.get(cand.recipe.id);
+          return {
+            ...toFeedItem(cand, stats),
             matchPercentage: scoredMap.get(cand.recipe.id) || 0,
-            matchedIngredientNames: breakdown.matchedNames,
-            missingIngredientNames: breakdown.missingNames,
-          });
-        }
+            matchedIngredientNames: breakdown?.matchedNames ?? [],
+            missingIngredientNames: breakdown?.missingNames ?? [],
+          };
+        });
 
         // Ordenar descendentemente por coincidencia (Criterio de aceptacion c, Tabla 20)
         results.sort((a, b) => (b.matchPercentage || 0) - (a.matchPercentage || 0));
@@ -306,32 +294,8 @@ export class RecipesService {
       .offset(offset);
 
     const rows = await query;
-    const results: FeedRecipeItem[] = [];
-
-    for (const row of rows) {
-      const stats = await this.getRecipeStats(row.recipe.id);
-      results.push({
-        id: row.recipe.id,
-        title: row.recipe.title,
-        description: row.recipe.description,
-        prepTimeMinutes: row.recipe.prepTimeMinutes,
-        cookTimeMinutes: row.recipe.cookTimeMinutes,
-        servings: row.recipe.servings,
-        difficulty: row.recipe.difficulty,
-        coverImageUrl: row.recipe.coverImageUrl,
-        originRegion: row.recipe.originRegion,
-        sourceType: row.recipe.sourceType,
-        sourceName: row.recipe.sourceName,
-        sourceUrl: row.recipe.sourceUrl,
-        status: row.recipe.status,
-        createdAt: row.recipe.createdAt,
-        author: row.author,
-        reactionCounts: stats.reactionCounts,
-        commentsCount: stats.commentsCount,
-      });
-    }
-
-    return results;
+    const stats = await this.getStatsFor(rows.map((row) => row.recipe.id));
+    return rows.map((row) => toFeedItem(row, stats));
   }
 
   async getById(id: string): Promise<FeedRecipeItem> {
@@ -355,28 +319,8 @@ export class RecipesService {
       throw new NotFoundException('Receta no encontrada');
     }
 
-    const stats = await this.getRecipeStats(id);
-
-    return {
-      id: row.recipe.id,
-      title: row.recipe.title,
-      description: row.recipe.description,
-      prepTimeMinutes: row.recipe.prepTimeMinutes,
-      cookTimeMinutes: row.recipe.cookTimeMinutes,
-      servings: row.recipe.servings,
-      difficulty: row.recipe.difficulty,
-      coverImageUrl: row.recipe.coverImageUrl,
-      originRegion: row.recipe.originRegion,
-      sourceType: row.recipe.sourceType,
-      sourceName: row.recipe.sourceName,
-      sourceUrl: row.recipe.sourceUrl,
-      status: row.recipe.status,
-      reviewNotes: row.recipe.reviewNotes,
-      createdAt: row.recipe.createdAt,
-      author: row.author,
-      reactionCounts: stats.reactionCounts,
-      commentsCount: stats.commentsCount,
-    };
+    const stats = await this.getStatsFor([id]);
+    return { ...toFeedItem(row, stats), reviewNotes: row.recipe.reviewNotes };
   }
 
   async getDetail(
@@ -410,6 +354,12 @@ export class RecipesService {
       .innerJoin(ingredients, eq(recipeIngredients.ingredientId, ingredients.id))
       .where(eq(recipeIngredients.recipeId, id));
 
+    const galleryRows = await db
+      .select({ url: recipeImages.url })
+      .from(recipeImages)
+      .where(eq(recipeImages.recipeId, id))
+      .orderBy(asc(recipeImages.position));
+
     let userReaction: RecipeDetailItem['userReaction'] = null;
     let isBookmarked = false;
     if (viewer) {
@@ -437,6 +387,7 @@ export class RecipesService {
       // Las observaciones de moderacion son privadas del autor y del admin
       reviewNotes: canSeeUnpublished ? base.reviewNotes : null,
       ingredients: ingredientRows,
+      galleryImageUrls: galleryRows.map((row) => row.url),
       steps: [...(recipeRow?.instructions ?? [])].sort((a, b) => a.stepNumber - b.stepNumber),
       userReaction,
       isBookmarked,
@@ -448,7 +399,7 @@ export class RecipesService {
     editor: AuthenticatedUser,
     dto: CreateRecipeDto,
   ): Promise<FeedRecipeItem> {
-    this.assertCoverImage(dto.coverImageUrl);
+    const images = this.resolveImages(dto);
     const db = this.databaseService.db;
 
     const [recipe] = await db
@@ -476,7 +427,7 @@ export class RecipesService {
         cookTimeMinutes: dto.cookTimeMinutes,
         servings: dto.servings,
         difficulty: dto.difficulty,
-        coverImageUrl: dto.coverImageUrl,
+        coverImageUrl: images.coverImageUrl,
         originRegion: dto.originRegion || 'Jutiapa',
         instructions: dto.instructions,
         status,
@@ -487,6 +438,7 @@ export class RecipesService {
 
     await db.delete(recipeIngredients).where(eq(recipeIngredients.recipeId, recipeId));
     await this.attachIngredients(recipeId, dto.ingredients);
+    await this.replaceGallery(recipeId, images.gallery);
 
     return this.getById(recipeId);
   }
@@ -564,65 +516,113 @@ export class RecipesService {
     return authorRole === 'ADMIN' ? 'PUBLISHED' : 'PENDING_REVIEW';
   }
 
-  private async getRecipeStats(recipeId: string): Promise<{
-    reactionCounts: { like: number; yummy: number; triedIt: number };
-    commentsCount: number;
-  }> {
+  // Reacciones y comentarios de varias recetas en dos consultas agrupadas
+  private async getStatsFor(recipeIds: string[]): Promise<Map<string, RecipeStats>> {
+    const stats = new Map<string, RecipeStats>();
+    if (recipeIds.length === 0) return stats;
     const db = this.databaseService.db;
 
-    const reactions = await db
-      .select({
-        type: recipeReactions.type,
-        count: sql<number>`count(*)::int`,
-      })
-      .from(recipeReactions)
-      .where(eq(recipeReactions.recipeId, recipeId))
-      .groupBy(recipeReactions.type);
+    const [reactions, comments] = await Promise.all([
+      db
+        .select({
+          recipeId: recipeReactions.recipeId,
+          type: recipeReactions.type,
+          count: sql<number>`count(*)::int`,
+        })
+        .from(recipeReactions)
+        .where(inArray(recipeReactions.recipeId, recipeIds))
+        .groupBy(recipeReactions.recipeId, recipeReactions.type),
+      db
+        .select({
+          recipeId: recipeComments.recipeId,
+          count: sql<number>`count(*)::int`,
+        })
+        .from(recipeComments)
+        .where(inArray(recipeComments.recipeId, recipeIds))
+        .groupBy(recipeComments.recipeId),
+    ]);
 
-    const counts = { like: 0, yummy: 0, triedIt: 0 };
+    const entry = (id: string): RecipeStats => {
+      let current = stats.get(id);
+      if (!current) {
+        current = { reactionCounts: { like: 0, yummy: 0, triedIt: 0 }, commentsCount: 0 };
+        stats.set(id, current);
+      }
+      return current;
+    };
     for (const r of reactions) {
+      const counts = entry(r.recipeId).reactionCounts;
       if (r.type === 'LIKE') counts.like = r.count;
       if (r.type === 'YUMMY') counts.yummy = r.count;
       if (r.type === 'TRIED_IT') counts.triedIt = r.count;
     }
+    for (const c of comments) entry(c.recipeId).commentsCount = c.count;
 
-    const [commentRow] = await db
-      .select({ count: sql<number>`count(*)::int` })
-      .from(recipeComments)
-      .where(eq(recipeComments.recipeId, recipeId));
-
-    return {
-      reactionCounts: counts,
-      commentsCount: commentRow ? commentRow.count : 0,
-    };
+    return stats;
   }
 
-  private async getIngredientBreakdown(
-    recipeId: string,
+  // Ingredientes que el usuario tiene y los que le faltan, para todas las candidatas en una consulta
+  private async getBreakdownsFor(
+    recipeIds: string[],
     matchedIngredientIds: string[],
-  ): Promise<{ matchedNames: string[]; missingNames: string[] }> {
-    const db = this.databaseService.db;
+  ): Promise<Map<string, { matchedNames: string[]; missingNames: string[] }>> {
+    const breakdowns = new Map<string, { matchedNames: string[]; missingNames: string[] }>();
+    if (recipeIds.length === 0) return breakdowns;
 
-    const rows = await db
+    const rows = await this.databaseService.db
       .select({
+        recipeId: recipeIngredients.recipeId,
         ingredientId: recipeIngredients.ingredientId,
         name: ingredients.name,
       })
       .from(recipeIngredients)
       .innerJoin(ingredients, eq(recipeIngredients.ingredientId, ingredients.id))
-      .where(eq(recipeIngredients.recipeId, recipeId));
+      .where(inArray(recipeIngredients.recipeId, recipeIds));
 
-    const matchedNames: string[] = [];
-    const missingNames: string[] = [];
-
+    const matched = new Set(matchedIngredientIds);
     for (const row of rows) {
-      if (matchedIngredientIds.includes(row.ingredientId)) {
-        matchedNames.push(row.name);
-      } else {
-        missingNames.push(row.name);
+      let breakdown = breakdowns.get(row.recipeId);
+      if (!breakdown) {
+        breakdown = { matchedNames: [], missingNames: [] };
+        breakdowns.set(row.recipeId, breakdown);
       }
+      (matched.has(row.ingredientId) ? breakdown.matchedNames : breakdown.missingNames).push(row.name);
     }
 
-    return { matchedNames, missingNames };
+    return breakdowns;
   }
+}
+
+interface RecipeStats {
+  reactionCounts: { like: number; yummy: number; triedIt: number };
+  commentsCount: number;
+}
+
+interface RecipeWithAuthor {
+  recipe: typeof recipes.$inferSelect;
+  author: FeedRecipeItem['author'];
+}
+
+// Forma comun de una receta en el feed, la busqueda y el detalle
+function toFeedItem(row: RecipeWithAuthor, stats: Map<string, RecipeStats>): FeedRecipeItem {
+  const recipeStats = stats.get(row.recipe.id);
+  return {
+    id: row.recipe.id,
+    title: row.recipe.title,
+    description: row.recipe.description,
+    prepTimeMinutes: row.recipe.prepTimeMinutes,
+    cookTimeMinutes: row.recipe.cookTimeMinutes,
+    servings: row.recipe.servings,
+    difficulty: row.recipe.difficulty,
+    coverImageUrl: row.recipe.coverImageUrl,
+    originRegion: row.recipe.originRegion,
+    sourceType: row.recipe.sourceType,
+    sourceName: row.recipe.sourceName,
+    sourceUrl: row.recipe.sourceUrl,
+    status: row.recipe.status,
+    createdAt: row.recipe.createdAt,
+    author: row.author,
+    reactionCounts: recipeStats?.reactionCounts ?? { like: 0, yummy: 0, triedIt: 0 },
+    commentsCount: recipeStats?.commentsCount ?? 0,
+  };
 }

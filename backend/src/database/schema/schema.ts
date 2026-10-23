@@ -145,6 +145,29 @@ export const recipes = pgTable(
 );
 
 /**
+ * Fotos adicionales de una receta (galeria). La portada sigue en recipes.cover_image_url;
+ * aqui van las demas en el orden que eligio el autor.
+ */
+export const recipeImages = pgTable(
+  'recipe_images',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    recipeId: uuid('recipe_id')
+      .notNull()
+      .references(() => recipes.id, { onDelete: 'cascade' }),
+    url: text('url').notNull(),
+    position: integer('position').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    // Un solo lugar por posicion y lectura ordenada de la galeria de una receta
+    uniqueIndex('recipe_images_recipe_position_unique').on(table.recipeId, table.position),
+  ],
+);
+
+/**
  * Catalogo Oficial de Ingredientes (Normalizado)
  * Sustenta la busqueda inteligente por ingredientes segun numeral 3.4.2 de Entrega I part2.md.
  */
@@ -372,6 +395,14 @@ export const recipesRelations = relations(recipes, ({ one, many }) => ({
   reactions: many(recipeReactions),
   bookmarks: many(recipeBookmarks),
   comments: many(recipeComments),
+  images: many(recipeImages),
+}));
+
+export const recipeImagesRelations = relations(recipeImages, ({ one }) => ({
+  recipe: one(recipes, {
+    fields: [recipeImages.recipeId],
+    references: [recipes.id],
+  }),
 }));
 
 export const ingredientsRelations = relations(ingredients, ({ many }) => ({

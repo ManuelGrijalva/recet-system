@@ -111,7 +111,14 @@ async function main(): Promise<void> {
         continue;
       }
 
-      const source = await downloadImage(file.original);
+      let source: Buffer;
+      try {
+        source = await downloadImage(file.original);
+      } catch (err) {
+        // Se sigue con las demas; volver a correr el script la completa
+        console.warn(`Se omite "${photo.recipeTitle}" por ahora: ${err instanceof Error ? err.message : err}`);
+        continue;
+      }
       const key = `recipes/${recipe.authorId}/${randomUUID()}.webp`;
       await s3.send(
         new PutObjectCommand({ Bucket: bucket, Key: key, Body: await toCoverWebp(source), ContentType: 'image/webp' }),

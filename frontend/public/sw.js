@@ -1,11 +1,11 @@
 // Service worker de Memoria del Comal (PP-12): consulta sin conexión de lo ya visitado.
 // Subir CACHE_VERSION invalida las cachés anteriores al activarse.
-const CACHE_VERSION = 'v3';
+const CACHE_VERSION = 'v4';
 const STATIC_CACHE = `static-${CACHE_VERSION}`;
 const PAGES_CACHE = `pages-${CACHE_VERSION}`;
 const API_CACHE = `api-${CACHE_VERSION}`;
 const OFFLINE_URL = '/offline';
-const PRECACHE_URLS = [OFFLINE_URL, '/', '/icons/icon-192.png'];
+const PRECACHE_URLS = [OFFLINE_URL, '/', '/icons/icon-192.png', '/brand/comal.png'];
 
 // Solo se guardan lecturas públicas de recetas, comentarios e ingredientes, nunca datos de la sesión
 const CACHEABLE_API = [
@@ -73,7 +73,11 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url);
 
   if (url.origin === self.location.origin) {
-    if (url.pathname.startsWith('/_next/static/') || url.pathname.startsWith('/icons/')) {
+    if (
+      url.pathname.startsWith('/_next/static/') ||
+      url.pathname.startsWith('/icons/') ||
+      url.pathname.startsWith('/brand/')
+    ) {
       event.respondWith(cacheFirst(request, STATIC_CACHE));
       return;
     }

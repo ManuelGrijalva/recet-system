@@ -3,72 +3,72 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #09090b;
-  --card: #ffffff;
-  --card-foreground: #09090b;
-  --popover: #ffffff;
-  --popover-foreground: #09090b;
-  --primary: #09090b;
-  --primary-foreground: #fafafa;
-  --secondary: #f4f4f5;
-  --secondary-foreground: #18181b;
-  --muted: #f4f4f5;
-  --muted-foreground: #71717a;
-  --accent: #f4f4f5;
-  --accent-foreground: #18181b;
-  --destructive: #18181b;
-  --destructive-foreground: #fafafa;
-  --border: #e4e4e7;
-  --input: #e4e4e7;
-  --ring: #09090b;
+  --background: #f8f1e5;
+  --foreground: #1f1a13;
+  --card: #fffcf6;
+  --card-foreground: #1f1a13;
+  --popover: #fffcf6;
+  --popover-foreground: #1f1a13;
+  --primary: #1f1a13;
+  --primary-foreground: #fbf6ec;
+  --secondary: #f3ebdb;
+  --secondary-foreground: #2d261d;
+  --muted: #f3ebdb;
+  --muted-foreground: #6f6350;
+  --accent: #f3ebdb;
+  --accent-foreground: #2d261d;
+  --destructive: #2d261d;
+  --destructive-foreground: #fbf6ec;
+  --border: #e7dcc6;
+  --input: #e7dcc6;
+  --ring: #1f1a13;
   --radius: 0.375rem; /* 6px max 8px */
 
   /* Brasa (acento de marca) y colores de estado; ver regla de color en CLAUDE.md */
   --brand: #c2410c;
   --brand-hover: #9a3412;
   --brand-foreground: #ffffff;
-  --brand-soft: #fff7ed;
+  --brand-soft: #fce8d6;
   --brand-soft-foreground: #9a3412;
   --success: #15803d;
   --success-hover: #166534;
   --success-foreground: #ffffff;
-  --success-soft: #f0fdf4;
+  --success-soft: #e5f2e0;
   --success-soft-foreground: #166534;
   --danger: #b91c1c;
   --danger-hover: #991b1b;
   --danger-foreground: #ffffff;
-  --danger-soft: #fef2f2;
+  --danger-soft: #fae3de;
   --danger-soft-foreground: #991b1b;
-  --warning-soft: #fffbeb;
+  --warning-soft: #f9ecc8;
   --warning-soft-foreground: #92400e;
 }
 
 .dark {
-  --background: #0a0a0a;
-  --foreground: #f4f4f5;
-  --card: #0a0a0a;
-  --card-foreground: #f4f4f5;
-  --popover: #0a0a0a;
-  --popover-foreground: #f4f4f5;
-  --primary: #f4f4f5;
-  --primary-foreground: #09090b;
-  --secondary: #27272a;
-  --secondary-foreground: #f4f4f5;
-  --muted: #18181b;
-  --muted-foreground: #a1a1aa;
-  --accent: #27272a;
-  --accent-foreground: #f4f4f5;
-  --destructive: #f4f4f5;
-  --destructive-foreground: #09090b;
-  --border: #27272a;
-  --input: #27272a;
-  --ring: #d4d4d8;
+  --background: #15110d;
+  --foreground: #f3ebdb;
+  --card: #1c1712;
+  --card-foreground: #f3ebdb;
+  --popover: #1c1712;
+  --popover-foreground: #f3ebdb;
+  --primary: #f3ebdb;
+  --primary-foreground: #15110d;
+  --secondary: #2d261d;
+  --secondary-foreground: #f3ebdb;
+  --muted: #1f1a13;
+  --muted-foreground: #a39579;
+  --accent: #2d261d;
+  --accent-foreground: #f3ebdb;
+  --destructive: #f3ebdb;
+  --destructive-foreground: #15110d;
+  --border: #2d261d;
+  --input: #2d261d;
+  --ring: #d5c7ac;
 
   --brand: #fb923c;
   --brand-hover: #fdba74;
   --brand-foreground: #09090b;
-  --brand-soft: #2a1408;
+  --brand-soft: #2e1809;
   --brand-soft-foreground: #fdba74;
   --success: #4ade80;
   --success-hover: #86efac;
@@ -78,7 +78,7 @@
   --danger: #f87171;
   --danger-hover: #fca5a5;
   --danger-foreground: #09090b;
-  --danger-soft: #2a0a0a;
+  --danger-soft: #2e0f0c;
   --danger-soft-foreground: #f87171;
   --warning-soft: #2b1d05;
   --warning-soft-foreground: #fcd34d;
@@ -91,6 +91,9 @@
 
 body {
   background-color: var(--background);
+  /* Tapiz de Guatemala (maiz, quetzal, volcan, olla de barro, huipil, Tikal) en trazo arena: identidad sin competir con las tarjetas */
+  background-image: url('/patterns/guatemala.svg');
+  background-size: 240px 240px;
   color: var(--foreground);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -122,4 +125,9 @@ h1 {
   .animate-reaction-pop {
     animation: none;
   }
+}
+
+/* El tapiz esta dibujado para el fondo crema; en oscuro queda el color solido */
+.dark body {
+  background-image: none;
 }

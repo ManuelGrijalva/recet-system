@@ -47,7 +47,7 @@ export function Modal({
         aria-modal="true"
         aria-labelledby="modal-title"
         className={cn(
-          'relative z-10 w-full max-w-lg bg-white dark:bg-[#0a0a0a] border border-zinc-200 dark:border-zinc-800 shadow-xl animate-sheet-in sm:animate-dialog-in',
+          'relative z-10 w-full max-w-lg bg-white dark:bg-[#15110d] border border-zinc-200 dark:border-zinc-800 shadow-xl animate-sheet-in sm:animate-dialog-in',
           // Movil: Bottom Sheet (borde superior redondeado a 8px maximo)
           'rounded-t-md sm:rounded-md max-h-[90vh] flex flex-col',
           className,

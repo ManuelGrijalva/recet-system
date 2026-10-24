@@ -15,7 +15,24 @@ const config: Config = {
         serif: ['var(--font-serif)', 'Georgia', 'serif'],
       },
       colors: {
-        // Base monocromatica en escala zinc / neutral
+        // La escala zinc se reasigna a tonos arena calidos (la referencia visual es crema, no gris frio)
+        zinc: {
+          50: '#FBF6EC',
+          100: '#F3EBDB',
+          200: '#E7DCC6',
+          300: '#D5C7AC',
+          400: '#A39579',
+          500: '#6F6350',
+          600: '#554B3B',
+          700: '#41392C',
+          800: '#2D261D',
+          900: '#1F1A13',
+          950: '#14100B',
+        },
+        white: '#FFFCF6',
+        // Ocre: solo decoracion (formas y tejido de portada), nunca texto ni botones
+        ochre: '#D69E2E',
+        // Base crema y arena; los acentos vienen despues
         background: 'var(--background)',
         foreground: 'var(--foreground)',
         card: {

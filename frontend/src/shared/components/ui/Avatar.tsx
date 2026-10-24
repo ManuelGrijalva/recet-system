@@ -1,4 +1,6 @@
-import React from 'react';
+'use client';
+
+import React, { useState } from 'react';
 
 interface AvatarProps {
   src?: string | null;
@@ -13,6 +15,8 @@ export function Avatar({
   size = 'md',
   fallbackName = 'Usuario',
 }: AvatarProps): React.JSX.Element {
+  // Si la foto no carga (enlace vencido o bloqueado) se muestran las iniciales en vez del texto alternativo cortado
+  const [failed, setFailed] = useState(false);
   const sizeClasses = {
     sm: 'w-7 h-7 text-xs',
     md: 'w-9 h-9 text-sm',
@@ -28,11 +32,13 @@ export function Avatar({
     .join('')
     .toUpperCase(); // Iniciales en dos letras
 
-  if (src) {
+  if (src && !failed) {
     return (
       <img
         src={src}
         alt={alt}
+        referrerPolicy="no-referrer"
+        onError={() => setFailed(true)}
         className={`${sizeClasses[size]} rounded-full object-cover border border-zinc-200 dark:border-zinc-800 shrink-0`}
       />
     );

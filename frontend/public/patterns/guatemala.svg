@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240" fill="none" stroke="#DED0B5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Fondo decorativo de Memoria del Comal: maiz, quetzal, volcan, olla de barro, rombo de huipil y templo de Tikal en trazo arena -->
+  <g transform="translate(36 40) rotate(-12)">
+    <ellipse cx="0" cy="0" rx="7" ry="16"/>
+    <path d="M0 -15 V15 M-6 -8 H6 M-7 -2 H7 M-7 4 H7 M-5 10 H5"/>
+    <path d="M-2 15 C-14 8 -17 -8 -12 -22 M2 15 C14 8 17 -8 12 -22"/>
+  </g>
+  <g transform="translate(158 46)">
+    <ellipse cx="0" cy="0" rx="9" ry="6"/>
+    <circle cx="9" cy="-6" r="4.5"/>
+    <path d="M13 -6 L17 -4 L13 -3 M7 -10 C8 -15 12 -15 12 -11 M-2 -2 C2 2 6 2 7 -1"/>
+    <path d="M-8 3 C-20 12 -32 18 -46 32 M-6 5 C-15 17 -22 26 -30 42"/>
+  </g>
+  <g transform="translate(104 128)">
+    <path d="M-32 16 L-9 -15 L-3 -10 L3 -15 L32 16"/>
+    <path d="M-20 0 L-14 4 L-8 -1 M8 -1 L14 4 L20 0"/>
+    <path d="M0 -21 C-5 -27 3 -31 -1 -38"/>
+  </g>
+  <g transform="translate(40 168)">
+    <path d="M-16 -4 C-16 14 16 14 16 -4"/>
+    <path d="M-19 -6 H19 M-16 -1 C-22 -1 -22 5 -16 5 M16 -1 C22 -1 22 5 16 5"/>
+    <path d="M-6 -12 C-8 -16 -4 -18 -6 -22 M2 -12 C0 -16 4 -18 2 -22"/>
+  </g>
+  <g transform="translate(188 170)">
+    <path d="M0 -15 L15 0 L0 15 L-15 0 Z"/>
+    <path d="M0 -7 L7 0 L0 7 L-7 0 Z"/>
+    <path d="M-21 0 H-17 M17 0 H21 M0 -21 V-17 M0 17 V21"/>
+  </g>
+  <g transform="translate(196 104)">
+    <path d="M-18 16 H18 V10 H14 V4 H10 V-2 H6 V-10 H-6 V-2 H-10 V4 H-14 V10 H-18 Z"/>
+    <path d="M-4 -10 V-17 H4 V-10 M-2 16 V10 H2 V16"/>
+  </g>
+  <g stroke-width="1.2">
+    <path d="M92 30 L96 34 L92 38 L88 34 Z M128 214 L132 218 L128 222 L124 218 Z M18 102 L22 106 L18 110 L14 106 Z M222 18 L226 22 L222 26 L218 22 Z"/>
+  </g>
+</svg>

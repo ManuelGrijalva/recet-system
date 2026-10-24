@@ -45,12 +45,12 @@ export function PublishedRecipeRow({ recipe, isDeleting, onDelete }: PublishedRe
             <Button size="sm" variant="ghost" onClick={() => setConfirming(false)} disabled={isDeleting}>
               Cancelar
             </Button>
-            <Button size="sm" variant="primary" onClick={onDelete} isLoading={isDeleting}>
+            <Button size="sm" variant="danger" onClick={onDelete} isLoading={isDeleting}>
               Eliminar
             </Button>
           </>
         ) : (
-          <Button size="sm" variant="outline" onClick={() => setConfirming(true)}>
+          <Button size="sm" variant="dangerOutline" onClick={() => setConfirming(true)}>
             Eliminar
           </Button>
         )}

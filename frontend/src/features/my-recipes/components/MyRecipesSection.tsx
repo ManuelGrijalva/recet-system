@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { Notice } from '@/shared/components/ui/Notice';
 import Link from 'next/link';
 import { useMyRecipes } from '../hooks/useMyRecipes';
 import { MyRecipeRow } from './MyRecipeRow';
@@ -20,7 +21,7 @@ export function MyRecipesSection(): React.JSX.Element {
         </Link>
       </div>
 
-      {error && <p className="text-xs text-zinc-700 dark:text-zinc-300">{error}</p>}
+      {error && <Notice tone="danger" role="alert">{error}</Notice>}
 
       {isLoading ? (
         <p className="text-xs text-zinc-500 dark:text-zinc-400">Cargando tus recetas...</p>

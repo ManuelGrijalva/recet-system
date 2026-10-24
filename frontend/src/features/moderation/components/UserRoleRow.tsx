@@ -31,7 +31,7 @@ export function UserRoleRow({
       </div>
 
       {user.role === 'USER' && (
-        <Button size="sm" variant="primary" isLoading={isUpdating} onClick={() => onSetRole('CONTRIBUTOR')}>
+        <Button size="sm" variant="neutral" isLoading={isUpdating} onClick={() => onSetRole('CONTRIBUTOR')}>
           Hacer colaborador
         </Button>
       )}

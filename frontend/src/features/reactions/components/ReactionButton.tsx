@@ -29,9 +29,9 @@ export function ReactionButton({
       aria-label={`${label} (${count})`}
       title={label}
       className={cn(
-        'flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium border transition-all active:scale-95 disabled:opacity-60',
+        'flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium border transition-all active:scale-95 disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand',
         active
-          ? 'bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 border-transparent shadow-xs'
+          ? 'bg-brand-soft text-brand-soft-foreground border-brand font-semibold'
           : 'border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-900',
       )}
     >

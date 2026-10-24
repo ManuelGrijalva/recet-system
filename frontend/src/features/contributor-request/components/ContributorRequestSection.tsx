@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/shared/components/ui/Button';
+import { Notice } from '@/shared/components/ui/Notice';
 import { useContributorRequest } from '../hooks/useContributorRequest';
 import {
   CONTRIBUTOR_BENEFITS,
@@ -72,13 +73,11 @@ export function ContributorRequestSection(): React.JSX.Element | null {
       </div>
 
       {request?.status === 'REJECTED' && (
-        <div className="p-3 rounded-md border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 space-y-1">
-          <p className="text-xs font-medium text-zinc-900 dark:text-zinc-100">Tu solicitud anterior no fue aprobada</p>
-          {request.reviewNotes && (
-            <p className="text-xs text-zinc-700 dark:text-zinc-300 whitespace-pre-line">{request.reviewNotes}</p>
-          )}
-          <p className="text-xs text-zinc-600 dark:text-zinc-400">Puedes volver a solicitarlo.</p>
-        </div>
+        <Notice tone="danger">
+          <p className="font-semibold">Tu solicitud anterior no fue aprobada</p>
+          {request.reviewNotes && <p className="whitespace-pre-line">{request.reviewNotes}</p>}
+          <p>Puedes volver a solicitarlo.</p>
+        </Notice>
       )}
 
       {!isOpen ? (

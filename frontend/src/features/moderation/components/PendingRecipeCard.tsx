@@ -97,7 +97,7 @@ export function PendingRecipeCard({
               </Button>
               <Button
                 type="submit"
-                variant="primary"
+                variant="neutral"
                 size="sm"
                 isLoading={isReviewing}
                 disabled={notes.trim().length === 0}
@@ -117,7 +117,7 @@ export function PendingRecipeCard({
               Devolver con observaciones
             </Button>
             <Button
-              variant="primary"
+              variant="success"
               size="sm"
               isLoading={isReviewing}
               onClick={() => void onReview({ decision: 'APPROVE' })}

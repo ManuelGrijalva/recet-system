@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/shared/components/ui/Button';
+import { StatusBadge, type StatusTone } from '@/shared/components/ui/StatusBadge';
 import { describeRecipeStatus } from '../lib/describeRecipeStatus';
 import type { MyRecipe } from '../types';
 
@@ -10,6 +11,13 @@ interface MyRecipeRowProps {
   recipe: MyRecipe;
   isDeleting: boolean;
   onDelete: () => void;
+}
+
+function statusTone(recipe: MyRecipe): StatusTone {
+  if (recipe.status === 'PUBLISHED') return 'success';
+  if (recipe.status === 'PENDING_REVIEW') return 'warning';
+  if (recipe.status === 'DRAFT' && recipe.reviewNotes) return 'danger';
+  return 'neutral';
 }
 
 export function MyRecipeRow({ recipe, isDeleting, onDelete }: MyRecipeRowProps): React.JSX.Element {
@@ -25,8 +33,9 @@ export function MyRecipeRow({ recipe, isDeleting, onDelete }: MyRecipeRowProps):
           >
             {recipe.title}
           </Link>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400">
-            {describeRecipeStatus(recipe)} · {recipe.originRegion}
+          <p className="mt-1 flex flex-wrap items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400">
+            <StatusBadge tone={statusTone(recipe)}>{describeRecipeStatus(recipe)}</StatusBadge>
+            {recipe.originRegion}
           </p>
         </div>
 
@@ -42,7 +51,7 @@ export function MyRecipeRow({ recipe, isDeleting, onDelete }: MyRecipeRowProps):
               <Button size="sm" variant="ghost" onClick={() => setConfirming(false)} disabled={isDeleting}>
                 Cancelar
               </Button>
-              <Button size="sm" variant="primary" onClick={onDelete} isLoading={isDeleting}>
+              <Button size="sm" variant="danger" onClick={onDelete} isLoading={isDeleting}>
                 Confirmar
               </Button>
             </>

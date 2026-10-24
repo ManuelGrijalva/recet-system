@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useCallback } from 'react';
+import { Notice } from '@/shared/components/ui/Notice';
 import { useRecipeComposer } from '../hooks/useRecipeComposer';
 import { useRecipePhotos } from '../hooks/useRecipePhotos';
 import { moveToFront, removeAt } from '../lib/recipePhotos';
@@ -56,22 +57,16 @@ export function RecipeComposerScreen({ recipeId }: RecipeComposerScreenProps): R
       </div>
 
       {reviewNotes && (
-        <div className="p-4 rounded-md border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 space-y-1">
-          <p className="text-xs font-medium text-zinc-900 dark:text-zinc-100">Observaciones del administrador</p>
-          <p className="text-xs text-zinc-700 dark:text-zinc-300 whitespace-pre-line">{reviewNotes}</p>
-        </div>
+        <Notice tone="danger">
+          <p className="font-semibold">Observaciones del administrador</p>
+          <p className="whitespace-pre-line">{reviewNotes}</p>
+        </Notice>
       )}
 
       {result && (
-        <div
-          className={`p-4 rounded-md border text-xs font-medium ${
-            result.ok
-              ? 'border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100'
-              : 'border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-900 text-zinc-800 dark:text-zinc-200'
-          }`}
-        >
+        <Notice tone={result.ok ? 'success' : 'danger'} role="status" className="font-medium">
           {result.message}
-        </div>
+        </Notice>
       )}
 
       <form

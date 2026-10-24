@@ -66,7 +66,7 @@ export function ContributorRequestCard({
               <Button type="button" size="sm" variant="ghost" onClick={() => setIsRejecting(false)} disabled={isReviewing}>
                 Cancelar
               </Button>
-              <Button type="submit" size="sm" variant="primary" isLoading={isReviewing}>
+              <Button type="submit" size="sm" variant="danger" isLoading={isReviewing}>
                 Rechazar solicitud
               </Button>
             </div>
@@ -76,7 +76,7 @@ export function ContributorRequestCard({
             <Button size="sm" variant="outline" onClick={() => setIsRejecting(true)} disabled={isReviewing}>
               Rechazar
             </Button>
-            <Button size="sm" variant="primary" isLoading={isReviewing} onClick={() => void onReview({ decision: 'APPROVE' })}>
+            <Button size="sm" variant="success" isLoading={isReviewing} onClick={() => void onReview({ decision: 'APPROVE' })}>
               Aprobar
             </Button>
           </div>

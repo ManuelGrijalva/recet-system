@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { Notice } from '@/shared/components/ui/Notice';
 import { useContributorRequests } from '../hooks/useContributorRequests';
 import { ContributorRequestCard } from './ContributorRequestCard';
 
@@ -14,9 +15,7 @@ export function ContributorRequestsPanel(): React.JSX.Element {
       </p>
 
       {error && (
-        <div className="p-4 rounded-md border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-900 text-xs font-medium text-zinc-800 dark:text-zinc-200">
-          {error}
-        </div>
+        <Notice tone="danger" role="alert">{error}</Notice>
       )}
 
       {isLoading ? (

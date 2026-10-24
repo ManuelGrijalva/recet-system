@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { cn } from '@/shared/lib/utils';
 import { ROLE_LABELS, useSession } from '@/shared/session';
 import { Button } from '@/shared/components/ui/Button';
+import { Notice } from '@/shared/components/ui/Notice';
 import { MyRecipesSection } from '@/features/my-recipes';
 import { ContributorRequestSection } from '@/features/contributor-request';
 import { ProfileHeader } from '@/features/user-profile';
@@ -108,9 +109,9 @@ function ProfileContent(): React.JSX.Element {
       />
 
       {feedback && (
-        <div role="status" className="p-3 rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-xs font-medium text-zinc-900 dark:text-zinc-100">
+        <Notice tone={feedback.ok ? 'success' : 'danger'} role="status" className="font-medium">
           {feedback.message}
-        </div>
+        </Notice>
       )}
 
       {!profile.bio && (
@@ -186,7 +187,7 @@ export function ProfileScreen(): React.JSX.Element {
         </p>
         <Link
           href="/login"
-          className="inline-flex h-9 items-center justify-center rounded-md bg-zinc-900 px-4 text-sm font-medium text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+          className="inline-flex h-9 items-center justify-center rounded-md bg-brand px-4 text-sm font-medium text-brand-foreground hover:bg-brand-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
         >
           Iniciar sesión
         </Link>

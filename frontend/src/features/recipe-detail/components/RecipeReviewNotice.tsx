@@ -1,4 +1,5 @@
 import React from 'react';
+import { Notice } from '@/shared/components/ui/Notice';
 import type { RecipeStatus } from '@/shared/types';
 
 interface RecipeReviewNoticeProps {
@@ -20,16 +21,14 @@ export function RecipeReviewNotice({
   if (!message) return null;
 
   return (
-    <div className="p-4 rounded-md border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 space-y-2">
-      <p className="text-xs font-medium text-zinc-800 dark:text-zinc-200">{message}</p>
+    <Notice tone={status === 'PENDING_REVIEW' ? 'warning' : reviewNotes ? 'danger' : 'neutral'} className="p-4">
+      <p className="font-medium">{message}</p>
       {reviewNotes && (
         <div>
-          <p className="text-xs font-medium text-zinc-900 dark:text-zinc-100">
-            Observaciones del administrador
-          </p>
-          <p className="text-xs text-zinc-700 dark:text-zinc-300 whitespace-pre-line">{reviewNotes}</p>
+          <p className="font-semibold">Observaciones del administrador</p>
+          <p className="whitespace-pre-line">{reviewNotes}</p>
         </div>
       )}
-    </div>
+    </Notice>
   );
 }

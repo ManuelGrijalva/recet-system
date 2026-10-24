@@ -21,7 +21,7 @@ export function FeedWelcome(): React.JSX.Element {
         <div className="flex flex-wrap gap-2 mt-5">
           <Link
             href="/search"
-            className="text-sm font-medium px-4 py-2 rounded-md bg-zinc-900 text-white hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300 transition-colors"
+            className="text-sm font-medium px-4 py-2 rounded-md bg-brand text-brand-foreground hover:bg-brand-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 transition-colors"
           >
             Buscar con lo que tengo
           </Link>

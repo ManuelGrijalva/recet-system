@@ -30,7 +30,7 @@ export function AdminDeleteRecipeButton({ recipeId }: AdminDeleteRecipeButtonPro
 
   if (!confirming) {
     return (
-      <Button size="sm" variant="outline" onClick={() => setConfirming(true)}>
+      <Button size="sm" variant="dangerOutline" onClick={() => setConfirming(true)}>
         Eliminar receta
       </Button>
     );
@@ -42,7 +42,7 @@ export function AdminDeleteRecipeButton({ recipeId }: AdminDeleteRecipeButtonPro
       <Button size="sm" variant="ghost" onClick={() => setConfirming(false)} disabled={isDeleting}>
         Cancelar
       </Button>
-      <Button size="sm" variant="primary" onClick={() => void remove()} isLoading={isDeleting}>
+      <Button size="sm" variant="danger" onClick={() => void remove()} isLoading={isDeleting}>
         Eliminar
       </Button>
     </div>

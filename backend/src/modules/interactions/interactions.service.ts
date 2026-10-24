@@ -148,6 +148,9 @@ export class InteractionsService {
           servings: recipes.servings,
           difficulty: recipes.difficulty,
           coverImageUrl: recipes.coverImageUrl,
+          // El credito es obligatorio para mostrar fotos con licencia libre
+          coverImageCredit: recipes.coverImageCredit,
+          coverImageCreditUrl: recipes.coverImageCreditUrl,
           originRegion: recipes.originRegion,
         },
         author: {

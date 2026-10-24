@@ -111,7 +111,7 @@ Atajos equivalentes desde la raiz: `pnpm dev:backend` y `pnpm dev:frontend`.
 | Capa | Tecnología | Detalle |
 |---|---|---|
 | Frontend | Next.js 15 (App Router) | React 19, Vertical Slice Architecture |
-| Estilos | Tailwind CSS 3 | Paleta monocromática estricta (blanco, negro, `zinc`) |
+| Estilos | Tailwind CSS 3 | Base monocromática (blanco, negro, `zinc`) con acento Brasa y colores de estado |
 | Backend | NestJS 11 | Modular, TypeScript estricto |
 | Base de datos | PostgreSQL 16+ | Alojada en Railway, SSL controlado por `DATABASE_SSL` |
 | ORM | Drizzle ORM | Con `drizzle-kit`. Prohibido TypeORM |
@@ -230,7 +230,7 @@ Las directrices completas están en `AGENTS.md`. Resumen:
 - pnpm exclusivo; prohibido `npm` y `yarn`.
 - TypeScript estricto; prohibido `any`. Un `any` hace fallar el linteo.
 - Sin emojis en código, documentación ni control de versiones.
-- Diseño monocromático (blanco, negro, `zinc`); `rounded-full` solo en avatares; prohibido `uppercase`. Los botones de la barra lateral y de la barra inferior muestran el tejido gris (`NavTextile`) al pasar el cursor, al presionarlos y en la sección actual; el ícono y el texto quedan sobre una pastilla blanca para que se lean. La única pieza con color es el isotipo: un comal de barro sobre el fuego con una franja de tejido (`BrandMark`, que muestra `public/brand/comal.png` con fondo transparente). Los íconos de la PWA (`public/icons/`, incluido el adaptable con el dibujo dentro de la zona segura) y el favicon salen de la misma imagen; al cambiarlos se sube `CACHE_VERSION` en `sw.js`.
+- Diseño monocromático con un acento: Brasa (`#C2410C`) en la acción principal, el foco y la reacción activa; verde, rojo y ámbar solo para estados (`StatusBadge`, `Notice`, variantes `success`/`danger` de `Button`), siempre con ícono y texto. `rounded-full` solo en avatares; prohibido `uppercase`. Los botones de la barra lateral y de la barra inferior muestran el tejido gris (`NavTextile`) al pasar el cursor, al presionarlos y en la sección actual; el ícono y el texto quedan sobre una pastilla blanca para que se lean. Fuera de esos acentos, la pieza con color propio es el isotipo: un comal de barro sobre el fuego con una franja de tejido (`BrandMark`, que muestra `public/brand/comal.png` con fondo transparente). Los íconos de la PWA (`public/icons/`, incluido el adaptable con el dibujo dentro de la zona segura) y el favicon salen de la misma imagen; al cambiarlos se sube `CACHE_VERSION` en `sw.js`.
 - Tipografía: los `h1`, los títulos de receta y el nombre de la marca usan la serifa Lora (`next/font`, clase `font-serif`); el resto, la fuente del sistema. Las recetas sin foto muestran `RecipeCoverPlaceholder` (patrón de tejido `TextilePattern` con el título) en el feed y el detalle. Las tarjetas se elevan con sombra y borde al pasar el mouse; `hoverOnlyWhenSupported` evita que `hover:` se quede pegado al tocar en el celular. El feed muestra a los invitados la portada `FeedWelcome`, con accesos a buscar por ingredientes y a iniciar sesión.
 - Commits con Conventional Commits (`tipo(scope): resumen`), resumen y cuerpo en español e imperativo. Tipos: `feat`, `fix`, `refactor`, `perf`, `docs`, `test`, `build`, `ci`, `chore`, `style`.
 - Prohibido incluir trailers `Co-Authored-By` o cualquier atribución a un agente en commits o Pull Request. El autor es siempre el desarrollador humano.

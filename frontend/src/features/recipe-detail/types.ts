@@ -46,3 +46,15 @@ export interface RecipeDetail {
   ingredients: RecipeIngredient[];
   steps: RecipeStep[];
 }
+
+// Receta del mismo lugar para la seccion "Mas recetas de ..." al final del detalle
+export interface RelatedRecipe {
+  id: string;
+  title: string;
+  originRegion: string;
+  prepTimeMinutes: number;
+  cookTimeMinutes: number;
+  coverImageUrl: string | null;
+  coverImageCredit?: string | null;
+  coverImageCreditUrl?: string | null;
+}

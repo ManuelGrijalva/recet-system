@@ -36,7 +36,7 @@ export function RecipeDetailHeader({
             {recipe.author.name}
           </p>
           {recipe.author.role && (
-            <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
+            <p className="text-xs text-zinc-500 dark:text-zinc-400">
               {recipe.author.role}
             </p>
           )}

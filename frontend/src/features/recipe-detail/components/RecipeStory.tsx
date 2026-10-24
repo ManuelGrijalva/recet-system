@@ -6,7 +6,7 @@ interface RecipeStoryProps {
 
 export function RecipeStory({ description }: RecipeStoryProps): React.JSX.Element {
   return (
-    <div className="p-4 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a]">
+    <div className="p-4 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#15110d]">
       <h2 className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 mb-1.5">
         Reseña e historia
       </h2>

@@ -19,7 +19,7 @@ export function PublishBar({
   onStatusChange,
 }: PublishBarProps): React.JSX.Element {
   return (
-    <div className="flex items-center justify-between p-4 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a]">
+    <div className="flex items-center justify-between p-4 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#15110d]">
       <div className="flex items-center gap-2">
         <input
           type="checkbox"
@@ -33,7 +33,7 @@ export function PublishBar({
         </label>
       </div>
 
-      <Button type="submit" size="md" variant="primary" isLoading={isSubmitting} disabled={isBlocked}>
+      <Button type="submit" size="md" variant="primary" isLoading={isSubmitting} disabled={isBlocked} className="shrink-0 whitespace-nowrap">
         {status === 'DRAFT' ? 'Guardar borrador' : isEditing ? 'Guardar y enviar' : 'Publicar receta'}
       </Button>
     </div>

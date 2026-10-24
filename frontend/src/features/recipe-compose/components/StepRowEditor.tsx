@@ -25,7 +25,7 @@ export function StepRowEditor({
         value={step.instruction}
         onChange={(e) => onChange(e.target.value)}
         rows={2}
-        className="flex-1 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a] p-2.5 text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-400 resize-none"
+        className="flex-1 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#15110d] p-2.5 text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-400 resize-none"
         required
       />
       {canRemove && (

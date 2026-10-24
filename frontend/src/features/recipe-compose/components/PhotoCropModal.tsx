@@ -59,7 +59,7 @@ export function PhotoCropModal({ file, remaining, onConfirm, onSkip }: PhotoCrop
           />
         </label>
 
-        <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
+        <p className="text-xs text-zinc-500 dark:text-zinc-400">
           Arrastra la foto para encuadrar el platillo. Así se verá en el feed y en la receta.
           {remaining > 0 && ` Después siguen ${remaining} ${remaining === 1 ? 'foto' : 'fotos'} más.`}
         </p>

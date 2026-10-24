@@ -10,7 +10,7 @@ interface IngredientRowEditorProps {
 }
 
 const FIELD_CLASS =
-  'h-9 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a] text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-400';
+  'h-9 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#15110d] text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-400';
 
 export function IngredientRowEditor({
   value,
@@ -19,13 +19,14 @@ export function IngredientRowEditor({
   onRemove,
 }: IngredientRowEditorProps): React.JSX.Element {
   return (
-    <div className="flex items-center gap-2">
+    // En el celular el nombre ocupa su propia linea y cantidad y unidad van debajo
+    <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
       <input
         type="text"
         placeholder="Nombre (ej. Queso criollo)"
         value={value.name}
         onChange={(e) => onChange('name', e.target.value)}
-        className={`flex-1 px-3 ${FIELD_CLASS}`}
+        className={`min-w-0 flex-1 basis-full px-3 sm:basis-auto ${FIELD_CLASS}`}
         required
       />
       <input
@@ -33,7 +34,7 @@ export function IngredientRowEditor({
         placeholder="Cantidad (ej. 1/2)"
         value={value.quantity}
         onChange={(e) => onChange('quantity', e.target.value)}
-        className={`w-24 px-2.5 ${FIELD_CLASS}`}
+        className={`min-w-0 flex-1 px-2.5 sm:w-24 sm:flex-none ${FIELD_CLASS}`}
         required
       />
       <input
@@ -41,7 +42,7 @@ export function IngredientRowEditor({
         placeholder="Unidad (ej. libra)"
         value={value.unit}
         onChange={(e) => onChange('unit', e.target.value)}
-        className={`w-24 px-2.5 ${FIELD_CLASS}`}
+        className={`min-w-0 flex-1 px-2.5 sm:w-24 sm:flex-none ${FIELD_CLASS}`}
         required
       />
       {canRemove && (

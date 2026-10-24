@@ -23,14 +23,7 @@ export function RecipePhotosField({
   const isFull = images.length + uploadingCount >= MAX_RECIPE_PHOTOS;
 
   return (
-    <div className="space-y-3 p-4 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a]">
-      <div>
-        <p className="text-xs font-medium text-zinc-700 dark:text-zinc-300">Fotos del platillo</p>
-        <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5">
-          Opcional, hasta {MAX_RECIPE_PHOTOS}. Ajustas el encuadre de cada una antes de subirla; la primera es la portada.
-        </p>
-      </div>
-
+    <div className="space-y-3 p-4 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#1c1712]">
       {(images.length > 0 || uploadingCount > 0) && (
         <ul className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {images.map((url, index) => (
@@ -42,7 +35,7 @@ export function RecipePhotosField({
                   className="w-full aspect-[4/3] object-cover rounded-md border border-zinc-200 dark:border-zinc-800"
                 />
                 {index === 0 && (
-                  <span className="absolute top-1.5 left-1.5 text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-white/90 text-zinc-900 dark:bg-[#0a0a0a]/90 dark:text-zinc-100">
+                  <span className="absolute top-1.5 left-1.5 text-xs font-medium px-1.5 py-0.5 rounded-md bg-white/90 text-zinc-900 dark:bg-[#15110d]/90 dark:text-zinc-100">
                     Portada
                   </span>
                 )}
@@ -52,7 +45,7 @@ export function RecipePhotosField({
                   <button
                     type="button"
                     onClick={() => onMakeCover(index)}
-                    className="text-[11px] px-1.5 py-0.5 rounded-md text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-900"
+                    className="text-xs px-1.5 py-0.5 rounded-md text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-900"
                   >
                     Hacer portada
                   </button>
@@ -60,7 +53,7 @@ export function RecipePhotosField({
                 <button
                   type="button"
                   onClick={() => onRemove(index)}
-                  className="text-[11px] px-1.5 py-0.5 rounded-md text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-900"
+                  className="text-xs px-1.5 py-0.5 rounded-md text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-900"
                 >
                   Quitar
                 </button>
@@ -69,7 +62,7 @@ export function RecipePhotosField({
           ))}
           {Array.from({ length: uploadingCount }, (_, i) => (
             <li key={`subiendo-${i}`}>
-              <div className="w-full aspect-[4/3] rounded-md border border-dashed border-zinc-300 dark:border-zinc-700 flex items-center justify-center text-[11px] text-zinc-500 animate-pulse">
+              <div className="w-full aspect-[4/3] rounded-md border border-dashed border-zinc-300 dark:border-zinc-700 flex items-center justify-center text-xs text-zinc-500 animate-pulse">
                 Subiendo...
               </div>
             </li>

@@ -17,7 +17,7 @@ export function RecipeBasicsFields({
   onFieldChange,
 }: RecipeBasicsFieldsProps): React.JSX.Element {
   return (
-    <div className="space-y-4 p-4 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a]">
+    <div className="space-y-4 p-4 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#1c1712]">
       <Input
         label="Título de la receta"
         value={draft.title}
@@ -35,7 +35,7 @@ export function RecipeBasicsFields({
           onChange={(e) => onFieldChange('description', e.target.value)}
           placeholder="Describe el platillo, su ocasión tradicional de consumo o el contexto en el municipio..."
           rows={3}
-          className="w-full rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a] p-3 text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-400"
+          className="w-full rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#15110d] p-3 text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-400"
           required
         />
       </div>
@@ -89,7 +89,7 @@ export function RecipeBasicsFields({
             onChange={(e) =>
               onFieldChange('difficulty', e.target.value as Difficulty)
             }
-            className="w-full h-9 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a] px-3 text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-400"
+            className="w-full h-9 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#15110d] px-3 text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-400"
           >
             {DIFFICULTY_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { cn } from '../../lib/utils';
+import { ExclamationCircleIcon } from './icons';
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -25,14 +26,15 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           id={inputId}
           ref={ref}
           className={cn(
-            'flex h-9 w-full rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a] px-3 py-1 text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-400 dark:focus:ring-zinc-600 disabled:cursor-not-allowed disabled:opacity-50 transition-colors',
-            error && 'border-zinc-950 dark:border-zinc-100',
+            'flex h-9 w-full rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a] px-3 py-1 text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand disabled:cursor-not-allowed disabled:opacity-50 transition-colors',
+            error && 'border-danger',
             className,
           )}
           {...props}
         />
         {error && (
-          <p className="text-xs text-zinc-600 dark:text-zinc-400 font-medium">
+          <p className="flex items-center gap-1 text-xs font-medium text-danger-soft-foreground">
+            <ExclamationCircleIcon className="h-3.5 w-3.5 shrink-0" />
             {error}
           </p>
         )}

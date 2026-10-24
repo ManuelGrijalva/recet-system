@@ -15,7 +15,7 @@ const config: Config = {
         serif: ['var(--font-serif)', 'Georgia', 'serif'],
       },
       colors: {
-        // Paleta estrictamente monocromatica en escala zinc / neutral
+        // Base monocromatica en escala zinc / neutral
         background: 'var(--background)',
         foreground: 'var(--foreground)',
         card: {
@@ -23,6 +23,32 @@ const config: Config = {
           foreground: 'var(--card-foreground)',
         },
         border: 'var(--border)',
+        // Brasa (marca) y estados: unico uso de color fuera del isotipo
+        brand: {
+          DEFAULT: 'var(--brand)',
+          hover: 'var(--brand-hover)',
+          foreground: 'var(--brand-foreground)',
+          soft: 'var(--brand-soft)',
+          'soft-foreground': 'var(--brand-soft-foreground)',
+        },
+        success: {
+          DEFAULT: 'var(--success)',
+          hover: 'var(--success-hover)',
+          foreground: 'var(--success-foreground)',
+          soft: 'var(--success-soft)',
+          'soft-foreground': 'var(--success-soft-foreground)',
+        },
+        danger: {
+          DEFAULT: 'var(--danger)',
+          hover: 'var(--danger-hover)',
+          foreground: 'var(--danger-foreground)',
+          soft: 'var(--danger-soft)',
+          'soft-foreground': 'var(--danger-soft-foreground)',
+        },
+        warning: {
+          soft: 'var(--warning-soft)',
+          'soft-foreground': 'var(--warning-soft-foreground)',
+        },
       },
       borderRadius: {
         // Restriccion de geometria: maximo 6px a 8px

@@ -3,7 +3,7 @@ import { cn } from '../../lib/utils';
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
+  variant?: 'primary' | 'neutral' | 'success' | 'danger' | 'dangerOutline' | 'secondary' | 'outline' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
   isLoading?: boolean;
 }
@@ -23,14 +23,22 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     // Restricciones de diseno estrictas:
     // 1. Geometria: rounded-md (6px) maximo. Prohibido rounded-full.
-    // 2. Paleta monocromatica en escala zinc / blanco / negro.
+    // 2. Base zinc; color solo en primary (Brasa), success y danger.
     // 3. Prohibido uppercase.
     const baseStyles =
-      'inline-flex items-center justify-center font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:focus:ring-zinc-600 disabled:opacity-50 disabled:pointer-events-none rounded-md';
+      'inline-flex items-center justify-center font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-[#0a0a0a] disabled:opacity-50 disabled:pointer-events-none rounded-md';
 
     const variants = {
       primary:
+        'bg-brand text-brand-foreground hover:bg-brand-hover border border-transparent shadow-sm',
+      neutral:
         'bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200 border border-transparent shadow-sm',
+      success:
+        'bg-success text-success-foreground hover:bg-success-hover border border-transparent shadow-sm',
+      danger:
+        'bg-danger text-danger-foreground hover:bg-danger-hover border border-transparent shadow-sm',
+      dangerOutline:
+        'bg-transparent text-danger hover:bg-danger-soft border border-danger',
       secondary:
         'bg-zinc-100 text-zinc-900 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700',
       outline:

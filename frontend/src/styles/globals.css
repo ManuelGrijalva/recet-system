@@ -23,6 +23,25 @@
   --input: #e4e4e7;
   --ring: #09090b;
   --radius: 0.375rem; /* 6px max 8px */
+
+  /* Brasa (acento de marca) y colores de estado; ver regla de color en CLAUDE.md */
+  --brand: #c2410c;
+  --brand-hover: #9a3412;
+  --brand-foreground: #ffffff;
+  --brand-soft: #fff7ed;
+  --brand-soft-foreground: #9a3412;
+  --success: #15803d;
+  --success-hover: #166534;
+  --success-foreground: #ffffff;
+  --success-soft: #f0fdf4;
+  --success-soft-foreground: #166534;
+  --danger: #b91c1c;
+  --danger-hover: #991b1b;
+  --danger-foreground: #ffffff;
+  --danger-soft: #fef2f2;
+  --danger-soft-foreground: #991b1b;
+  --warning-soft: #fffbeb;
+  --warning-soft-foreground: #92400e;
 }
 
 .dark {
@@ -45,6 +64,24 @@
   --border: #27272a;
   --input: #27272a;
   --ring: #d4d4d8;
+
+  --brand: #fb923c;
+  --brand-hover: #fdba74;
+  --brand-foreground: #09090b;
+  --brand-soft: #2a1408;
+  --brand-soft-foreground: #fdba74;
+  --success: #4ade80;
+  --success-hover: #86efac;
+  --success-foreground: #09090b;
+  --success-soft: #052e16;
+  --success-soft-foreground: #4ade80;
+  --danger: #f87171;
+  --danger-hover: #fca5a5;
+  --danger-foreground: #09090b;
+  --danger-soft: #2a0a0a;
+  --danger-soft-foreground: #f87171;
+  --warning-soft: #2b1d05;
+  --warning-soft-foreground: #fcd34d;
 }
 
 * {

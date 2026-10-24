@@ -47,9 +47,9 @@ export function ProfileEditModal({
             maxLength={BIO_MAX}
             rows={3}
             placeholder="Cuéntale a la comunidad de dónde eres y qué cocinas. Ejemplo: Aprendí a hacer tamales con mi abuela en Asunción Mita."
-            className="w-full rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a] p-3 text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-400"
+            className="w-full rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#15110d] p-3 text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-400"
           />
-          <p className="text-[11px] text-zinc-500 dark:text-zinc-400 text-right">
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 text-right">
             {values.bio.length}/{BIO_MAX} · Visible para todos
           </p>
         </div>
@@ -63,7 +63,7 @@ export function ProfileEditModal({
             placeholder="+502 xxxx-xxxx"
             maxLength={25}
           />
-          <p className="text-[11px] text-zinc-500 dark:text-zinc-400">Privado: nadie más lo ve.</p>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400">Privado: nadie más lo ve.</p>
         </div>
 
         <div className="flex justify-end gap-2 pt-2">

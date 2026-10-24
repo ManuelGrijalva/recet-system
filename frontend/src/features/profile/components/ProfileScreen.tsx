@@ -9,11 +9,14 @@ import { Notice } from '@/shared/components/ui/Notice';
 import { MyRecipesSection } from '@/features/my-recipes';
 import { ContributorRequestSection } from '@/features/contributor-request';
 import { ProfileHeader } from '@/features/user-profile';
-import { SavedRecipeCard, useSavedRecipes } from '@/features/saved-recipes';
+import { useSavedRecipes } from '@/features/saved-recipes';
+import { RecipeTile, RecipeTileGrid } from '@/shared/components/ui/RecipeTile';
 import { CookbookPdfButton } from '@/features/recipe-export';
 import { useProfileForm } from '../hooks/useProfileForm';
 import { ProfileEditModal } from './ProfileEditModal';
-import type { UserProfile } from '../types';
+import type { UserProfile } from '../types';
+import { SkeletonList, ProfileSkeleton } from '@/shared/components/ui/Skeleton';
+import { EmptyState } from '@/shared/components/ui/EmptyState';
 
 type ProfileTab = 'recipes' | 'saved' | 'about';
 
@@ -22,13 +25,15 @@ const dateFormatter = new Intl.DateTimeFormat('es-GT', { month: 'long', year: 'n
 function SavedTab(): React.JSX.Element {
   const { recipes, isLoading, error } = useSavedRecipes();
 
-  if (isLoading) return <p className="text-xs text-zinc-500 dark:text-zinc-400">Cargando tu recetario...</p>;
+  if (isLoading) return <SkeletonList rows={3} label="Cargando tu recetario" />;
   if (error) return <p className="text-xs text-zinc-700 dark:text-zinc-300">{error}</p>;
   if (recipes.length === 0) {
     return (
-      <div className="rounded-md border border-dashed border-zinc-200 dark:border-zinc-800 p-8 text-center">
-        <p className="text-xs text-zinc-500">Aún no has guardado recetas. Abre una y presiona "Guardar en mi recetario".</p>
-      </div>
+      <EmptyState
+        title="Tu recetario está vacío"
+        description="Guarda las recetas que quieras cocinar y aparecerán aquí."
+        action={{ href: '/', label: 'Explorar recetas' }}
+      />
     );
   }
   return (
@@ -36,9 +41,20 @@ function SavedTab(): React.JSX.Element {
       <div className="flex justify-end">
         <CookbookPdfButton />
       </div>
-      {recipes.map((recipe) => (
-        <SavedRecipeCard key={recipe.id} recipe={recipe} />
-      ))}
+      <RecipeTileGrid>
+        {recipes.map((recipe, index) => (
+          <RecipeTile
+        key={recipe.id}
+        id={recipe.id}
+        title={recipe.title}
+        coverImageUrl={recipe.coverImageUrl}
+        coverImageCredit={recipe.coverImageCredit}
+        coverImageCreditUrl={recipe.coverImageCreditUrl}
+        meta={`${recipe.timeMinutes} min · ${recipe.author}`}
+        index={index}
+          />
+        ))}
+      </RecipeTileGrid>
     </div>
   );
 }
@@ -51,13 +67,13 @@ function AboutTab({ profile }: { profile: UserProfile }): React.JSX.Element {
     { label: 'En la comunidad desde', value: dateFormatter.format(new Date(profile.createdAt)) },
   ];
   return (
-    <dl className="divide-y divide-zinc-100 dark:divide-zinc-900 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a] px-4">
+    <dl className="divide-y divide-zinc-100 dark:divide-zinc-900 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#15110d] px-4">
       {rows.map((row) => (
         <div key={row.label} className="py-3 flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-0.5">
           <dt className="text-xs text-zinc-500 dark:text-zinc-400">{row.label}</dt>
           <dd className="text-sm text-zinc-900 dark:text-zinc-100 sm:text-right">
             {row.value}
-            {row.note && <span className="block text-[11px] text-zinc-500 dark:text-zinc-400">{row.note}</span>}
+            {row.note && <span className="block text-xs text-zinc-500 dark:text-zinc-400">{row.note}</span>}
           </dd>
         </div>
       ))}
@@ -74,7 +90,7 @@ function ProfileContent(): React.JSX.Element {
   const [isEditing, setIsEditing] = useState(false);
 
   if (isLoading || !profile) {
-    return <p className="text-xs text-zinc-500 dark:text-zinc-400">Cargando tu perfil...</p>;
+    return <ProfileSkeleton label="Cargando tu perfil" />;
   }
 
   const tabs: { id: ProfileTab; label: string }[] = [
@@ -176,22 +192,16 @@ export function ProfileScreen(): React.JSX.Element {
   const { status } = useSession();
 
   if (status === 'loading') {
-    return <p className="text-xs text-zinc-500 dark:text-zinc-400">Cargando tu perfil...</p>;
+    return <ProfileSkeleton label="Cargando tu perfil" />;
   }
 
   if (status === 'guest') {
     return (
-      <div className="rounded-md border border-dashed border-zinc-200 dark:border-zinc-800 p-8 text-center space-y-3">
-        <p className="text-sm text-zinc-700 dark:text-zinc-300">
-          Inicia sesión con tu cuenta de Google para ver y editar tu perfil.
-        </p>
-        <Link
-          href="/login"
-          className="inline-flex h-9 items-center justify-center rounded-md bg-brand px-4 text-sm font-medium text-brand-foreground hover:bg-brand-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
-        >
-          Iniciar sesión
-        </Link>
-      </div>
+      <EmptyState
+        title="Tu perfil de cocinero"
+        description="Inicia sesión con tu cuenta de Google para ver y editar tu perfil."
+        action={{ href: '/login', label: 'Iniciar sesión', primary: true }}
+      />
     );
   }
 

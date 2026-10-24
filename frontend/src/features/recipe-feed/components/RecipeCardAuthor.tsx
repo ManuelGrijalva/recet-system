@@ -25,7 +25,7 @@ export function RecipeCardAuthor({
           <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 leading-tight group-hover:underline">
             {author.name}
           </h3>
-          <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
+          <p className="text-xs text-zinc-500 dark:text-zinc-400">
             {originRegion}
           </p>
         </div>

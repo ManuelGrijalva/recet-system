@@ -13,5 +13,8 @@ export async function getSavedRecipes(): Promise<SavedRecipe[]> {
     region: row.recipe.originRegion,
     timeMinutes: row.recipe.prepTimeMinutes + row.recipe.cookTimeMinutes,
     savedLabel: `Guardada el ${savedDateFormatter.format(new Date(row.savedAt))}`,
+    coverImageUrl: row.recipe.coverImageUrl ?? null,
+    coverImageCredit: row.recipe.coverImageCredit ?? null,
+    coverImageCreditUrl: row.recipe.coverImageCreditUrl ?? null,
   }));
 }

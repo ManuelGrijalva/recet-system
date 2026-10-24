@@ -1,6 +1,7 @@
 export { SavedRecipesScreen } from './components/SavedRecipesScreen';
 export { BookmarkButton } from './components/BookmarkButton';
-export { SavedRecipeCard } from './components/SavedRecipeCard';
+export { BookmarkIconButton } from './components/BookmarkIconButton';
+export { useMyBookmarks } from './hooks/useMyBookmarks';
 export { useSavedRecipes } from './hooks/useSavedRecipes';
 export { useBookmark } from './hooks/useBookmark';
 export { getSavedRecipes } from './api/getSavedRecipes';

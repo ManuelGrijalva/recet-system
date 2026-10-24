@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/shared/components/ui/Button';
+import { RecipeThumb } from '@/shared/components/ui/RecipeThumb';
 import { StatusBadge, type StatusTone } from '@/shared/components/ui/StatusBadge';
 import { describeRecipeStatus } from '../lib/describeRecipeStatus';
 import type { MyRecipe } from '../types';
@@ -26,17 +27,20 @@ export function MyRecipeRow({ recipe, isDeleting, onDelete }: MyRecipeRowProps):
   return (
     <li className="py-3 space-y-2">
       <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <Link
-            href={`/recipe/${recipe.id}`}
-            className="text-sm font-medium text-zinc-900 dark:text-zinc-100 hover:underline"
-          >
-            {recipe.title}
-          </Link>
-          <p className="mt-1 flex flex-wrap items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400">
-            <StatusBadge tone={statusTone(recipe)}>{describeRecipeStatus(recipe)}</StatusBadge>
-            {recipe.originRegion}
-          </p>
+        <div className="flex min-w-0 items-center gap-3">
+          <RecipeThumb coverImageUrl={recipe.coverImageUrl} coverImageCredit={recipe.coverImageCredit} className="h-12 w-12" />
+          <div className="min-w-0">
+            <Link
+              href={`/recipe/${recipe.id}`}
+              className="text-sm font-medium text-zinc-900 dark:text-zinc-100 hover:underline"
+            >
+              {recipe.title}
+            </Link>
+            <p className="mt-1 flex flex-wrap items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400">
+              <StatusBadge tone={statusTone(recipe)}>{describeRecipeStatus(recipe)}</StatusBadge>
+              {recipe.originRegion}
+            </p>
+          </div>
         </div>
 
         <div className="flex shrink-0 gap-2">

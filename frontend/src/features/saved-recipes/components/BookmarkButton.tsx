@@ -26,7 +26,8 @@ export function BookmarkButton({
         href="/login"
         className="inline-flex h-8 items-center rounded-md border border-zinc-200 dark:border-zinc-800 px-3 text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-900"
       >
-        Inicia sesión para guardar
+        <span className="sm:hidden">Guardar</span>
+        <span className="hidden sm:inline">Inicia sesión para guardar</span>
       </Link>
     );
   }
@@ -39,7 +40,9 @@ export function BookmarkButton({
       disabled={isSaving}
       aria-pressed={isBookmarked}
     >
-      {isBookmarked ? 'Guardada en mi recetario' : 'Guardar en mi recetario'}
+      {/* En el celular la etiqueta corta para que quepa en la barra fija */}
+      <span className="sm:hidden">{isBookmarked ? 'Guardada' : 'Guardar'}</span>
+      <span className="hidden sm:inline">{isBookmarked ? 'Guardada en mi recetario' : 'Guardar en mi recetario'}</span>
     </Button>
   );
 }

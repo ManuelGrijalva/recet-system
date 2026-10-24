@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { useToast } from '@/shared/components/ui/Toast';
 import { ShareIcon } from '@/shared/components/ui/icons';
 import { shareRecipe, type ShareOutcome } from '../lib/shareRecipe';
 
@@ -11,22 +12,17 @@ interface ShareRecipeButtonProps {
   variant?: 'icon' | 'button';
 }
 
-const FEEDBACK: Partial<Record<ShareOutcome, string>> = {
-  copied: 'Enlace copiado',
-  failed: 'No se pudo compartir',
+const FEEDBACK: Partial<Record<ShareOutcome, { message: string; tone: 'success' | 'danger' }>> = {
+  copied: { message: 'Enlace copiado: pégalo donde quieras compartirlo', tone: 'success' },
+  failed: { message: 'No se pudo compartir. Intenta de nuevo.', tone: 'danger' },
 };
 
 export function ShareRecipeButton({ recipeId, title, variant = 'icon' }: ShareRecipeButtonProps): React.JSX.Element {
-  const [feedback, setFeedback] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!feedback) return;
-    const timer = window.setTimeout(() => setFeedback(null), 2500);
-    return () => window.clearTimeout(timer);
-  }, [feedback]);
+  const toast = useToast();
 
   const handleClick = async (): Promise<void> => {
-    setFeedback(FEEDBACK[await shareRecipe(recipeId, title)] ?? null);
+    const feedback = FEEDBACK[await shareRecipe(recipeId, title)];
+    if (feedback) toast.show(feedback.message, feedback.tone);
   };
 
   if (variant === 'button') {
@@ -37,18 +33,13 @@ export function ShareRecipeButton({ recipeId, title, variant = 'icon' }: ShareRe
         className="inline-flex h-8 items-center gap-1.5 rounded-md border border-zinc-200 dark:border-zinc-800 px-3 text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
       >
         <ShareIcon className="w-4 h-4" />
-        {feedback ?? 'Compartir'}
+        Compartir
       </button>
     );
   }
 
   return (
     <span className="flex items-center gap-1">
-      {feedback && (
-        <span role="status" className="text-[11px] text-zinc-500 dark:text-zinc-400">
-          {feedback}
-        </span>
-      )}
       <button
         type="button"
         onClick={() => void handleClick()}

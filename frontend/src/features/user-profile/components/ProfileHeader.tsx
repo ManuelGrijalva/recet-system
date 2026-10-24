@@ -63,7 +63,7 @@ export function ProfileHeader({
   editing,
 }: ProfileHeaderProps): React.JSX.Element {
   return (
-    <section className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a] overflow-hidden">
+    <section className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#15110d] overflow-hidden">
       <div className="relative h-36 sm:h-48 bg-zinc-100 dark:bg-zinc-900 text-zinc-300 dark:text-zinc-700">
         {coverImageUrl ? (
           <img src={coverImageUrl} alt="" className="w-full h-full object-cover" />
@@ -84,7 +84,7 @@ export function ProfileHeader({
       <div className="px-4 sm:px-5 pb-5">
         <div className="flex items-end justify-between gap-3 -mt-10 sm:-mt-12">
           <div className="relative">
-            <div className="rounded-full ring-4 ring-white dark:ring-[#0a0a0a] bg-white dark:bg-[#0a0a0a]">
+            <div className="rounded-full ring-4 ring-white dark:ring-[#15110d] bg-white dark:bg-[#15110d]">
               <Avatar src={avatarUrl} alt={name} fallbackName={name} size="xl" />
             </div>
             {editing && (

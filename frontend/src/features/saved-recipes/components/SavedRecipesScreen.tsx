@@ -1,11 +1,13 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
 import { useSession } from '@/shared/session';
 import { useSavedRecipes } from '../hooks/useSavedRecipes';
 import { CookbookPdfButton } from '@/features/recipe-export';
-import { SavedRecipeCard } from './SavedRecipeCard';
+import { RecipeTile, RecipeTileGrid } from '@/shared/components/ui/RecipeTile';
+import { TextileBand } from '@/shared/components/ui/TextileBand';
+import { SkeletonList } from '@/shared/components/ui/Skeleton';
+import { EmptyState } from '@/shared/components/ui/EmptyState';
 
 function SavedRecipesContent(): React.JSX.Element {
   const { recipes, isLoading, error } = useSavedRecipes();
@@ -19,6 +21,7 @@ function SavedRecipesContent(): React.JSX.Element {
         <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
           Tu colección privada de preparaciones tradicionales guardadas para cocinar cuando quieras.
         </p>
+        <TextileBand scale={0.375} className="mt-3 rounded-sm" />
       </div>
 
       {error && (
@@ -26,13 +29,13 @@ function SavedRecipesContent(): React.JSX.Element {
       )}
 
       {isLoading ? (
-        <p className="text-xs text-zinc-500 dark:text-zinc-400">Cargando tu recetario...</p>
+        <SkeletonList rows={3} label="Cargando tu recetario" />
       ) : recipes.length === 0 && !error ? (
-        <div className="rounded-md border border-dashed border-zinc-200 dark:border-zinc-800 p-8 text-center">
-          <p className="text-xs text-zinc-500">
-            Aún no has guardado recetas. Abre una receta y presiona "Guardar en mi recetario".
-          </p>
-        </div>
+        <EmptyState
+          title="Tu recetario está vacío"
+          description="Guarda las recetas que quieras cocinar con el ícono de guardar del feed o con el botón Guardar de cada receta."
+          action={{ href: '/', label: 'Explorar recetas', primary: true }}
+        />
       ) : (
         <div className="space-y-3">
           {recipes.length > 0 && (
@@ -40,9 +43,20 @@ function SavedRecipesContent(): React.JSX.Element {
               <CookbookPdfButton />
             </div>
           )}
-          {recipes.map((recipe) => (
-            <SavedRecipeCard key={recipe.id} recipe={recipe} />
-          ))}
+          <RecipeTileGrid>
+            {recipes.map((recipe, index) => (
+              <RecipeTile
+                key={recipe.id}
+                id={recipe.id}
+                title={recipe.title}
+                coverImageUrl={recipe.coverImageUrl}
+                coverImageCredit={recipe.coverImageCredit}
+                coverImageCreditUrl={recipe.coverImageCreditUrl}
+                meta={`${recipe.timeMinutes} min · ${recipe.author}`}
+                index={index}
+              />
+            ))}
+          </RecipeTileGrid>
         </div>
       )}
     </div>
@@ -53,22 +67,16 @@ export function SavedRecipesScreen(): React.JSX.Element {
   const { status } = useSession();
 
   if (status === 'loading') {
-    return <p className="text-xs text-zinc-500 dark:text-zinc-400">Cargando tu recetario...</p>;
+    return <SkeletonList rows={3} label="Cargando tu recetario" />;
   }
 
   if (status === 'guest') {
     return (
-      <div className="rounded-md border border-dashed border-zinc-200 dark:border-zinc-800 p-8 text-center space-y-3">
-        <p className="text-sm text-zinc-700 dark:text-zinc-300">
-          Inicia sesión para guardar recetas y consultarlas en tu recetario personal.
-        </p>
-        <Link
-          href="/login"
-          className="inline-flex h-9 items-center justify-center rounded-md bg-brand px-4 text-sm font-medium text-brand-foreground hover:bg-brand-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
-        >
-          Iniciar sesión
-        </Link>
-      </div>
+      <EmptyState
+        title="Guarda tus recetas favoritas"
+        description="Inicia sesión para guardar recetas y consultarlas en tu recetario personal."
+        action={{ href: '/login', label: 'Iniciar sesión', primary: true }}
+      />
     );
   }
 

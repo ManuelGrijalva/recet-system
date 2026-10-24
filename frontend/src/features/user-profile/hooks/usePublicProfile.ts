@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { ApiError } from '@/shared/lib/apiClient';
+import { useToast } from '@/shared/components/ui/Toast';
 import type { FeedRecipe } from '@/features/recipe-feed';
 import { getAuthorRecipes } from '../api/getAuthorRecipes';
 import { getPublicProfile } from '../api/getPublicProfile';
@@ -20,6 +21,7 @@ interface UsePublicProfileResult {
 
 export function usePublicProfile(userId: string): UsePublicProfileResult {
   const [profile, setProfile] = useState<PublicProfile | null>(null);
+  const toast = useToast();
   const [recipes, setRecipes] = useState<FeedRecipe[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -54,12 +56,14 @@ export function usePublicProfile(userId: string): UsePublicProfileResult {
     try {
       const state = await toggleFollow(userId);
       setProfile((prev) => (prev ? { ...prev, ...state } : prev));
+      const name = profile?.name.split(' ')[0] ?? 'este cocinero';
+      toast.show(state.isFollowing ? `Ahora sigues a ${name}` : `Dejaste de seguir a ${name}`, state.isFollowing ? 'success' : 'neutral');
     } catch (err) {
       setFollowError(err instanceof ApiError && err.status === 401 ? 'Inicia sesión para seguir a otros cocineros.' : 'No se pudo actualizar. Intenta de nuevo.');
     } finally {
       setIsToggling(false);
     }
-  }, [userId]);
+  }, [userId, profile, toast]);
 
   return { profile, recipes, isLoading, error, isToggling, followError, follow };
 }

@@ -6,6 +6,7 @@ import { cn } from '@/shared/lib/utils';
 import { ReactionButtons, type ReactionType } from '@/features/reactions';
 import { InlineComments } from '@/features/comments';
 import { ShareRecipeButton } from '@/features/recipe-share';
+import { BookmarkIconButton } from '@/features/saved-recipes';
 import type { ReactionCounts } from '@/shared/types';
 
 interface RecipeCardActionsProps {
@@ -14,15 +15,17 @@ interface RecipeCardActionsProps {
   reactionCounts: ReactionCounts;
   commentsCount: number;
   userReaction: ReactionType | null;
+  isBookmarked: boolean;
 }
 
-// Barra de la tarjeta al estilo de una red social: reaccionar, comentar y compartir sin salir del feed
+// Barra de la tarjeta al estilo de una red social: reaccionar, comentar, guardar y compartir sin salir del feed
 export function RecipeCardActions({
   recipeId,
   title,
   reactionCounts,
   commentsCount,
   userReaction,
+  isBookmarked,
 }: RecipeCardActionsProps): React.JSX.Element {
   const [showComments, setShowComments] = useState(false);
 
@@ -59,6 +62,8 @@ export function RecipeCardActions({
               {commentsCount > 0 && <span className="sm:ml-1">{commentsCount}</span>}
             </span>
           </button>
+          {/* La clave remonta el boton cuando llegan las guardadas del servidor */}
+          <BookmarkIconButton key={isBookmarked ? 'si' : 'no'} recipeId={recipeId} initialBookmarked={isBookmarked} />
           <ShareRecipeButton recipeId={recipeId} title={title} />
         </div>
       </div>

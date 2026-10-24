@@ -7,4 +7,6 @@ export interface MyRecipe {
   status: RecipeStatus;
   reviewNotes?: string | null;
   createdAt: string;
+  coverImageUrl?: string | null;
+  coverImageCredit?: string | null;
 }

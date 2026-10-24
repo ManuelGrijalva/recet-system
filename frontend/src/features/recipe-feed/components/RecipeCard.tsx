@@ -12,13 +12,14 @@ interface RecipeCardProps {
   recipe: FeedRecipe;
   // Reaccion propia, si el usuario tiene sesion
   userReaction?: ReactionType | null;
+  isBookmarked?: boolean;
 }
 
-export function RecipeCard({ recipe, userReaction = null }: RecipeCardProps): React.JSX.Element {
+export function RecipeCard({ recipe, userReaction = null, isBookmarked = false }: RecipeCardProps): React.JSX.Element {
   const totalTimeMinutes = recipe.prepTimeMinutes + recipe.cookTimeMinutes;
 
   return (
-    <article className="rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a] overflow-hidden transition-[border-color,box-shadow] duration-200 hover:border-zinc-300 hover:shadow-md dark:hover:border-zinc-700">
+    <article className="rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#15110d] overflow-hidden transition-[border-color,box-shadow] duration-200 hover:border-zinc-300 hover:shadow-md dark:hover:border-zinc-700">
       <RecipeCardAuthor author={recipe.author} originRegion={recipe.originRegion} />
 
       <div className="relative mb-3">
@@ -64,6 +65,7 @@ export function RecipeCard({ recipe, userReaction = null }: RecipeCardProps): Re
         reactionCounts={recipe.reactionCounts}
         commentsCount={recipe.commentsCount}
         userReaction={userReaction}
+        isBookmarked={isBookmarked}
       />
     </article>
   );

@@ -5,6 +5,9 @@ export interface SavedRecipe {
   region: string;
   timeMinutes: number;
   savedLabel: string;
+  coverImageUrl: string | null;
+  coverImageCredit: string | null;
+  coverImageCreditUrl: string | null;
 }
 
 // Forma de cada fila de GET /interactions/bookmarks
@@ -17,6 +20,9 @@ export interface BookmarkRow {
     prepTimeMinutes: number;
     cookTimeMinutes: number;
     originRegion: string;
+    coverImageUrl?: string | null;
+    coverImageCredit?: string | null;
+    coverImageCreditUrl?: string | null;
   };
   author: { id: string; name: string };
 }

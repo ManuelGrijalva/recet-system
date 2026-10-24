@@ -13,7 +13,7 @@
 - **Prohibición absoluta de `any`:** Ningún archivo debe contener `any`. Se aplica la regla `@typescript-eslint/no-explicit-any: ["error"]`.
 
 ## 4. Sistema de Diseño (UI/UX)
-- **Paleta:** base blanco (`#FFFFFF`), negro (`#000000`, `#0A0A0A`) y escala zinc (`#E4E4E7`, `#27272A`, `#09090B`, `#F4F4F5`), con un único acento Brasa (`#C2410C`) y colores de estado éxito (`#15803D`), peligro (`#B91C1C`) y en revisión (ámbar `#92400E` sobre `#FFFBEB`), solo en acciones y estados (ver `CLAUDE.md`). El color nunca va solo: lleva ícono y texto. Prohibidos otros acentos, degradados, azul y morado.
+- **Paleta:** base crema (`#F8F1E5` de fondo, `#FFFCF6` en tarjetas) y escala arena cálida (la `zinc` de Tailwind reasignada: `#E7DCC6`, `#2D261D`, `#1F1A13`, `#F3EBDB`), con un único acento Brasa (`#C2410C`) y colores de estado éxito (`#15803D`), peligro (`#B91C1C`) y en revisión (ámbar `#92400E` sobre `#FFFBEB`), solo en acciones y estados (ver `CLAUDE.md`). El color nunca va solo: lleva ícono y texto. Prohibidos otros acentos, degradados, azul y morado.
 - **Geometría:** Botones, modales y tarjetas con bordes ligeramente redondeados (máximo 6px-8px: `rounded-md` o `rounded-lg`).
 - **Avatares:** Es el ÚNICO elemento con permiso de usar `rounded-full`.
 - **Tipografía:** Geist o Inter. TERMINANTEMENTE PROHIBIDO el uso de `uppercase` o texto en mayúsculas sostenidas. Todo texto debe estar en Sentence case o Title case.

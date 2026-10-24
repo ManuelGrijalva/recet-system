@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import loginGuate from '@/shared/assets/login-guate.jpg';
 import { BrandMark } from '@/shared/components/ui/BrandMark';
+import { TextileBand } from '@/shared/components/ui/TextileBand';
 import { GoogleLoginButton } from './GoogleLoginButton';
 import { RedirectIfAuthenticated } from './RedirectIfAuthenticated';
 
@@ -16,10 +17,10 @@ import { RedirectIfAuthenticated } from './RedirectIfAuthenticated';
  */
 export function LoginScreen(): React.JSX.Element {
   return (
-    <div className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-white dark:bg-[#0a0a0a] md:flex-row">
+    <div className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-background md:flex-row">
       <RedirectIfAuthenticated />
       {/* Franja superior con fragmento de la foto (solo móvil) */}
-      <div className="relative h-28 w-full shrink-0 overflow-hidden border-b border-zinc-200 dark:border-zinc-800 md:hidden">
+      <div className="relative h-56 w-full shrink-0 overflow-hidden md:hidden">
         <Image
           src={loginGuate}
           alt="Cocina tradicional de Jutiapa"
@@ -28,14 +29,16 @@ export function LoginScreen(): React.JSX.Element {
           sizes="100vw"
           className="object-cover object-center"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-white/85 to-transparent dark:from-[#0a0a0a]/85" />
-        <div className="absolute bottom-3 left-4 flex items-center gap-2">
-          <BrandMark size="sm" />
-          <span className="font-serif text-sm font-semibold text-zinc-950 dark:text-zinc-50">
-            Memoria del Comal
+        {/* Franja oscura solida para que el texto se lea sobre la tela */}
+        <div className="absolute inset-x-0 bottom-0 flex items-center gap-2.5 bg-black/55 px-4 py-3">
+          <BrandMark size="md" />
+          <span>
+            <span className="block font-serif text-base font-semibold text-white">Memoria del Comal</span>
+            <span className="block text-xs text-white/85">Rescate del patrimonio gastronómico de Jutiapa</span>
           </span>
         </div>
       </div>
+      <TextileBand scale={0.5} className="md:hidden" />
 
       {/* Panel de imagen (solo escritorio) */}
       <div className="relative hidden w-1/2 shrink-0 md:block">
@@ -59,13 +62,13 @@ export function LoginScreen(): React.JSX.Element {
       </div>
 
       {/* Panel del formulario */}
-      <div className="flex w-full flex-1 items-center justify-center px-6 py-10 md:w-1/2">
+      <div className="flex w-full flex-1 items-start justify-center px-6 pb-24 pt-8 md:w-1/2 md:items-center md:py-10">
         <div className="w-full max-w-sm">
           <div className="flex flex-col items-center text-center">
             <div className="hidden md:block">
               <BrandMark size="lg" />
             </div>
-            <h1 className="mt-4 text-2xl font-medium tracking-tight text-zinc-950 dark:text-zinc-50 md:text-3xl">
+            <h1 className="mt-2 text-2xl font-semibold tracking-tight md:mt-4 text-zinc-950 dark:text-zinc-50 md:text-3xl">
               Iniciar sesión
             </h1>
             <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
@@ -96,7 +99,7 @@ export function LoginScreen(): React.JSX.Element {
             >
               Explorar recetas como invitado
             </Link>
-            <p className="mt-4 text-[11px] text-zinc-400">
+            <p className="mt-4 text-xs text-zinc-400">
               Proyecto de Graduación I · Universidad Mariano Gálvez de Guatemala · Campus Jutiapa
             </p>
           </div>

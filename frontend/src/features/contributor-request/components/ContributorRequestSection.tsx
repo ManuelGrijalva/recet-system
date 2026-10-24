@@ -19,7 +19,7 @@ const dateFormatter = new Intl.DateTimeFormat('es-GT', {
 });
 
 const boxClass =
-  'p-4 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a] space-y-3';
+  'p-4 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#15110d] space-y-3';
 
 function GuidelineList({ items }: { items: string[] }): React.JSX.Element {
   return (
@@ -118,9 +118,9 @@ export function ContributorRequestSection(): React.JSX.Element | null {
               maxLength={MOTIVATION_MAX}
               rows={3}
               placeholder="Ejemplo: recetas de mi abuela de Asunción Mita, como el tamal de viaje y los dulces de Semana Santa."
-              className="w-full rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a] p-3 text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-400"
+              className="w-full rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#15110d] p-3 text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-400"
             />
-            <p className="text-[11px] text-zinc-500 dark:text-zinc-400 text-right">
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 text-right">
               {motivation.length}/{MOTIVATION_MAX}
             </p>
           </div>

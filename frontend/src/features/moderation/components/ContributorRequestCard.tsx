@@ -60,7 +60,7 @@ export function ContributorRequestCard({
               maxLength={500}
               rows={2}
               placeholder="Motivo del rechazo (opcional, lo verá el usuario)"
-              className="w-full rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a] p-3 text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-400"
+              className="w-full rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#15110d] p-3 text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-400"
             />
             <div className="flex justify-end gap-2">
               <Button type="button" size="sm" variant="ghost" onClick={() => setIsRejecting(false)} disabled={isReviewing}>

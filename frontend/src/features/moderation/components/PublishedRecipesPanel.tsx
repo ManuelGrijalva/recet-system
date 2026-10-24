@@ -5,7 +5,8 @@ import { Notice } from '@/shared/components/ui/Notice';
 import { Button } from '@/shared/components/ui/Button';
 import { Input } from '@/shared/components/ui/Input';
 import { usePublishedRecipes } from '../hooks/usePublishedRecipes';
-import { PublishedRecipeRow } from './PublishedRecipeRow';
+import { PublishedRecipeRow } from './PublishedRecipeRow';
+import { SkeletonList } from '@/shared/components/ui/Skeleton';
 
 export function PublishedRecipesPanel(): React.JSX.Element {
   const { recipes, isLoading, error, deletingId, search, remove } = usePublishedRecipes();
@@ -40,7 +41,7 @@ export function PublishedRecipesPanel(): React.JSX.Element {
       )}
 
       {isLoading ? (
-        <p className="text-xs text-zinc-500 dark:text-zinc-400">Cargando recetas publicadas...</p>
+        <SkeletonList rows={3} label="Cargando recetas publicadas" />
       ) : recipes.length === 0 ? (
         !error && (
           <div className="rounded-md border border-dashed border-zinc-200 dark:border-zinc-800 p-8 text-center">

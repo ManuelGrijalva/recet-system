@@ -40,13 +40,13 @@ export function CommentCard({
           <span
             className={
               isReply
-                ? 'text-[11px] font-semibold text-zinc-900 dark:text-zinc-100'
+                ? 'text-xs font-semibold text-zinc-900 dark:text-zinc-100'
                 : 'text-xs font-semibold text-zinc-900 dark:text-zinc-100'
             }
           >
             {comment.author.name}
           </span>
-          <span className={isReply ? 'text-[9px] text-zinc-400' : 'text-[10px] text-zinc-400'}>
+          <span className={isReply ? 'text-[9px] text-zinc-400' : 'text-xs text-zinc-400'}>
             {formatCommentDate(comment.createdAt)}
           </span>
         </div>
@@ -59,14 +59,14 @@ export function CommentCard({
               <button
                 type="button"
                 onClick={onReply}
-                className="text-[11px] font-medium text-zinc-500 hover:text-zinc-950 dark:hover:text-zinc-100"
+                className="text-xs font-medium text-zinc-500 hover:text-zinc-950 dark:hover:text-zinc-100"
               >
                 Responder
               </button>
             )}
             {onDelete &&
               (confirming ? (
-                <span className="flex items-center gap-2 text-[11px]">
+                <span className="flex items-center gap-2 text-xs">
                   <span className="text-zinc-500">{isReply ? '¿Eliminar?' : '¿Eliminar con sus respuestas?'}</span>
                   <button type="button" onClick={onDelete} className="font-semibold text-zinc-900 dark:text-zinc-100 hover:underline">
                     Sí, eliminar
@@ -79,7 +79,7 @@ export function CommentCard({
                 <button
                   type="button"
                   onClick={() => setConfirming(true)}
-                  className="text-[11px] font-medium text-zinc-500 hover:text-zinc-950 dark:hover:text-zinc-100"
+                  className="text-xs font-medium text-zinc-500 hover:text-zinc-950 dark:hover:text-zinc-100"
                 >
                   Eliminar
                 </button>

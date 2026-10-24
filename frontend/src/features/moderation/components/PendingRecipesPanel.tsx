@@ -3,7 +3,9 @@
 import React from 'react';
 import { Notice } from '@/shared/components/ui/Notice';
 import { usePendingRecipes } from '../hooks/usePendingRecipes';
-import { PendingRecipeCard } from './PendingRecipeCard';
+import { PendingRecipeCard } from './PendingRecipeCard';
+import { SkeletonList } from '@/shared/components/ui/Skeleton';
+import { EmptyState } from '@/shared/components/ui/EmptyState';
 
 export function PendingRecipesPanel(): React.JSX.Element {
   const { recipes, isLoading, error, reviewingId, review } = usePendingRecipes();
@@ -15,12 +17,10 @@ export function PendingRecipesPanel(): React.JSX.Element {
       )}
 
       {isLoading ? (
-        <p className="text-xs text-zinc-500 dark:text-zinc-400">Cargando recetas pendientes...</p>
+        <SkeletonList rows={3} label="Cargando recetas pendientes" />
       ) : recipes.length === 0 ? (
         !error && (
-          <div className="rounded-md border border-dashed border-zinc-200 dark:border-zinc-800 p-8 text-center">
-            <p className="text-xs text-zinc-500">No hay recetas pendientes de revisión.</p>
-          </div>
+          <EmptyState title="Todo al día" description="No hay recetas pendientes de revisión." />
         )
       ) : (
         <div className="space-y-3">

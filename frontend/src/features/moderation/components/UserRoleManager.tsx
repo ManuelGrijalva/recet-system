@@ -5,7 +5,8 @@ import { Notice } from '@/shared/components/ui/Notice';
 import { Button } from '@/shared/components/ui/Button';
 import { Input } from '@/shared/components/ui/Input';
 import { useManagedUsers } from '../hooks/useManagedUsers';
-import { UserRoleRow } from './UserRoleRow';
+import { UserRoleRow } from './UserRoleRow';
+import { SkeletonList } from '@/shared/components/ui/Skeleton';
 
 export function UserRoleManager(): React.JSX.Element {
   const { users, isLoading, error, updatingId, search, setRole } = useManagedUsers();
@@ -36,7 +37,7 @@ export function UserRoleManager(): React.JSX.Element {
       )}
 
       {isLoading ? (
-        <p className="text-xs text-zinc-500 dark:text-zinc-400">Cargando usuarios...</p>
+        <SkeletonList rows={3} label="Cargando usuarios" />
       ) : users.length === 0 ? (
         !error && (
           <div className="rounded-md border border-dashed border-zinc-200 dark:border-zinc-800 p-8 text-center">

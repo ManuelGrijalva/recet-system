@@ -3,7 +3,9 @@
 import React from 'react';
 import { Notice } from '@/shared/components/ui/Notice';
 import { useContributorRequests } from '../hooks/useContributorRequests';
-import { ContributorRequestCard } from './ContributorRequestCard';
+import { ContributorRequestCard } from './ContributorRequestCard';
+import { SkeletonList } from '@/shared/components/ui/Skeleton';
+import { EmptyState } from '@/shared/components/ui/EmptyState';
 
 export function ContributorRequestsPanel(): React.JSX.Element {
   const { requests, isLoading, error, reviewingId, review } = useContributorRequests();
@@ -19,12 +21,10 @@ export function ContributorRequestsPanel(): React.JSX.Element {
       )}
 
       {isLoading ? (
-        <p className="text-xs text-zinc-500 dark:text-zinc-400">Cargando solicitudes...</p>
+        <SkeletonList rows={3} label="Cargando solicitudes" />
       ) : requests.length === 0 ? (
         !error && (
-          <div className="rounded-md border border-dashed border-zinc-200 dark:border-zinc-800 p-8 text-center">
-            <p className="text-xs text-zinc-500">No hay solicitudes pendientes.</p>
-          </div>
+          <EmptyState title="Todo al día" description="No hay solicitudes pendientes." />
         )
       ) : (
         <div className="space-y-3">

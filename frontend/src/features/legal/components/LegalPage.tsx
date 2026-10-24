@@ -1,4 +1,5 @@
 import React from 'react';
+import { TextileBand } from '@/shared/components/ui/TextileBand';
 
 export interface LegalSection {
   heading: string;
@@ -18,6 +19,7 @@ export function LegalPage({ title, updatedAt, intro, sections }: LegalPageProps)
       <header className="space-y-1">
         <h1 className="text-xl font-bold tracking-tight text-zinc-950 dark:text-zinc-50">{title}</h1>
         <p className="text-xs text-zinc-500 dark:text-zinc-400">Última actualización: {updatedAt}</p>
+        <TextileBand scale={0.375} className="!mt-3 rounded-sm" />
       </header>
 
       <p className="text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">{intro}</p>

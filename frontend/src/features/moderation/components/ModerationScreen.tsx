@@ -6,6 +6,7 @@ import { PendingRecipesPanel } from './PendingRecipesPanel';
 import { UserRoleManager } from './UserRoleManager';
 import { PublishedRecipesPanel } from './PublishedRecipesPanel';
 import { ContributorRequestsPanel } from './ContributorRequestsPanel';
+import { TextileBand } from '@/shared/components/ui/TextileBand';
 
 type ModerationTab = 'recipes' | 'published' | 'requests' | 'users';
 
@@ -35,6 +36,7 @@ export function ModerationScreen(): React.JSX.Element {
         <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
           Revisa las recetas antes de publicarlas, elimina las que no cumplan las normas y atiende las solicitudes para ser colaborador.
         </p>
+        <TextileBand scale={0.375} className="mt-3 rounded-sm" />
       </div>
 
       <div role="tablist" className="flex gap-1 overflow-x-auto border-b border-zinc-200 dark:border-zinc-800">

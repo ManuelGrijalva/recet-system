@@ -34,9 +34,9 @@ export function ShareRecipeButton({ recipeId, title, variant = 'icon' }: ShareRe
       <button
         type="button"
         onClick={() => void handleClick()}
-        className="inline-flex h-8 items-center gap-1.5 rounded-md border border-zinc-200 dark:border-zinc-800 px-3 text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-900"
+        className="inline-flex h-8 items-center gap-1.5 rounded-md border border-zinc-200 dark:border-zinc-800 px-3 text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
       >
-        <ShareIcon className="w-3.5 h-3.5" />
+        <ShareIcon className="w-4 h-4" />
         {feedback ?? 'Compartir'}
       </button>
     );
@@ -52,8 +52,9 @@ export function ShareRecipeButton({ recipeId, title, variant = 'icon' }: ShareRe
       <button
         type="button"
         onClick={() => void handleClick()}
-        className="p-2 rounded-md text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-50 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
+        className="inline-flex h-10 w-10 sm:h-8 sm:w-8 items-center justify-center rounded-md text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-50 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
         aria-label="Compartir receta"
+        title="Compartir receta"
       >
         <ShareIcon />
       </button>

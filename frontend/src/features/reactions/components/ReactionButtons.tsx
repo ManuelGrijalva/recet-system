@@ -5,8 +5,11 @@ import { useRouter } from 'next/navigation';
 import { useSession } from '@/shared/session';
 import {
   CheckCircleIcon,
+  CheckCircleSolidIcon,
   EmojiHappyIcon,
+  EmojiHappySolidIcon,
   ThumbUpIcon,
+  ThumbUpSolidIcon,
 } from '@/shared/components/ui/icons';
 import type { ReactionCounts } from '@/shared/types';
 import { useReactions } from '../hooks/useReactions';
@@ -20,7 +23,7 @@ interface ReactionButtonsProps {
   compact?: boolean;
 }
 
-const ICON_SIZE = 'w-3.5 h-3.5';
+const ICON_SIZE = 'w-4 h-4';
 
 export function ReactionButtons({
   recipeId,
@@ -40,19 +43,21 @@ export function ReactionButtons({
     type: ReactionType;
     label: string;
     icon: React.ReactNode;
+    activeIcon: React.ReactNode;
     count: number;
   }[] = [
-    { type: 'LIKE', label: 'Me gusta', icon: <ThumbUpIcon className={ICON_SIZE} />, count: stats.like },
-    { type: 'YUMMY', label: 'Delicioso', icon: <EmojiHappyIcon className={ICON_SIZE} />, count: stats.yummy },
-    { type: 'TRIED_IT', label: 'La preparé', icon: <CheckCircleIcon className={ICON_SIZE} />, count: stats.triedIt },
+    { type: 'LIKE', label: 'Me gusta', icon: <ThumbUpIcon className={ICON_SIZE} />, activeIcon: <ThumbUpSolidIcon className={ICON_SIZE} />, count: stats.like },
+    { type: 'YUMMY', label: 'Delicioso', icon: <EmojiHappyIcon className={ICON_SIZE} />, activeIcon: <EmojiHappySolidIcon className={ICON_SIZE} />, count: stats.yummy },
+    { type: 'TRIED_IT', label: 'La preparé', icon: <CheckCircleIcon className={ICON_SIZE} />, activeIcon: <CheckCircleSolidIcon className={ICON_SIZE} />, count: stats.triedIt },
   ];
 
   return (
-    <div className="flex items-center gap-1 sm:gap-1.5">
+    <div role="group" aria-label="Reacciones" className="flex items-center gap-2 sm:gap-1.5">
       {buttons.map((btn) => (
         <ReactionButton
           key={btn.type}
           icon={btn.icon}
+          activeIcon={btn.activeIcon}
           label={btn.label}
           count={btn.count}
           active={userReaction === btn.type}

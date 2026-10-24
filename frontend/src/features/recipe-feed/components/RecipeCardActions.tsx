@@ -38,22 +38,25 @@ export function RecipeCardActions({
           compact
         />
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-2 sm:gap-1">
           <button
             type="button"
             onClick={() => setShowComments((open) => !open)}
             aria-expanded={showComments}
+            aria-label={`Comentar (${commentsCount})`}
+            title="Comentar"
             className={cn(
-              'flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors',
+              'inline-flex min-h-10 sm:min-h-8 items-center gap-1.5 rounded-md px-2.5 text-xs font-medium tabular-nums',
+              'transition-colors motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand',
               showComments
                 ? 'bg-zinc-100 dark:bg-zinc-900 text-zinc-950 dark:text-zinc-50'
-                : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-900',
+                : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-zinc-900 dark:hover:text-zinc-100',
             )}
           >
             <ChatIcon className="w-4 h-4" />
             <span>
-              <span className="hidden sm:inline">Comentar </span>
-              {commentsCount}
+              <span className="hidden sm:inline">Comentar</span>
+              {commentsCount > 0 && <span className="sm:ml-1">{commentsCount}</span>}
             </span>
           </button>
           <ShareRecipeButton recipeId={recipeId} title={title} />

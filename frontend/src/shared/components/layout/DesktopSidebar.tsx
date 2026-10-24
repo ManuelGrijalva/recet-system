@@ -9,7 +9,9 @@ import { BrandMark } from '../ui/BrandMark';
 import { Button } from '../ui/Button';
 import { ROLE_LABELS, useSession } from '../../session';
 import { isNavVisible, type NavVisibility } from './navVisibility';
-import { NavTextile, isActiveRoute, navChipClass } from './NavTextile';
+import { NavHighlight, isActiveRoute, navChipClass } from './NavHighlight';
+import { TextileBand } from '../ui/TextileBand';
+import { TextilePattern } from '../ui/TextilePattern';
 
 interface NavItem {
   label: string;
@@ -129,7 +131,9 @@ export function DesktopSidebar(): React.JSX.Element {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden md:flex flex-col w-64 h-screen fixed left-0 top-0 border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a] px-5 py-6 z-40">
+    <aside className="hidden md:flex flex-col w-64 h-screen fixed left-0 top-0 border-r border-zinc-200 dark:border-zinc-800 bg-background px-5 py-6 z-40">
+      {/* Borde tejido de la columna */}
+      <TextileBand vertical scale={0.375} className="absolute inset-y-0 right-0" />
       {/* Brand Header */}
       <div className="mb-8 px-2">
         <Link href="/" className="inline-flex items-center gap-2.5 group">
@@ -146,7 +150,7 @@ export function DesktopSidebar(): React.JSX.Element {
       </div>
 
       {/* Navigation Links */}
-      <nav className="flex-1 space-y-1">
+      <nav className="space-y-1">
         {navItems
           .filter((item) => isNavVisible(item.visibleTo, role))
           .map((item) => {
@@ -158,18 +162,18 @@ export function DesktopSidebar(): React.JSX.Element {
                 href={item.href}
                 aria-current={active ? 'page' : undefined}
                 className={cn(
-                  'group relative overflow-hidden flex items-center px-1.5 py-1.5 rounded-md text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400',
+                  'group relative flex items-center px-1.5 py-1.5 rounded-md text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand',
                   active
                     ? 'text-zinc-950 dark:text-zinc-50'
                     : 'text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-zinc-50',
                 )}
               >
-                <NavTextile active={active} />
-                <span className={cn(navChipClass(active), 'gap-3.5 px-1.5 py-1')}>
+                <NavHighlight active={active} placement="left" />
+                <span className={cn(navChipClass(active), 'gap-3.5 px-2 py-1')}>
                   <Icon
                     className={cn(
                       'w-5 h-5 shrink-0',
-                      active ? 'text-zinc-900 dark:text-zinc-100' : 'text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-zinc-100',
+                      active ? 'text-brand' : 'text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-zinc-100',
                     )}
                   />
                   <span>{item.label}</span>
@@ -179,9 +183,17 @@ export function DesktopSidebar(): React.JSX.Element {
           })}
       </nav>
 
+      {/* Huipil de fondo en el espacio libre; nunca detras de botones ni texto */}
+      <div
+        aria-hidden="true"
+        className="relative my-4 min-h-0 flex-1 overflow-hidden text-zinc-200 dark:text-zinc-800 [mask-image:linear-gradient(to_bottom,transparent,black_25%,black_75%,transparent)]"
+      >
+        <TextilePattern />
+      </div>
+
       <div className="pt-4 border-t border-zinc-200 dark:border-zinc-800">
         <SessionCard />
-        <div className="mt-3 flex justify-center gap-3 text-[11px] text-zinc-400">
+        <div className="mt-3 flex justify-center gap-3 text-xs text-zinc-400">
           <Link href="/privacidad" className="hover:text-zinc-700 dark:hover:text-zinc-200">
             Privacidad
           </Link>

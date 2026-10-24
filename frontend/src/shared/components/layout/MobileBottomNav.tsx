@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import { cn } from '../../lib/utils';
 import { useSession } from '../../session';
 import { isNavVisible, type NavVisibility } from './navVisibility';
-import { NavTextile, isActiveRoute, navChipClass } from './NavTextile';
+import { NavHighlight, isActiveRoute, navChipClass } from './NavHighlight';
 
 interface BottomNavItem {
   label: string;
@@ -101,7 +101,7 @@ export function MobileBottomNav(): React.JSX.Element {
 
   return (
     <nav
-      className="md:hidden fixed bottom-0 left-0 right-0 z-50 h-16 bg-white dark:bg-[#0a0a0a] border-t border-zinc-200 dark:border-zinc-800 px-3 flex items-center justify-around"
+      className="md:hidden fixed bottom-0 left-0 right-0 z-50 h-16 bg-background border-t border-zinc-200 dark:border-zinc-800 px-3 flex items-center justify-around"
       aria-label="Navegación móvil"
     >
       {visibleItems.map((item) => {
@@ -119,7 +119,7 @@ export function MobileBottomNav(): React.JSX.Element {
               <div className="w-10 h-10 rounded-md bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 flex items-center justify-center shadow-sm">
                 <Icon className="w-5 h-5" />
               </div>
-              <span className="text-[10px] font-medium text-zinc-800 dark:text-zinc-200 mt-0.5">
+              <span className="text-xs font-medium text-zinc-800 dark:text-zinc-200 mt-0.5">
                 {item.label}
               </span>
             </Link>
@@ -132,16 +132,16 @@ export function MobileBottomNav(): React.JSX.Element {
             href={item.href}
             aria-current={active ? 'page' : undefined}
             className={cn(
-              'group relative overflow-hidden flex flex-col items-center justify-center p-1 rounded-md transition-colors focus:outline-none',
+              'group relative flex flex-col items-center justify-center p-1 rounded-md transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand',
               active
                 ? 'text-zinc-950 dark:text-zinc-50'
                 : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-50',
             )}
           >
-            <NavTextile active={active} />
+            <NavHighlight active={active} placement="top" />
             <span className={cn(navChipClass(active), 'flex-col px-1.5 py-0.5')}>
-              <Icon className="w-5 h-5" />
-              <span className="text-[10px] font-medium mt-0.5">{item.label}</span>
+              <Icon className={cn('w-5 h-5', active && 'text-brand')} />
+              <span className="text-xs font-medium mt-0.5">{item.label}</span>
             </span>
           </Link>
         );

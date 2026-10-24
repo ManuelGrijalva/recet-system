@@ -1,5 +1,8 @@
+import type { Metadata } from 'next';
 import React from 'react';
 import { RecipeComposerScreen } from '@/features/recipe-compose';
+
+export const metadata: Metadata = { title: 'Editar receta' };
 
 interface EditRecipePageProps {
   params: Promise<{ id: string }>;

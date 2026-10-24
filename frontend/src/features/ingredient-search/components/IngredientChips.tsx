@@ -29,7 +29,7 @@ export function IngredientChips({
               onClick={() => onToggle(ingredient)}
               aria-pressed={selected}
               className={cn(
-                'inline-flex items-center gap-1 text-xs px-3 py-1.5 rounded-md font-medium border transition-[color,background-color,border-color,transform] duration-150 ease-out-strong active:scale-[0.97] motion-reduce:active:scale-100',
+                'inline-flex min-h-10 items-center gap-1 rounded-md border px-3.5 text-sm font-medium sm:min-h-8 sm:px-3 sm:text-xs transition-[color,background-color,border-color,transform] duration-150 ease-out-strong active:scale-[0.97] motion-reduce:active:scale-100',
                 selected
                   ? 'bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 border-transparent shadow-xs'
                   : 'border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-900',

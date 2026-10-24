@@ -36,7 +36,7 @@ export function CustomIngredientForm({
           autoComplete="off"
           aria-label="Escribe un ingrediente"
           placeholder="Escribe un ingrediente, por ejemplo: tomate, frijol, masa..."
-          className="flex-1 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0a0a0a] px-3 py-2 text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-400"
+          className="flex-1 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#15110d] px-3 py-2 text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-400"
         />
         <datalist id="ingredient-catalog">
           {suggestions.map((name) => (

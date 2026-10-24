@@ -13,6 +13,8 @@ interface SearchApiRecipe {
   matchPercentage?: number;
   matchedIngredientNames?: string[];
   missingIngredientNames?: string[];
+  coverImageUrl?: string | null;
+  coverImageCredit?: string | null;
 }
 
 function toMatchedRecipe(item: SearchApiRecipe): MatchedRecipe {
@@ -27,6 +29,8 @@ function toMatchedRecipe(item: SearchApiRecipe): MatchedRecipe {
     missingIngredients: (item.missingIngredientNames ?? []).map(
       capitalizeIngredientName,
     ),
+    coverImageUrl: item.coverImageUrl ?? null,
+    coverImageCredit: item.coverImageCredit ?? null,
   };
 }
 

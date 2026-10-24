@@ -18,6 +18,9 @@ export interface MatchedRecipe {
   matchPercentage: number;
   matchedIngredients: string[];
   missingIngredients: string[];
+  // Portada opcional: el catalogo local sin conexion no la trae
+  coverImageUrl?: string | null;
+  coverImageCredit?: string | null;
 }
 
 export interface CatalogIngredient {

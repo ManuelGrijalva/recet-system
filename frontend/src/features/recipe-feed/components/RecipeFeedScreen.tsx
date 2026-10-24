@@ -36,8 +36,10 @@ export function RecipeFeedScreen(): React.JSX.Element {
         </div>
       ) : (
         <div className="space-y-6">
-          {recipes.map((recipe) => (
-            <RecipeCard key={recipe.id} recipe={recipe} userReaction={myReactions[recipe.id] ?? null} />
+          {recipes.map((recipe, index) => (
+            <div key={recipe.id} className="animate-rise-in" style={{ animationDelay: `${Math.min(index, 4) * 50}ms` }}>
+              <RecipeCard recipe={recipe} userReaction={myReactions[recipe.id] ?? null} />
+            </div>
           ))}
         </div>
       )}

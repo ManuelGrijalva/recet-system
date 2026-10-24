@@ -20,7 +20,7 @@ const TONES: Record<StatusTone, string> = {
 // Aviso en bloque con ícono; reemplaza los recuadros grises de estado
 export function Notice({ tone, children, role, className }: NoticeProps): React.JSX.Element {
   return (
-    <div role={role} className={cn('flex gap-2.5 rounded-md border p-3 text-xs', TONES[tone], className)}>
+    <div role={role} className={cn('flex gap-2.5 rounded-md border p-3 text-xs animate-fade-in', TONES[tone], className)}>
       {tone === 'success' && <CheckCircleIcon className="mt-0.5 h-4 w-4 shrink-0" />}
       {tone === 'danger' && <ExclamationCircleIcon className="mt-0.5 h-4 w-4 shrink-0" />}
       {tone === 'warning' && <ClockIcon className="mt-0.5 h-4 w-4 shrink-0" />}

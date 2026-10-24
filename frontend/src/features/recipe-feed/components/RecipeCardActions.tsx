@@ -47,7 +47,7 @@ export function RecipeCardActions({
             title="Comentar"
             className={cn(
               'inline-flex min-h-10 sm:min-h-8 items-center gap-1.5 rounded-md px-2.5 text-xs font-medium tabular-nums',
-              'transition-colors motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand',
+              'transition-[color,background-color,transform] duration-150 ease-out-strong active:scale-[0.97] motion-reduce:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand',
               showComments
                 ? 'bg-zinc-100 dark:bg-zinc-900 text-zinc-950 dark:text-zinc-50'
                 : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-zinc-900 dark:hover:text-zinc-100',
@@ -64,7 +64,7 @@ export function RecipeCardActions({
       </div>
 
       {showComments && (
-        <div className="px-4 pb-4 pt-1">
+        <div className="px-4 pb-4 pt-1 animate-rise-in">
           <InlineComments recipeId={recipeId} />
         </div>
       )}

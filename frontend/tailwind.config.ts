@@ -50,6 +50,31 @@ const config: Config = {
           'soft-foreground': 'var(--warning-soft-foreground)',
         },
       },
+      // Micro animaciones: solo transform y opacidad, curvas ease-out fuertes
+      transitionTimingFunction: {
+        'out-strong': 'cubic-bezier(0.23, 1, 0.32, 1)',
+      },
+      keyframes: {
+        fadeIn: { from: { opacity: '0' } },
+        riseIn: { from: { opacity: '0', transform: 'translateY(8px)' } },
+        popIn: { from: { opacity: '0', transform: 'scale(0.92)' } },
+        sheetIn: { from: { opacity: '0', transform: 'translateY(16px)' } },
+        dialogIn: { from: { opacity: '0', transform: 'scale(0.96)' } },
+        reactionPop: {
+          '0%': { transform: 'scale(0.7)' },
+          '60%': { transform: 'scale(1.15)' },
+          '100%': { transform: 'scale(1)' },
+        },
+      },
+      // fill backwards: al terminar no queda ningun transform, que romperia los hijos fixed
+      animation: {
+        'fade-in': 'fadeIn 200ms cubic-bezier(0.23, 1, 0.32, 1) backwards',
+        'rise-in': 'riseIn 240ms cubic-bezier(0.23, 1, 0.32, 1) backwards',
+        'pop-in': 'popIn 160ms cubic-bezier(0.23, 1, 0.32, 1) backwards',
+        'sheet-in': 'sheetIn 240ms cubic-bezier(0.32, 0.72, 0, 1) backwards',
+        'dialog-in': 'dialogIn 200ms cubic-bezier(0.23, 1, 0.32, 1) backwards',
+        'reaction-pop': 'reactionPop 260ms cubic-bezier(0.23, 1, 0.32, 1)',
+      },
       borderRadius: {
         // Restriccion de geometria: maximo 6px a 8px
         DEFAULT: '0.375rem', // 6px

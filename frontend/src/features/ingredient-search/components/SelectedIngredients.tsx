@@ -27,7 +27,7 @@ export function SelectedIngredients({ selected, onRemove }: SelectedIngredientsP
             type="button"
             onClick={() => onRemove(name)}
             aria-label={`Quitar ${name}`}
-            className="inline-flex items-center gap-1 text-xs px-3 py-1.5 rounded-md font-medium bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
+            className="inline-flex items-center gap-1 text-xs px-3 py-1.5 rounded-md font-medium bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 animate-pop-in transition-transform duration-150 ease-out-strong active:scale-95 motion-reduce:active:scale-100"
           >
             {capitalizeIngredientName(name)}
             <XIcon className="w-3 h-3" />

@@ -34,8 +34,10 @@ export function MatchResultList({
         </div>
       ) : (
         <div className="space-y-3">
-          {results.map((recipe) => (
-            <MatchResultCard key={recipe.id} recipe={recipe} />
+          {results.map((recipe, index) => (
+            <div key={recipe.id} className="animate-rise-in" style={{ animationDelay: `${Math.min(index, 4) * 40}ms` }}>
+              <MatchResultCard recipe={recipe} />
+            </div>
           ))}
         </div>
       )}

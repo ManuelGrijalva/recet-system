@@ -109,3 +109,17 @@ h1 {
 .app-modal {
   border-radius: 0.375rem; /* 6px */
 }
+
+/* Movimiento reducido: las entradas quedan en un fundido y se quita el rebote */
+@media (prefers-reduced-motion: reduce) {
+  .animate-rise-in,
+  .animate-pop-in,
+  .animate-sheet-in,
+  .animate-dialog-in {
+    animation-name: fadeIn;
+  }
+
+  .animate-reaction-pop {
+    animation: none;
+  }
+}

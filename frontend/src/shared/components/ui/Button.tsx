@@ -26,7 +26,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     // 2. Base zinc; color solo en primary (Brasa), success y danger.
     // 3. Prohibido uppercase.
     const baseStyles =
-      'inline-flex items-center justify-center font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-[#0a0a0a] disabled:opacity-50 disabled:pointer-events-none rounded-md';
+      'inline-flex items-center justify-center font-medium transition-[color,background-color,border-color,transform] duration-150 ease-out-strong active:scale-[0.97] motion-reduce:active:scale-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-[#0a0a0a] disabled:opacity-50 disabled:pointer-events-none rounded-md';
 
     const variants = {
       primary:
@@ -63,7 +63,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {isLoading ? (
           <span className="inline-flex items-center gap-2">
             <svg
-              className="animate-spin h-4 w-4 text-current"
+              className="animate-spin [animation-duration:700ms] h-4 w-4 text-current"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"

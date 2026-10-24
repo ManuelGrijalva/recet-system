@@ -36,7 +36,7 @@ export function Modal({
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
       {/* Fondo difuminado */}
       <div
-        className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
+        className="fixed inset-0 bg-black/60 backdrop-blur-xs animate-fade-in"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -47,7 +47,7 @@ export function Modal({
         aria-modal="true"
         aria-labelledby="modal-title"
         className={cn(
-          'relative z-10 w-full max-w-lg bg-white dark:bg-[#0a0a0a] border border-zinc-200 dark:border-zinc-800 shadow-xl transition-all',
+          'relative z-10 w-full max-w-lg bg-white dark:bg-[#0a0a0a] border border-zinc-200 dark:border-zinc-800 shadow-xl animate-sheet-in sm:animate-dialog-in',
           // Movil: Bottom Sheet (borde superior redondeado a 8px maximo)
           'rounded-t-md sm:rounded-md max-h-[90vh] flex flex-col',
           className,
@@ -61,7 +61,7 @@ export function Modal({
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-md text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
+            className="p-1.5 rounded-md text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors active:scale-95"
             aria-label="Cerrar ventana"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

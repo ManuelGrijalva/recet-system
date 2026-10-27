@@ -1,6 +1,8 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useToast } from '@/shared/components/ui/Toast';
 import { ApiError } from '@/shared/lib/apiClient';
 import type { RecipeStatus } from '@/shared/types';
 import { createRecipe } from '../api/createRecipe';
@@ -37,6 +39,10 @@ function describeSubmitError(err: unknown, isEditing: boolean): string {
   }
   if (err instanceof ApiError && err.status === 403 && !isEditing) {
     return 'Solo los usuarios colaboradores pueden publicar recetas. Solicita el rol desde tu perfil.';
+  }
+  // fetch rechaza con TypeError cuando no hay red o el servidor no responde
+  if (err instanceof TypeError) {
+    return 'No hay conexión con el servidor. Revisa tu internet e intenta de nuevo.';
   }
   return err instanceof Error
     ? err.message
@@ -80,6 +86,8 @@ export function useRecipeComposer(recipeId?: string): UseRecipeComposerResult {
   const [isLoadingRecipe, setIsLoadingRecipe] = useState(recipeId !== undefined);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [reviewNotes, setReviewNotes] = useState<string | null>(null);
+  const router = useRouter();
+  const toast = useToast();
 
   useEffect(() => {
     if (!recipeId) return;
@@ -162,13 +170,19 @@ export function useRecipeComposer(recipeId?: string): UseRecipeComposerResult {
       const created = recipeId
         ? await updateRecipe(recipeId, payload)
         : await createRecipe(payload);
-      setResult({ ok: true, message: SUCCESS_MESSAGES[created.status] });
+      // Al terminar se abre la receta: el usuario ve que quedo guardada, con su estado y sus fotos
+      toast.show(SUCCESS_MESSAGES[created.status], 'success');
+      router.push(`/recipe/${created.id}`);
     } catch (err) {
-      setResult({ ok: false, message: describeSubmitError(err, recipeId !== undefined) });
+      const message = describeSubmitError(err, recipeId !== undefined);
+      setResult({ ok: false, message });
+      toast.show(message, 'danger');
+      // El aviso detallado queda arriba del formulario
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } finally {
       setIsSubmitting(false);
     }
-  }, [draft, recipeId]);
+  }, [draft, recipeId, router, toast]);
 
   return {
     draft,

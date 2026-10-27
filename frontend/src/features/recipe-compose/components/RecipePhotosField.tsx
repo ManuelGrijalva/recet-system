@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import { Notice } from '@/shared/components/ui/Notice';
 import { Button } from '@/shared/components/ui/Button';
 import { MAX_RECIPE_PHOTOS } from '../lib/recipePhotos';
 
@@ -94,7 +95,11 @@ export function RecipePhotosField({
         {isFull ? 'Llegaste al máximo de fotos' : images.length > 0 ? 'Agregar más fotos' : 'Elegir fotos'}
       </Button>
 
-      {error && <p className="text-xs text-zinc-700 dark:text-zinc-300">{error}</p>}
+      {error && (
+        <Notice tone="danger" role="alert">
+          {error}
+        </Notice>
+      )}
     </div>
   );
 }

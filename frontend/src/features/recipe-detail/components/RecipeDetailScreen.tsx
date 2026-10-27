@@ -6,7 +6,7 @@ import { ArrowLeftIcon } from '@/shared/components/ui/icons';
 import { ReactionButtons } from '@/features/reactions';
 import { CommentSection } from '@/features/comments';
 import { BookmarkButton } from '@/features/saved-recipes';
-import { RecipePdfButton } from '@/features/recipe-export';
+import { PrintRecipeButton, RecipePdfButton } from '@/features/recipe-export';
 import { ShareRecipeButton } from '@/features/recipe-share';
 import { useSession } from '@/shared/session';
 import { useRecipeDetail } from '../hooks/useRecipeDetail';
@@ -66,8 +66,12 @@ export function RecipeDetailScreen({
   }
 
   return (
-    <article className="space-y-6">
-      <div>
+    <article className="space-y-6 print:space-y-4">
+      {/* Solo en papel: de donde salio la receta */}
+      <p className="hidden text-xs text-zinc-600 print:block">
+        Memoria del Comal · memoriadelcomal.com/recipe/{recipe.id}
+      </p>
+      <div className="print:hidden">
         <Link
           href="/"
           className="inline-flex items-center gap-1 text-xs font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
@@ -77,7 +81,9 @@ export function RecipeDetailScreen({
         </Link>
       </div>
 
-      <RecipeReviewNotice status={recipe.status} reviewNotes={recipe.reviewNotes} />
+      <div className="print:hidden">
+        <RecipeReviewNotice status={recipe.status} reviewNotes={recipe.reviewNotes} />
+      </div>
 
       <RecipeDetailHeader recipe={recipe} />
 
@@ -101,14 +107,15 @@ export function RecipeDetailScreen({
       />
 
       {/* En el celular las acciones principales quedan fijas sobre la barra inferior mientras se lee la receta */}
-      <div className="sticky bottom-[4.5rem] z-30 flex flex-wrap items-center justify-end gap-2 rounded-lg border border-zinc-200 bg-white/95 p-2 shadow-sm backdrop-blur-sm dark:border-zinc-800 dark:bg-[#1c1712]/95 md:static md:border-0 md:bg-transparent md:p-0 md:shadow-none md:backdrop-blur-none">
+      <div className="print:hidden sticky bottom-[4.5rem] z-30 flex flex-wrap items-center justify-end gap-2 rounded-lg border border-zinc-200 bg-white/95 p-2 shadow-sm backdrop-blur-sm dark:border-zinc-800 dark:bg-[#1c1712]/95 md:static md:border-0 md:bg-transparent md:p-0 md:shadow-none md:backdrop-blur-none">
         <ShareRecipeButton recipeId={recipe.id} title={recipe.title} variant="button" />
         <RecipePdfButton recipeId={recipe.id} />
+        <PrintRecipeButton />
         <BookmarkButton recipeId={recipe.id} initialBookmarked={recipe.isBookmarked ?? false} />
       </div>
 
       {user && (user.id === recipe.author.id || user.role === 'ADMIN') && (
-        <div className="flex flex-wrap justify-end gap-2">
+        <div className="print:hidden flex flex-wrap justify-end gap-2">
           {user.role === 'ADMIN' && user.id !== recipe.author.id && (
             <AdminDeleteRecipeButton recipeId={recipe.id} />
           )}
@@ -123,7 +130,7 @@ export function RecipeDetailScreen({
         </div>
       )}
 
-      <div className="p-4 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#1c1712]">
+      <div className="print:hidden p-4 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#1c1712]">
         <h3 className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-3">
           ¿Has probado esta receta? Reacciona para la comunidad:
         </h3>
@@ -134,10 +141,14 @@ export function RecipeDetailScreen({
         />
       </div>
 
-      <RelatedRecipes recipeId={recipe.id} region={recipe.originRegion} />
+      <div className="print:hidden">
+        <RelatedRecipes recipeId={recipe.id} region={recipe.originRegion} />
+      </div>
 
       {commentsLoaded && (
-        <CommentSection recipeId={recipe.id} initialComments={comments} />
+        <div className="print:hidden">
+          <CommentSection recipeId={recipe.id} initialComments={comments} />
+        </div>
       )}
     </article>
   );

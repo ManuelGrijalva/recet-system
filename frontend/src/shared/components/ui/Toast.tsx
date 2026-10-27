@@ -39,7 +39,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }): Reac
     <ToastContext.Provider value={{ show }}>
       {children}
       {/* Sobre la barra inferior en el celular y abajo al centro en escritorio */}
-      <div role="status" aria-live="polite" className="pointer-events-none fixed inset-x-0 bottom-20 z-[60] flex justify-center px-4 md:bottom-6">
+      <div role="status" aria-live="polite" className="print:hidden pointer-events-none fixed inset-x-0 bottom-20 z-[60] flex justify-center px-4 md:bottom-6">
         {toast && (
           <div
             key={toast.id}

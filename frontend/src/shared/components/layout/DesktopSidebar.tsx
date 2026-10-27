@@ -131,7 +131,7 @@ export function DesktopSidebar(): React.JSX.Element {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden md:flex flex-col w-64 h-screen fixed left-0 top-0 border-r border-zinc-200 dark:border-zinc-800 bg-background px-5 py-6 z-40">
+    <aside className="print:hidden hidden md:flex flex-col w-64 h-screen fixed left-0 top-0 border-r border-zinc-200 dark:border-zinc-800 bg-background px-5 py-6 z-40">
       {/* Borde tejido de la columna */}
       <TextileBand vertical scale={0.375} className="absolute inset-y-0 right-0" />
       {/* Brand Header */}

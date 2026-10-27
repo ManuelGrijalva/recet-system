@@ -32,6 +32,7 @@ export function PreparationSteps({
         <h2 className="font-serif text-lg font-semibold text-zinc-950 dark:text-zinc-50">Modo de preparación</h2>
         {cookMode.isSupported && (
           <button
+            data-print="hide"
             type="button"
             onClick={cookMode.toggle}
             aria-pressed={cookMode.isActive}
@@ -55,7 +56,7 @@ export function PreparationSteps({
         {steps.map((step) => {
           const isDone = done.has(step.stepNumber);
           return (
-            <li key={step.stepNumber}>
+            <li key={step.stepNumber} className="break-inside-avoid">
               <button
                 type="button"
                 onClick={() => toggle(step.stepNumber)}

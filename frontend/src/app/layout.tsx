@@ -72,7 +72,7 @@ export default function RootLayout({
             <DesktopSidebar />
 
             {/* 2. Encabezado Móvil (Solo visible en pantallas pequeñas) */}
-            <header className="md:hidden fixed top-0 left-0 right-0 h-14 bg-[#f8f1e5]/90 dark:bg-[#15110d]/90 backdrop-blur-sm border-b border-zinc-200 dark:border-zinc-800 z-40 px-4 flex items-center justify-between">
+            <header className="print:hidden md:hidden fixed top-0 left-0 right-0 h-14 bg-[#f8f1e5]/90 dark:bg-[#15110d]/90 backdrop-blur-sm border-b border-zinc-200 dark:border-zinc-800 z-40 px-4 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <BrandMark size="sm" />
                 <span className="font-serif font-semibold text-sm text-zinc-950 dark:text-zinc-50">
@@ -90,11 +90,11 @@ export default function RootLayout({
             </header>
 
             {/* 3. Área Central del Feed (Contenido Principal) */}
-            <main id="contenido" tabIndex={-1} className="min-w-0 flex-1 focus:outline-none md:pl-64 lg:pr-80 pt-14 md:pt-0 pb-20 md:pb-10 flex justify-center">
+            <main id="contenido" tabIndex={-1} className="min-w-0 flex-1 focus:outline-none print:p-0 md:pl-64 lg:pr-80 pt-14 md:pt-0 pb-20 md:pb-10 flex justify-center">
               {/* Columna de papel: el tapiz se ve desenfocado detras del contenido y nitido en los margenes */}
-              <div className="relative w-full min-w-0 max-w-2xl min-h-screen px-4 py-6 md:px-6 md:border-x md:border-zinc-200/80 dark:md:border-zinc-800">
+              <div className="relative w-full min-w-0 max-w-2xl min-h-screen px-4 py-6 md:px-6 print:min-h-0 print:max-w-none print:border-0 print:p-0 md:border-x md:border-zinc-200/80 dark:md:border-zinc-800">
                 {/* El desenfoque va en una capa hermana y no en la columna: un ancestro con filtro romperia los modales fixed */}
-                <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-[#f8f1e5]/[0.62] backdrop-blur-[3px] dark:bg-transparent dark:backdrop-blur-none" />
+                <div aria-hidden="true" className="print:hidden pointer-events-none absolute inset-0 -z-10 bg-[#f8f1e5]/[0.62] backdrop-blur-[3px] dark:bg-transparent dark:backdrop-blur-none" />
                 {children}
               </div>
             </main>

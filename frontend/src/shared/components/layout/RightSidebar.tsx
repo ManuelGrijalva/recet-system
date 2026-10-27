@@ -90,7 +90,7 @@ export function RightSidebar(): React.JSX.Element {
   const cooks = recipes ? recommendedCooks(recipes, user?.id) : [];
 
   return (
-    <aside className="hidden lg:flex flex-col gap-6 w-80 h-screen fixed right-0 top-0 border-l border-zinc-200 dark:border-zinc-800 bg-background px-6 py-6 z-40 overflow-y-auto">
+    <aside className="print:hidden hidden lg:flex flex-col gap-6 w-80 h-screen fixed right-0 top-0 border-l border-zinc-200 dark:border-zinc-800 bg-background px-6 py-6 z-40 overflow-y-auto">
       <TextileBand vertical scale={0.375} className="fixed inset-y-0 right-80 z-10" />
       <SidebarCard title="Tendencias en Jutiapa">
         {recipes === null ? (

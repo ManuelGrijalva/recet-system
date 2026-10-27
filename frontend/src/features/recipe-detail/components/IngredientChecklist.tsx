@@ -28,7 +28,7 @@ export function IngredientChecklist({
     <section className="space-y-3 rounded-md border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-[#1c1712]">
       <div className="flex items-baseline justify-between gap-3">
         <h2 className="font-serif text-lg font-semibold text-zinc-950 dark:text-zinc-50">Ingredientes</h2>
-        <p className="text-xs text-zinc-500 dark:text-zinc-400" aria-live="polite">
+        <p data-print="hide" className="text-xs text-zinc-500 dark:text-zinc-400" aria-live="polite">
           {ready > 0 ? `${ready} de ${ingredients.length} listos` : 'Toca para marcar los que ya tienes'}
         </p>
       </div>

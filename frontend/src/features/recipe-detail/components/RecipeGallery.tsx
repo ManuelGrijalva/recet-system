@@ -23,7 +23,7 @@ export function RecipeGallery({ title, images, coverCredit, coverCreditUrl }: Re
         <img
           src={current}
           alt={active === 0 ? title : `${title}, foto ${active + 1}`}
-          className="w-full aspect-[4/3] object-cover rounded-lg border border-zinc-200 dark:border-zinc-800 print:aspect-auto print:max-h-[90mm]"
+          className="w-full aspect-[4/3] object-cover rounded-lg border border-zinc-200 dark:border-zinc-800 print:aspect-[2/1]"
         />
         {active === 0 && <PhotoCredit credit={coverCredit} url={coverCreditUrl} className="bottom-2 right-2" />}
       </div>

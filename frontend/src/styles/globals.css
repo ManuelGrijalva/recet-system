@@ -143,12 +143,24 @@ h1 {
     color: #000000;
   }
 
+  /* Sin esto el navegador quita los fondos: tarjetas crema, numeros de paso Brasa y la franja tejida */
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  h1,
+  h2 {
+    break-after: avoid;
+  }
+
   [data-print="hide"],
   [role="status"] {
     display: none !important;
   }
 
-  section,
+  /* Las tarjetas largas se parten entre renglones, nunca dentro de uno: asi no queda media hoja vacia */
+  li,
   img {
     break-inside: avoid;
   }

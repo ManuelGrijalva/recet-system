@@ -20,6 +20,7 @@ import { RecipeSourceNote } from './RecipeSourceNote';
 import { RecipeReviewNotice } from './RecipeReviewNotice';
 import { AdminDeleteRecipeButton } from './AdminDeleteRecipeButton';
 import { RelatedRecipes } from './RelatedRecipes';
+import { RecipePrintFooter, RecipePrintHeader } from './RecipePrintFrame';
 import { Skeleton, SkeletonList, LoadingRegion } from '@/shared/components/ui/Skeleton';
 import { EmptyState } from '@/shared/components/ui/EmptyState';
 
@@ -67,10 +68,7 @@ export function RecipeDetailScreen({
 
   return (
     <article className="space-y-6 print:space-y-4">
-      {/* Solo en papel: de donde salio la receta */}
-      <p className="hidden text-xs text-zinc-600 print:block">
-        Memoria del Comal · memoriadelcomal.com/recipe/{recipe.id}
-      </p>
+      <RecipePrintHeader />
       <div className="print:hidden">
         <Link
           href="/"
@@ -105,6 +103,8 @@ export function RecipeDetailScreen({
         sourceName={recipe.sourceName}
         sourceUrl={recipe.sourceUrl}
       />
+
+      <RecipePrintFooter recipeId={recipe.id} />
 
       {/* En el celular las acciones principales quedan fijas sobre la barra inferior mientras se lee la receta */}
       <div className="print:hidden sticky bottom-[4.5rem] z-30 flex flex-wrap items-center justify-end gap-2 rounded-lg border border-zinc-200 bg-white/95 p-2 shadow-sm backdrop-blur-sm dark:border-zinc-800 dark:bg-[#1c1712]/95 md:static md:border-0 md:bg-transparent md:p-0 md:shadow-none md:backdrop-blur-none">
